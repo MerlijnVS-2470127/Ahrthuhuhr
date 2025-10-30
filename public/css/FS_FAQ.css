@@ -1,0 +1,44 @@
+/* 
+Author: Merlijn Van Suetendael
+
+This file contains the ccs conventions used in the faq page 
+*/
+
+/*Link for the main css file*/
+@import url(FS_Main.css);
+
+.revealable_list {
+    padding-left: 10px;
+}
+
+.revealable_list_item {
+    margin-top: 20px;
+    list-style: none;
+}
+
+.revealable_list_item_header:hover {
+    cursor: pointer;
+}
+
+.revealable_list_item_header {
+    padding: 10px;
+}
+
+.chevron {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#chevron-up {
+    display: none;
+}
+
+#chevron-down {
+    display: inline;
+}
+
+.revealable_list_item_contents {
+    padding-top: 0px;
+    padding-left: 40px;
+    display: none;
+}
