@@ -1,42 +1,62 @@
 /* 
-Author: Merlijn Van Suetendael
-
 This file contains the main ccs conventions used throughout the whole fellowships site 
 */
 
-/*  var -> element
-    #var -> id
-    .var -> class */
+    /*bootstrap overrides*/
+    :root {
+        --bs-primary: #216477 !important;
+        --bs-primary-rgb: 33, 100, 119 !important;
+
+        --bs-secondary: #728FCE !important;
+        --bs-secondary-rgb: 114, 143, 206 !important;
+
+        --bs-tertiary: #728FCE !important;
+        --bs-tertiary-rgb: 114, 143, 206 !important;
+    }
+
+    .text-tertiary {
+        --bs-text-opacity: 1;
+        color: rgba(var(--bs-tertiary-rgb), var(--bs-text-opacity)) !important;
+    }
+
+    /*end of bootstrap overrides*/
+
+
+    .main-content-wrapper {
+        flex-grow: 1;
+    }
 
     body {
-        background-color: #E5E4E2;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
 
+        background-color: whitesmoke; /*#E5E4E2*/
+        
         font-family: Arial, Helvetica, sans-serif;
         font-size: 20px;
         color: black;
+        
+    }
 
-        padding-left: 20px;
-        padding-top: 20px;
+    .main_div {
+        padding: 30px 50px;
     }
 
     hr {
-        margin-top: 40px;
-        color: #728FCE;
+        margin: 30px 0px;
+        color: var(--bs-primary);
     }
 
     .page_header{
         font-size: 50px;
-        color: darkslategray;
+        color: var(--bs-primary);
         font-weight: bold;
-    }
-
-    .Main_tab {
-        margin-top: 40px;
     }
 
     .tab_header {
         font-size: 34px;
-        color: #728FCE; /*light purple blue*/
+        color: var(--bs-secondary);
     }
 
     .hidden {
