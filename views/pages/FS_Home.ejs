@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="/css/FS_Main.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <%- include('../partials/FS_Standard_Head'); %>
+    <title>Fellowships</title>
 </head>
-<!--Nav balk-->
+
+<header>
+  <%- include('../partials/FS_Header'); %>
+</header>
+
 <body>
     <div class="main_Div" id="Homepage_main_div">
         <div class="page_header" id="Homepage_header"> Home </div>
@@ -41,6 +43,9 @@
 
     </div>
 </body>
-<!--Footer-->
-<a href="FS_FAQ.html" class="tab_header"> FAQ </a>
+
+<footer>
+    <%- include('../partials/FS_Footer'); %>
+</footer>
+
 </html>

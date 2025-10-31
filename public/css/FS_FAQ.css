@@ -4,9 +4,6 @@ Author: Merlijn Van Suetendael
 This file contains the ccs conventions used in the faq page 
 */
 
-/*Link for the main css file*/
-@import url(FS_Main.css);
-
 .revealable_list {
     padding-left: 10px;
 }

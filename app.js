@@ -32,6 +32,10 @@ app.get("/", (request, response) => {
   response.render('pages/FS_Home');
 });
 
+app.get('/faq', (request, response) => {
+  response.render('pages/FS_FAQ');
+});
+
 // Your routes here ...
 
 // Middleware for unknown routes
