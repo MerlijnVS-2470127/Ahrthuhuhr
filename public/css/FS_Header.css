@@ -1,29 +1,30 @@
-    /* styling specifically for the navbar/header */
-
-    /*  var -> element
-    #var -> id
-    .var -> class */
+/* 
+    styling specifically for the navbar/header 
+*/
 
     header {
         position: sticky;
         top: 0;
     }
-    
+
     .custom-nav {
         list-style-type: none;
-        margin: 0;
-        padding: 0;
         overflow: hidden;
+        display: flex;
+        align-items: center;
     }
 
     .nav-link {
-        display: block;
         color: white;
-        text-align: center;
-        padding: 14px 16px;
         text-decoration: none;
+        margin-right: 40px;
+        border-radius: 7px;
+        line-height: 45px;
     }
 
-    .nav-link:hover {
-        background-color: #111111;
+    .page-link:hover {
+        color: var(--bs-primary);
+        background-color: white;
+        transition: 0.25s;
     }
+

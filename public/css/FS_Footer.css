@@ -1,0 +1,19 @@
+/* 
+    styling specifically for the footer
+*/
+
+    
+
+    .nav-link-footer {
+        color: rgb(180, 180, 180);
+    }
+
+    .nav-link-footer:hover {
+        color: white;
+        transition: 0.3s;
+    }
+
+    .nav-link-footer-text {
+        background-color: var(--bs-primary);
+    }
+    

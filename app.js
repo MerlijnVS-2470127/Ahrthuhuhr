@@ -1,5 +1,6 @@
 import express from "express";
 import { InitializeDatabase } from "./db.js";
+import viewRenders from "./viewRenders.js";
 
 const app = express();
 const port = process.env.PORT || 8080; // Set by Docker Entrypoint or use 8080
@@ -28,15 +29,16 @@ app.use((request, response, next) => {
   next();
 });
 
-app.get("/", (request, response) => {
-  response.render('pages/FS_Home');
-});
 
-app.get('/faq', (request, response) => {
-  response.render('pages/FS_FAQ');
-});
+// Page routes
 
-// Your routes here ...
+app.use("/", viewRenders);
+
+
+//Middleware to check if a user is logged in
+app.use((request, response, next) => {
+  
+});
 
 // Middleware for unknown routes
 // Must be last in pipeline
