@@ -13,6 +13,7 @@ function validateAccountCreation(){
     let form = document.forms["createAccount"];
 
     let email = form["userEmail"].value;
+    alert(email);
     let password = form["userPassword"].value;
     let confirmPassword = form["userConfirmPassword"].value;
 
@@ -35,9 +36,9 @@ function validateAccountCreation(){
 }
 
 function checkEmailValidity(email) {
-    //let regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;
-    //return email.match(regex);
-    return true;
+    let regex = new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+    alert(regex + "      " + email.match(regex))
+    return email.match(regex);
 }
 
 function checkEmailAvailability(email) {
