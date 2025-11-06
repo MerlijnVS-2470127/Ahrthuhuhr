@@ -1,0 +1,35 @@
+/* 
+    styling specifically for the login-page
+*/
+
+.login-form {
+    
+    margin: auto;
+    margin-top: 25%;
+    width: 50%;
+    padding: 30px;
+    background-color: whitesmoke;
+    border: solid 2px var(--bs-primary);
+    border-radius: 20px;   
+    box-shadow: 5px 5px 50px var(--bs-primary); 
+}
+
+.centered {
+    display: flex;
+    height: 50%;
+}
+
+.seperator {
+    width: 50%;
+}
+
+body {
+    background-image: url("../images/sea_login_page.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+}
