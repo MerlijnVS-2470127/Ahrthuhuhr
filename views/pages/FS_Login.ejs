@@ -2,77 +2,51 @@
 <html lang="en">
 <head>
     <%- include('../partials/FS_Standard_Head'); %>
-    <link rel="stylesheet" href="/css/FS_Login.css">
-    <script src="/js/FS_Login.js" type="module"></script>
-    <title>Login - Fellowships</title>
+    <title>Fellowships</title>
 </head>
 
-<body>
-    <div class="centered">
-        <div class="seperator">
-            <div class="login-form collapse show" id="collapsable-login">
+<header>
+  <%- include('../partials/FS_Header'); %>
+</header>
+<div class="main-content-wrapper">
+    <body>
+        <div class="main_div" id="Homepage_main_div">
+            <div class="page_header" id="Homepage_header"> Home </div>
 
-                <div class="page_header"> Login </div>
+            <div class="main_tab" id="Homepage_Announcements_div">
 
-                <form id="login">
-                    <div class="mb-3">
-                        <label for="userEmail" class="form-label">Email adress</label>
-                        <input type="email" class="form-control" id="userEmail" name="userEmail" aria-describedby="emailHelp" placeholder="email">
-                        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-                    </div>
+                <h1 id="Homepage_Announcements_h1"> <a href="FS_Announcements.html" class="tab_header"> Anouncements </a> </h1>
+                <div> Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore optio soluta quia dolore beatae esse, reprehenderit nam expedita distinctio sapiente enim fuga eaque, 
+                    nisi iste totam sequi molestiae asperiores laudantium. </div>
 
-                    <div class="mb-3">
-                        <label for="userPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="userPassword" placeholder="Password">
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="chek_stayLoggedIn">
-                        <label class="form-check-label" for="chek_stayLoggedIn">Stay logged in?</label>
-                        <div class="error" id="loginError"></div>
-                    </div>
-
-                    
-
-                    <button type="button" class="btn btn-primary" id="btn_login">Log in</button>
-
-                    <a class="btn btn-primary" role="button" data-bs-toggle="collapse" data-bs-target=".login-form" aria-expanded="false" aria-controls="collapsable-login collapsable-create">Create account</a>
-                </form>
             </div>
-        </div>
 
-        <div class="seperator">
+            <hr>
 
-            <div class="login-form collapse" id="collapsable-create">
+            <div class="main_tab" id="Homepage_Groups_div">
 
-                <div class="page_header"> Register </div>
+                <h1 id="Homepage_Groups_h1"> <a href="FS_Groups.html" class="tab_header"> Groups </a> </h1>
+                <div> Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore optio soluta quia dolore beatae esse, reprehenderit nam expedita distinctio sapiente enim fuga eaque, 
+                    nisi iste totam sequi molestiae asperiores laudantium. </div>
 
-                <form id="createAccount">
-                    <div class="mb-3">
-                        <label for="userEmail" class="form-label">Email adress</label>
-                        <input type="email" class="form-control" id="userEmail" name="fname" aria-describedby="emailHelp" placeholder="email">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="userPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="userPassword" placeholder="Password">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="userPassword" class="form-label">Confirm password</label>
-                        <input type="password" class="form-control" id="userConfirmPassword" placeholder="Confirm password">
-                        <div class="error" id="createError"></div>
-                    </div>
-
-                    
-
-                    <button type="button" class="btn btn-primary" id="btn_createAccount">Create Account</button>
-
-                    <a class="btn btn-primary" role="button" data-bs-toggle="collapse" data-bs-target=".login-form" aria-expanded="false" aria-controls="collapsable-login collapsable-create">Login instead</a>
-                </form>
             </div>
-        </div>
-    </div>    
 
-</body>
+            <hr>
+
+            <div class="main_tab" id="Homepage_Events_div">
+
+                <h1 id="Homepage_Events_h1"> <a href="FS_Events.html" class="tab_header"> Events </a> </h1>
+                <div> Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore optio soluta quia dolore beatae esse, reprehenderit nam expedita distinctio sapiente enim fuga eaque, 
+                    nisi iste totam sequi molestiae asperiores laudantium. </div>
+
+            </div>
+
+        </div>
+    </body>
+</div>
+
+<footer>
+    <%- include('../partials/FS_Footer'); %>
+</footer>
 
 </html>

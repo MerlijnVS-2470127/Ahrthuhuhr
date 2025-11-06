@@ -9,6 +9,7 @@
 
     .custom-nav {
         list-style-type: none;
+        overflow: hidden;
         display: flex;
         align-items: center;
     }
@@ -25,12 +26,5 @@
         color: var(--bs-primary);
         background-color: white;
         transition: 0.25s;
-    }
-
-    .user-dropdown {
-        color: white;
-    }
-    .user-dropdown:hover {
-        color: white;
     }
 
