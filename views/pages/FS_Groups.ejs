@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/FS_Standard_Head'); %>
+    <title>Groups - Fellowships</title>
+    <style>
+    .groups-list { max-width: 800px; margin: 2rem auto; }
+    .group-item { background:#fff; border:1px solid #ddd; padding: .8rem 1rem; margin-bottom:.6rem; }
+    .group-item a { text-decoration:none; font-weight:600; color:#222; }
+    </style>
+</head>
+
+<header>
+  <%- include('../partials/FS_Header'); %>
+</header>
+
+<div class="main-content-wrapper">
+  <body>
+    <div class="main_div">
+      <main class="groups-list container">
+        <h1>Groups</h1>
+
+        <!-- server-provided groups array (we passed one in viewRenders.js) -->
+        <% if (Array.isArray(groups) && groups.length) { %>
+          <% groups.forEach(g => { %>
+            <div class="group-item">
+              <a href="/groups/<%= encodeURIComponent(g.id) %>"><%= g.name %></a>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <p>No groups found.</p>
+        <% } %>
+      </main>
+    </div>
+  </body>
+</div>
+
+<footer>
+    <%- include('../partials/FS_Footer') %>
+</footer>
+
+</html>

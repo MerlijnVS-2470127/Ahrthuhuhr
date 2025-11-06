@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/FS_Standard_Head'); %>
+    <title>Group chat: <%= groupId %></title>
+    <link rel="stylesheet" href="/css/FS_Groupchat.css">
+</head>
+
+<header>
+  <%- include('../partials/FS_Header'); %>
+</header>
+
+<div class="main-content-wrapper">
+    <body>
+        <div class="main_div">
+            <main class="container" style="max-width: 900px; margin: 2rem auto;">
+                <h2>Group: <%= groupId %></h2>
+
+                <section id="chat" class="chat">
+                <div id="messages" class="messages" aria-live="polite">
+                    <% messages.forEach(msg => { %>
+                    <div class="message" data-id="<%= msg.id %>">
+                        <div class="meta"><strong><%= msg.user_name %></strong> — <%= new Date(msg.created_at).toLocaleString() %></div>
+                        <div class="content"><%= msg.content %></div>
+                    </div>
+                    <% }) %>
+                </div>
+
+                <form id="composer" class="composer" onsubmit="return false;">
+                    <input type="text" id="user_name" placeholder="Your name (optional)" value="Anonymous" />
+                    <input type="text" id="content" placeholder="Type a message..." autocomplete="off" />
+                    <button id="sendBtn">Send</button>
+                </form>
+                </section>
+            </main>
+
+            <script>
+                // hier kan vs code een syntax error geven, maar dat komt doordat het ejs binnen <script> niet herkend
+                window.__CHAT = {
+                groupId: "<%= groupId %>",
+                lastFetch: <%= messages.length ? messages[messages.length - 1].created_at : 0 %>
+                };
+            </script>
+
+            <script src="/js/FS_Groupchat.js"></script>
+        </div>
+    </body>
+</div>
+
+<footer>
+    <%- include('../partials/FS_Footer'); %>
+</footer>
+
+</html>

@@ -1,6 +1,6 @@
 import Database from "better-sqlite3";
 
-const db = new Database("database.db", { verbose: console.log });
+export const db = new Database("database.db", { verbose: console.log });
 
 export function InitializeDatabase() {
   db.pragma("journal_mode = WAL;");
@@ -10,8 +10,21 @@ export function InitializeDatabase() {
   db.pragma("foreign_keys = true;");
   db.pragma("temp_store = memory;");
 
+  //prepare users
   db.prepare("CREATE TABLE IF NOT EXISTS users (name TEXT) STRICT").run();
 
+  //prepare messages
+  db.prepare(`
+    CREATE TABLE IF NOT EXISTS messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      group_id TEXT NOT NULL,
+      user_name TEXT NOT NULL,
+      content TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    ) STRICT
+  `).run();
+  
+  
   const exampleUsers = [
     { name: "Peter" },
     { name: "Jori" },

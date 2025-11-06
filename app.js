@@ -53,7 +53,7 @@ app.use((error, request, response, next) => {
 });
 
 // App starts here
-// InitializeDatabase();
+InitializeDatabase();
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
