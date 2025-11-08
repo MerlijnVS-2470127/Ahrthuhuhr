@@ -21,6 +21,10 @@ views.get("/groups", (request, response) => {
     response.render('pages/FS_Groups', { groups: [{ id: "testgroup", name: "Test Group" }] });
 })
 
+views.get('/map', (request, response) => {
+    response.render('pages/FS_Map');
+});
+
 //chatpagina per groep
 views.get("/groups/:groupId", (request, response) => {
   const groupId = request.params.groupId;
@@ -33,9 +37,9 @@ views.get("/groups/:groupId", (request, response) => {
   response.render("pages/FS_Groupchat", { groupId, messages });
 });
 
-//CODE TO BE REVIEWED
+
 // ---------------------------
-// API: get messages (optionally since timestamp)
+// API: get messages
 // ---------------------------
 views.get("/groups/:groupId/messages", (req, res) => {
   const groupId = req.params.groupId;
