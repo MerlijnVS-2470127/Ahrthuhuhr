@@ -1,6 +1,8 @@
 import express from "express";
 import { InitializeDatabase } from "./db.js";
 import viewRenders from "./viewRenders.js";
+import mapRouter from "./mapRouter.js";
+import chatmessagesRouter from "./chatmessagesRouter.js";
 
 const app = express();
 const port = process.env.PORT || 8080; // Set by Docker Entrypoint or use 8080
@@ -30,10 +32,13 @@ app.use((request, response, next) => {
 });
 
 
-// Page routes
 
+// Page routes
 app.use("/", viewRenders);
 
+// API routers
+app.use("/", mapRouter);
+app.use("/", chatmessagesRouter);
 
 //Middleware to check if a user is logged in
 app.use((request, response, next) => {

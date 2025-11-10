@@ -7,6 +7,8 @@
   const userInput = document.getElementById("user_name");
   const sendBtn = document.getElementById("sendBtn");
 
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+
   function escapeHtml(str) {
     return String(str)
       .replaceAll("&", "&amp;")

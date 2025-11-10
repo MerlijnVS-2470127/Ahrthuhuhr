@@ -4,6 +4,14 @@
     <%- include('../partials/FS_Standard_Head'); %>
     <title>Group chat: <%= groupId %></title>
     <link rel="stylesheet" href="/css/FS_Groupchat.css">
+    <script>
+        // hier kan vs code een syntax error geven, maar dat komt doordat het ejs binnen <script> niet herkend
+        window.__CHAT = {
+        groupId: "<%= groupId %>",
+        lastFetch: <%= messages.length ? messages[messages.length - 1].created_at : 0 %>
+        };
+    </script>
+    <script src="/js/FS_Groupchat.js" defer></script>
 </head>
 
 <header>
@@ -34,15 +42,6 @@
                 </section>
             </main>
 
-            <script>
-                // hier kan vs code een syntax error geven, maar dat komt doordat het ejs binnen <script> niet herkend
-                window.__CHAT = {
-                groupId: "<%= groupId %>",
-                lastFetch: <%= messages.length ? messages[messages.length - 1].created_at : 0 %>
-                };
-            </script>
-
-            <script src="/js/FS_Groupchat.js"></script>
         </div>
     </body>
 </div>
