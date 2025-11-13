@@ -17,6 +17,7 @@ export function InitializeDatabase() {
     CREATE TABLE IF NOT EXISTS users (
       user_id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT NOT NULL UNIQUE,
+      username TEXT NOT NULL, 
       password TEXT NOT NULL,
       last_login TEXT NOT NULL
     ) STRICT
