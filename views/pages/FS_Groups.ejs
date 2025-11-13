@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
     <%- include('../partials/FS_Standard_Head'); %>
-    <title>Groups - Fellowships</title>
+    <%- include('../partials/FS_CardModule'); %>
     <link rel="stylesheet" href="/css/FS_Groups.css">
+    <script src="/js/FS_Groups.js" type="module"></script>
+    <title>Groups - Fellowships</title>
 </head>
 
 <header>
@@ -14,13 +16,24 @@
   <body>
     <div class="main_div">
       <main class="groups-list container">
-        <h1>Groups</h1>
+        <div class="page_header">Groups</div>
+
+        <hr>
+
         <% if (Array.isArray(groups) && groups.length) { %>
-          <% groups.forEach(g => { %>
-            <div class="group-item">
-              <a href="/groups/<%= encodeURIComponent(g.id) %>"><%= g.name %></a>
+          <% groups.forEach(g => { 
+            if (checkValidity())  {%>
+              <div class="card" style="width: 18rem;">
+              <!--<img src="../../public/images/albert2.jpg" class="card-img-top" alt="...">-->
+              <div class="card-body">
+                <h5 class="card-title"><%= g.name %></h5>
+                <p class="card-text">.</p>
+                <!--<button href="/groups/<%= encodeURIComponent(g.id) %>"><%= g.name %></a>-->
+                <button class="group-button" type="button" id="<%= g.id %>"><%= g.name %></button>
+              </div>
             </div>
-          <% }) %>
+
+          <% }}) %>
         <% } else { %>
           <p>No groups found.</p>
         <% } %>

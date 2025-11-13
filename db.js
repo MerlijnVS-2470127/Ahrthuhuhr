@@ -10,8 +10,17 @@ export function InitializeDatabase() {
   db.pragma("foreign_keys = true;");
   db.pragma("temp_store = memory;");
 
+  //db.prepare(`DROP TABLE users`);
+
   //prepare users
-  db.prepare("CREATE TABLE IF NOT EXISTS users (name TEXT) STRICT").run();
+  db.prepare(`
+    CREATE TABLE IF NOT EXISTS users (
+      user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT NOT NULL UNIQUE,
+      password TEXT NOT NULL,
+      last_login TEXT NOT NULL
+    ) STRICT
+    `).run();
 
   //prepare messages
   db.prepare(`
@@ -25,14 +34,11 @@ export function InitializeDatabase() {
   `).run();
   
   
-  const exampleUsers = [
-    { name: "Peter" },
-    { name: "Jori" },
-    { name: "Joris" },
-    { name: "Mike" },
+  /*const exampleUsers = [
+    { email: "admin", password: "admin", last_login: "/" },
   ];
-  const insertUser = db.prepare("INSERT INTO users (name) VALUES (?)");
+  const insertUser = db.prepare("INSERT INTO users (email, password, last_login) VALUES (?,?,?)");
   exampleUsers.forEach((user) => {
-    insertUser.run(user.name);
-  });
+    insertUser.run(user.email, user.password, user.last_login);
+  });*/
 }

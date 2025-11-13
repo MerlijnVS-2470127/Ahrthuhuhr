@@ -1,16 +1,23 @@
 import express from "express";
 import { db } from "./db.js";
+import { isAuthorized, goToLogin } from "./public/js/authenticate.js";
 
 const views = express();
 
-
 views.get("/", (request, response) => {
+    
     response.render('pages/FS_Home');
 });
 
 views.get('/faq', (request, response) => {
-    response.render('pages/FS_FAQ');
+    if (isAuthorized(request, response)) {
+        response.render('pages/FS_FAQ');
+    }
+    else{
+        goToLogin(request, response);
+    }
 });
+
 
 views.get('/login', (request, response) => {
     response.render('pages/FS_Login');

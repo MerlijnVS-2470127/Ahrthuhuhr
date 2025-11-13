@@ -31,8 +31,6 @@ app.use((request, response, next) => {
   next();
 });
 
-
-
 // Page routes
 app.use("/", viewRenders);
 
