@@ -28,6 +28,10 @@ views.get("/groups", (request, response) => {
     response.render('pages/FS_Groups', { groups: [{ id: "testgroup", name: "Test Group" }] });
 })
 
+views.get("/events", (request, response) => {
+    response.render('pages/FS_Events');
+})
+
 
 //chatpagina per groep
 views.get("/groups/:groupId", (request, response) => {
