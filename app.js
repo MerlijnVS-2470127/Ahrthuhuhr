@@ -1,5 +1,6 @@
 import express from "express";
 import { InitializeDatabase } from "./db.js";
+import {seedExampleData} from "./exampleData.js";
 import viewRenders from "./viewRenders.js";
 import mapRouter from "./mapRouter.js";
 import chatmessagesRouter from "./chatmessagesRouter.js";
@@ -57,6 +58,7 @@ app.use((error, request, response, next) => {
 
 // App starts here
 InitializeDatabase();
+seedExampleData();
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
