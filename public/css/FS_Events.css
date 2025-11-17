@@ -1,0 +1,123 @@
+/* Events grid + responsive tiles */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* increased min width so date fits */
+  gap: 1.25rem;
+  max-width: 1100px;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+}
+
+/* Individual tile */
+.event-tile {
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 120px; /* increased to fit one-line date comfortably */
+}
+
+/* content wrapper (keeps spacing tidy) */
+.event-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.10rem;
+}
+
+/* Title — bigger & bolder */
+.event-title {
+  font-size: 1.35rem;   /* larger */
+  font-weight: 700;     /* bold */
+  margin: 0;
+  color: var(--bs-primary, #216477);
+  line-height: 1.15;
+}
+
+/* Date — small, light grey, visually under title */
+.event-date {
+  font-size: 0.9rem;
+  color: #8b8b8b;       /* light grey */
+  margin-top: 0rem; /* tuck under title slightly */
+}
+
+/* Location — less bold, a little smaller */
+.event-location-block {
+    margin-top: -0.50rem;
+}
+
+.event-location {
+  font-size: 0.95rem;
+  font-weight: 400;     /* regular weight */
+  color: #444;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Description — unchanged from prior look */
+.event-description {
+  font-size: 0.95rem;
+  color: #333;
+  margin: 0.35rem 0 0;
+  max-height: 4.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Actions */
+.event-actions {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Button uses bootstrap styles but add small spacing class */
+.event-button {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+/* Accessibility helper (Bootstrap has .sr-only / .visually-hidden; include fallback) */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+/* Keep page header consistent */
+.page_header {
+  font-size: 50px;
+  color: var(--bs-primary);
+  font-weight: bold;
+}
+
+/* container adjustments */
+.events-list { 
+  max-width: 980px; 
+  margin: 2rem auto; 
+}
+
+/* Link hover */
+.event-location:hover {
+  text-decoration: none;
+  color: var(--bs-secondary, #728FCE);
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .events-grid {
+    grid-template-columns: 1fr;
+  }
+  .event-title {
+    font-size: 1.15rem;
+  }
+  .event-date {
+    font-size: 0.85rem;
+  }
+}

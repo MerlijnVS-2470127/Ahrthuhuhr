@@ -61,6 +61,9 @@ export function InitializeDatabase() {
       start_time INTEGER NOT NULL,
       end_time INTEGER,
       status TEXT NOT NULL DEFAULT 'planned', -- planned||ended||cancelled
+      location TEXT, -- location: leesbare string voor weer te geven op de site, lat en lng voor coördinaten op te slaan
+      location_lat REAL,
+      location_lng REAL,
       FOREIGN KEY(creator_id) REFERENCES users(id) ON DELETE SET NULL,
       FOREIGN KEY(group_id)  REFERENCES groups(id) ON DELETE CASCADE
     ) STRICT

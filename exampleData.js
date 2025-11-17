@@ -108,17 +108,44 @@ export function seedExampleData() {
       {
         creator_id: users[1].id,
         group_id: groups[1].id,
-        title: "Central park picknick",
-        description: "Bring food and blankets",
+        title: "Central Park picknick",
+        description: "Bring food and blankets.",
         start_time: cpStart,
         end_time: cpEnd,
         status: "planned",
+        location: "The Great Lawn, Central Park, Manhattan, NY",
+        location_lat: 40.785091,
+        location_lng: -73.968285
       },
+      {
+        creator_id: users[0].id,
+        group_id: groups[0].id,
+        title: "Test Group meetup",
+        description: "Short meetup to test the app.",
+        start_time: Date.UTC(2025, 6, 10, 18, 0),
+        end_time: Date.UTC(2025, 6, 10, 20, 0),
+        status: "planned",
+        location: "Community Center, Test City",
+        location_lat: null,
+        location_lng: null
+      },
+      {
+        creator_id: users[2].id,
+        group_id: groups[2].id,
+        title: "Hasselt uitstap lunch",
+        description: "Lunch in Hasselt followed by a walk.",
+        start_time: Date.UTC(2025, 7, 5, 11, 30),
+        end_time: Date.UTC(2025, 7, 5, 14, 0),
+        status: "planned",
+        location: "Dusartplein Hasselt, Hasselt, BE",
+        location_lat: 50.9327603,
+        location_lng: 5.3429212
+      }
     ];
 
     const insertEvent = db.prepare(`
-      INSERT INTO events (creator_id, group_id, title, description, start_time, end_time, status)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO events (creator_id, group_id, title, description, start_time, end_time, status, location, location_lat, location_lng)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     const insertMany = db.transaction(events => {
@@ -130,7 +157,10 @@ export function seedExampleData() {
           e.description,
           e.start_time,
           e.end_time,
-          e.status
+          e.status,
+          e.location,
+          e.location_lat,
+          e.location_lng
         )
       );
     });
