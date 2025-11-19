@@ -18,9 +18,12 @@ views.get('/faq', (request, response) => {
     }
 });
 
-
 views.get('/login', (request, response) => {
     response.render('pages/FS_Login');
+});
+
+views.get('/map', (request, response) => {
+    response.render('pages/FS_Map');
 });
 
 //algemene groups pagina
@@ -28,6 +31,19 @@ views.get("/groups", (request, response) => {
     response.render('pages/FS_Groups', { groups: [{ id: "testgroup", name: "Test Group" }] });
 })
 
+//chatpagina per groep
+views.get("/groups/:groupId", (request, response) => {
+  const groupId = request.params.groupId;
+  //berichten van groep ophalen
+  const messages = db
+  .prepare(
+    `SELECT id, group_id, user_name, content, created_at FROM messages WHERE group_id = ? ORDER BY created_at ASC`
+  )
+  .all(groupId);
+  response.render("pages/FS_Groupchat", { groupId, messages });
+});
+
+//algemene events pagina
 views.get('/events', (request, response) => {
   const rows = db.prepare(`
     SELECT e.*, g.name AS group_name
@@ -66,20 +82,9 @@ views.get('/events', (request, response) => {
 });
 
 
-//chatpagina per groep
-views.get("/groups/:groupId", (request, response) => {
-  const groupId = request.params.groupId;
-  //berichten van groep ophalen
-  const messages = db
-  .prepare(
-    `SELECT id, group_id, user_name, content, created_at FROM messages WHERE group_id = ? ORDER BY created_at ASC`
-  )
-  .all(groupId);
-  response.render("pages/FS_Groupchat", { groupId, messages });
-});
-
-views.get('/map', (request, response) => {
-    response.render('pages/FS_Map');
+//eventcreation pagina
+views.get('/events/eventcreation', (request, response) => {
+    response.render('pages/FS_EventCreation');
 });
 
 export default views;

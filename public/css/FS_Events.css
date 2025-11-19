@@ -121,3 +121,19 @@
     font-size: 0.85rem;
   }
 }
+
+/* Header row: title left, button right */
+.events-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .5rem;
+}
+
+.create-event-btn {
+  padding: .45rem 1rem;
+  font-size: 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
