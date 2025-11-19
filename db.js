@@ -18,7 +18,7 @@ export function InitializeDatabase() {
   // db.prepare(`DROP TABLE users`).run();
   
   // db.prepare(`DROP TABLE messages`).run();
-
+  
   //prepare users
   db.prepare(`
     CREATE TABLE IF NOT EXISTS users (
@@ -27,9 +27,9 @@ export function InitializeDatabase() {
       username TEXT NOT NULL, 
       password TEXT NOT NULL,
       last_login TEXT NOT NULL
-    ) STRICT
-  `).run();
-
+      ) STRICT
+      `).run();
+      
   // prepare groups
   db.prepare(`CREATE TABLE IF NOT EXISTS groups (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
