@@ -13,6 +13,7 @@ export function seedExampleData() {
   // ---------------------------
   if (isTableEmpty("users")) {
     const exampleUsers = [
+      { email: "admin", username: "admin", password: "admin", last_login: now },
       { email: "john@example.com", username: "John Doe", password: "password1", last_login: now },
       { email: "gerben@example.com", username: "Gerben Geurts", password: "password2", last_login: now },
       { email: "merlijn@example.com", username: "Merlijn van Suetendael", password: "password3", last_login: now },
