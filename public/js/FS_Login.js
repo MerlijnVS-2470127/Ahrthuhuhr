@@ -159,6 +159,7 @@ btn_createAccount.addEventListener("click", e => {
 
 addEventListener("load", e => {
 
+    deleteCookies();
     setFormFocus();
 
     if (mode === "login") {

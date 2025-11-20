@@ -12,10 +12,10 @@ views.get("/", (request, response) => {
 
 views.get('/faq', (request, response) => {
     if (isAuthorized(request, response, db)) {
-        response.render('pages/FS_FAQ');
+      response.render('pages/FS_FAQ');
     }
     else{
-        goToLogin(request, response);
+      goToLogin(request, response);
     }
 });
 
