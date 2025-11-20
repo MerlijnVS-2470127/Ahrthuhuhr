@@ -37,13 +37,18 @@ export function checkCredentails(email, password, db) {
 }
 
 export function createNewAccount(db, email, password, username = ""){
-    const insertUser = db
+    try {
+        const insertUser = db
         .prepare("INSERT INTO users (email, username, password, last_login) VALUES (?,?,?,?)");
     
-    let last_login = new Date(); last_login.getTime();
-    console.log(email, username, password, last_login);
+        let last_login = new Date(); last_login = last_login.getTime();
+        console.log(email, username, password, last_login);
     
-    insertUser.run(email, username, password, last_login);
+        insertUser.run(email, email, password, last_login);
+    } catch (error) {
+        console.log("ERROR!!!!:  " + error);
+        
+    }
 }
 
 export function checkEmailAvailability(email, db) {

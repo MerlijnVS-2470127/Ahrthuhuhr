@@ -15,9 +15,8 @@ export function InitializeDatabase() {
   // db.prepare(`DROP TABLE eventusers`).run();
   // db.prepare(`DROP TABLE groupusers`).run();
   // db.prepare(`DROP TABLE groups`).run();
-  // db.prepare(`DROP TABLE users`).run();
+  //db.prepare(`DROP TABLE users`).run();
   
-  // db.prepare(`DROP TABLE messages`).run();
   
   //prepare users
   db.prepare(`
@@ -26,7 +25,7 @@ export function InitializeDatabase() {
       email TEXT NOT NULL UNIQUE,
       username TEXT NOT NULL, 
       password TEXT NOT NULL,
-      last_login TEXT NOT NULL
+      last_login INTEGER NOT NULL
       ) STRICT
       `).run();
       
