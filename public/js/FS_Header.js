@@ -5,7 +5,7 @@
 function logout(){
     sessionStorage.removeItem("user");
     document.cookie = "user=; expires=8 Aug 2013";
-    window.location.href = "/login/" + encodeURIComponent("null") + "/" + encodeURIComponent("null");
+    window.location.href = "/login/" + encodeURIComponent("null") + "/" + encodeURIComponent("null") + "/" + encodeURIComponent("login");
 }
 
   // ------------------//

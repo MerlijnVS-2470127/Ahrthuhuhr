@@ -15,7 +15,7 @@ export function isAuthorized (req, res, db) {
 }
 
 export function goToLogin(req, res, db) {
-    res.render('pages/FS_Login', { email: "null" });
+    res.render('pages/FS_Login', { email: "null", mode: "login" });
 }
 
 export function checkCredentails(email, password, db) {
@@ -30,11 +30,55 @@ export function checkCredentails(email, password, db) {
       )
       .all(email);
       
-
     if (users.length != 0 && users[0].password === password) {
-        return email;
+        return "true";
     }
     return "false";
+}
+
+export function createNewAccount(db, email, password, username = ""){
+    const insertUser = db
+        .prepare("INSERT INTO users (email, username, password, last_login) VALUES (?,?,?,?)");
+    
+    let last_login = new Date(); last_login.getTime();
+    console.log(email, username, password, last_login);
+    
+    insertUser.run(email, username, password, last_login);
+}
+
+export function checkEmailAvailability(email, db) {
+if (email === "null") {
+        return "null";
+    }
+
+    const users = db
+      .prepare(
+        `SELECT email FROM users WHERE email = ?`
+      )
+      .all(email);
+
+    if (users.length === 0){
+        return "true";
+    }
+    return "false";
+}
+
+export function checkInputValidity(email, password){
+    if (checkEmailValidity(email)) {
+        if (checkPasswordValidity(password)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function checkEmailValidity(email) {
+    let regex = new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+    return email.match(regex);
+}
+
+function checkPasswordValidity(password){
+    return true;
 }
 
 function checkUserCookieValidity(userCookie, db) {

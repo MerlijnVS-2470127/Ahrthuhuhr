@@ -1,6 +1,6 @@
 import express from "express";
 import { db } from "./db.js";
-import { isAuthorized, goToLogin, checkCredentails } from "./public/js/authenticate.js";
+import { isAuthorized, goToLogin, checkCredentails, checkEmailAvailability, checkInputValidity, createNewAccount } from "./public/js/authenticate.js";
 import cookieParser from "cookie-parser";
 
 const views = express();
@@ -19,17 +19,34 @@ views.get('/faq', (request, response) => {
     }
 });
 
-views.get('/login/:email/:password', (request, response) => {
+views.get('/login/:email/:password/:mode', (request, response) => {
   const email = decodeURIComponent(request.params.email);
   const password = decodeURIComponent(request.params.password);  
+  const mode = decodeURIComponent(request.params.mode);
 
-  let credentialValidity = checkCredentails(email, password, db);
+  console.log("Verkregen waarden van login pagina:   email: " + email + "  password: " + password + " mode: " + mode);
 
-  if (credentialValidity === "false") {
-    response.render("pages/FS_Login", {email: "false"});
+  let credentialValidity;
+
+  if (mode === "login") {
+    credentialValidity = checkCredentails(email, password, db);
+
+    console.log("credentialValidity to be returned: " + credentialValidity + " type: " + typeof credentialValidity);
+    
+    response.render("pages/FS_Login", {email: email, credentialValidity: credentialValidity, mode: "login"});
   }
   else{
-    response.render("pages/FS_Login", {email: credentialValidity});
+    credentialValidity = checkEmailAvailability(email, db);
+
+    if (credentialValidity === "true") {
+      if(checkInputValidity(email, password)){
+        console.log("Nieuw account wordt aangemaakt met email: " + email);
+        createNewAccount(db, email, password); //username toe te voegen
+      }
+    }
+
+    console.log("credentialValidity to be returned: " + credentialValidity + " type: " + typeof credentialValidity);
+    response.render("pages/FS_Login", {email: email, credentialValidity: credentialValidity, mode: "create"});
   }
 })
 

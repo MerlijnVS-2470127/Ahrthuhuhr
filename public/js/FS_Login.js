@@ -2,22 +2,27 @@
  // Javascipt functions for login in and creating an account //
 // ---------------------------------------------------------//
 
-let credentialValidity = window.email;
-
-let errorBox = document.getElementById("loginError");
+let credentialValidity = window.credentialValidity;
+let mode = window.mode;
 
   // ------//
  // Login //
 // ------//
 
 function validateLogin(){
+
+    let errorBox = document.getElementById("loginError");
+
+    if (credentialValidity === "null") {
+        return
+    }
     
     if (credentialValidity === "false") {
         errorBox.innerText = "Email or password incorrect";
     }
     else{
-        if (!(credentialValidity === "null")) {
-            createSessionCookie(credentialValidity)
+        if (credentialValidity === "true") {
+            createSessionCookie(window.email)
         }
     }
 }
@@ -28,27 +33,22 @@ function validateLogin(){
 
 function validateAccountCreation(){
 
-    let form = document.forms["createAccount"];
+    let errorBox = document.getElementById("createError");
+    
+    if (credentialValidity === "null") {
+        return
+    }
 
-    let email = form["userEmail"].value;
-    let password = form["userPassword"].value;
-    let confirmPassword = form["userConfirmPassword"].value;
-
-    if (password === confirmPassword) {
-        if (checkEmailValidity(email)) {
-            if (checkEmailAvailability(email)) {
-                createSessionCookie(email);
-            }
-            else{
-                errorBox.innerText = "An account with this email already exists";
-            }
+    if (credentialValidity === "true") {
+        if (checkEmailValidity(window.email)){
+            createSessionCookie(window.email);
         }
         else{
             errorBox.innerText = "Email does not have the correct format";
         }
     }
     else{
-        errorBox.innerText = "Passwords do not match";
+        errorBox.innerText = "An account with this email already exists";
     }
 }
 
@@ -56,13 +56,13 @@ function validateAccountCreation(){
  // General functions //
 // ------------------//
 
-function checkEmailAvailability(email) {
-    return true;
-}
-
 function checkEmailValidity(email) {
     let regex = new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
     return email.match(regex);
+}
+
+function checkPasswordValidity(password){
+    return true;
 }
 
 function createSessionCookie(email){
@@ -93,6 +93,15 @@ function deleteCookies() {
     }
 }
 
+function setFormFocus(){
+    if (mode === "create") {
+        document.getElementById("collapsable-create").className = "login-form collapse show";
+    }
+    else{
+        document.getElementById("collapsable-login").className = "login-form collapse show";
+    }
+}
+
   // ----------------//
  // Event listeners //
 // ----------------//
@@ -109,15 +118,54 @@ btn_login.addEventListener("click", e => {
     let password = form["userPassword"].value;
     
     if (email != "" && password != "") {
-        window.location.href = "/login/" + encodeURIComponent(email) + "/" + encodeURIComponent(password);
+        window.location.href = "/login/" + encodeURIComponent(email) + "/" + encodeURIComponent(password) + "/" + encodeURIComponent("login");
     }
 })
 
 btn_createAccount.addEventListener("click", e => {
+
     deleteCookies();
-    validateAccountCreation();
+
+    let errorBox = document.getElementById("createError");
+    let form = document.forms["createAccount"];
+
+    let email = form["userEmail"].value;
+    let password = form["userPassword"].value;
+    let confirmPassword = form["userConfirmPassword"].value;
+
+    
+    if (email != "" && password != "") {
+        if (checkPasswordValidity(password)) {
+            if (checkEmailValidity(email)) {
+                if (password === confirmPassword) {
+                    window.location.href = "/login/" + encodeURIComponent(email) + "/" + encodeURIComponent(password) + "/" + encodeURIComponent("create");
+                }
+                else{
+                    errorBox.innerText = "Passwords do not match";
+                }
+            }
+            else{
+                errorBox.innerText = "Email does not have the correct format";
+            }
+        }
+        else{
+            errorBox.innerText = "Password does not have the correct format";
+        }
+    }
+    else{
+        errorBox.innerText = "All fields are required";
+    }
 })
 
 addEventListener("load", e => {
-    validateLogin();
+
+    setFormFocus();
+
+    if (mode === "login") {
+        validateLogin();
+    }
+    else{
+        
+        validateAccountCreation();
+    }    
 })

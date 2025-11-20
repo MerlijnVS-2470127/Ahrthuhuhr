@@ -7,13 +7,15 @@
     <title>Login - Fellowships</title>
     <script>
         window.email = "<%= email %>";
+        window.credentialValidity = "<%= credentialValidity %>";
+        window.mode = "<%= mode %>";
     </script>
 </head>
 
 <body>
     <div class="centered">
         <div class="seperator">
-            <div class="login-form collapse show" id="collapsable-login">
+            <div class="login-form collapse" id="collapsable-login">
 
                 <div class="page_header"> Login </div>
 
@@ -28,14 +30,14 @@
                         <label for="userPassword" class="form-label">Password</label>
                         <input type="password" class="form-control" id="userPassword" placeholder="Password">
                     </div>
+                    <!-- Persist button (not used)
+
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="check_stayLoggedIn">
                         <label class="form-check-label" for="chek_stayLoggedIn">Stay logged in?</label>
-                        <div class="error" id="loginError"></div>
                     </div>
-
-                    
-
+                    -->
+                    <div class="error" id="loginError"></div>
                     <button type="button" class="btn btn-primary" id="btn_login">Log in</button>
 
                     <a class="btn btn-primary" role="button" data-bs-toggle="collapse" data-bs-target=".login-form" aria-expanded="false" aria-controls="collapsable-login collapsable-create">Create account</a>
@@ -65,8 +67,6 @@
                         <input type="password" class="form-control" id="userConfirmPassword" placeholder="Confirm password">
                         <div class="error" id="createError"></div>
                     </div>
-
-                    
 
                     <button type="button" class="btn btn-primary" id="btn_createAccount">Create Account</button>
 
