@@ -5,6 +5,9 @@
     <link rel="stylesheet" href="/css/FS_Login.css">
     <script src="/js/FS_Login.js" type="module"></script>
     <title>Login - Fellowships</title>
+    <script>
+        window.email = "<%= email %>";
+    </script>
 </head>
 
 <body>
@@ -17,7 +20,7 @@
                 <form id="login">
                     <div class="mb-3">
                         <label for="userEmail" class="form-label">Email adress</label>
-                        <input type="email" class="form-control" id="userEmail" name="userEmail" aria-describedby="emailHelp" placeholder="email">
+                        <input type="email"  class="form-control" id="userEmail" name="userEmail" aria-describedby="emailHelp" placeholder="Email">
                         <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
                     </div>
 

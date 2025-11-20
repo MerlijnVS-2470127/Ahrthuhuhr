@@ -1,16 +1,17 @@
 import express from "express";
 import { db } from "./db.js";
-import { isAuthorized, goToLogin } from "./public/js/authenticate.js";
+import { isAuthorized, goToLogin, checkCredentails } from "./public/js/authenticate.js";
+import cookieParser from "cookie-parser";
 
 const views = express();
+views.use(cookieParser());
 
 views.get("/", (request, response) => {
-    
     response.render('pages/FS_Home');
 });
 
 views.get('/faq', (request, response) => {
-    if (isAuthorized(request, response)) {
+    if (isAuthorized(request, response, db)) {
         response.render('pages/FS_FAQ');
     }
     else{
@@ -18,9 +19,19 @@ views.get('/faq', (request, response) => {
     }
 });
 
-views.get('/login', (request, response) => {
-    response.render('pages/FS_Login');
-});
+views.get('/login/:email/:password', (request, response) => {
+  const email = decodeURIComponent(request.params.email);
+  const password = decodeURIComponent(request.params.password);  
+
+  let credentialValidity = checkCredentails(email, password, db);
+
+  if (credentialValidity === "false") {
+    response.render("pages/FS_Login", {email: "false"});
+  }
+  else{
+    response.render("pages/FS_Login", {email: credentialValidity});
+  }
+})
 
 views.get('/map', (request, response) => {
     response.render('pages/FS_Map');

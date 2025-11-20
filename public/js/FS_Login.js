@@ -2,34 +2,23 @@
  // Javascipt functions for login in and creating an account //
 // ---------------------------------------------------------//
 
-import { db } from "./db.js";
+let credentialValidity = window.email;
+
+let errorBox = document.getElementById("loginError");
 
   // ------//
  // Login //
 // ------//
 
 function validateLogin(){
-    let errorBox = document.getElementById("loginError");
-
-    let form = document.forms["login"];
-
-    let email = form["userEmail"].value;
-    let givenPassword = form["userPassword"].value;
-    let persist = form["check_stayLoggedIn"].value;
-
-    //Controleren met de db
-    if (!checkEmailAvailability()) {
-        let passwordSearch = db.prepare(`SELECT password FROM users WHERE email = ?`).all(email);
-
-        if (passwordSearch === givenPassword) {
-            createSessionCookie(email, persist);
-        }
-        else{
-            errorBox.innerText = "Email or password incorrect";
-        }
+    
+    if (credentialValidity === "false") {
+        errorBox.innerText = "Email or password incorrect";
     }
     else{
-        errorBox.innerText = "Email or password incorrect";
+        if (!(credentialValidity === "null")) {
+            createSessionCookie(credentialValidity)
+        }
     }
 }
 
@@ -38,12 +27,10 @@ function validateLogin(){
 // -----------------//
 
 function validateAccountCreation(){
-    let errorBox = document.getElementById("createError");
 
     let form = document.forms["createAccount"];
 
     let email = form["userEmail"].value;
-    alert(email);
     let password = form["userPassword"].value;
     let confirmPassword = form["userConfirmPassword"].value;
 
@@ -70,11 +57,7 @@ function validateAccountCreation(){
 // ------------------//
 
 function checkEmailAvailability(email) {
-    let emailSearch = db.prepare(`SELECT email FROM users WHERE email = ?`).all(email);
-    if (!emailSearch) {
-        return true;
-    }
-    return false;
+    return true;
 }
 
 function checkEmailValidity(email) {
@@ -82,9 +65,32 @@ function checkEmailValidity(email) {
     return email.match(regex);
 }
 
-function createSessionCookie(email, persist = false){
-    document.cookie = "user=" + email;
+function createSessionCookie(email){
+
+    let cookieString = "user=" + email + ";";
+    
+    /* code for persistence of login (not needed, not completed)
+    if (document.forms["login"]["check_stayLoggedIn"].checked) {
+        let date = new Date(); date.setFullYear(date.getFullYear() + 30);
+        alert(date);
+        cookieString += "expires=" + date + ";";
+    }
+    else{
+        let date = new Date(Number.MAX_SAFE_INTEGER);
+        alert(date);
+        cookieString += "expires=" + date + ";";
+    }*/
+
+    cookieString += " path=/;";
+    document.cookie = cookieString;
     window.location.href = "/";
+}
+
+function deleteCookies() {
+    let cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        document.cookie = cookies[i] += "=;expires=8 Aug 2013";
+    }
 }
 
   // ----------------//
@@ -95,16 +101,23 @@ let btn_login = document.getElementById("btn_login");
 let btn_createAccount = document.getElementById("btn_createAccount");
 
 btn_login.addEventListener("click", e => {
-    validateLogin();
+    deleteCookies();
+
+    let form = document.forms["login"];
+
+    let email = form["userEmail"].value;
+    let password = form["userPassword"].value;
+    
+    if (email != "" && password != "") {
+        window.location.href = "/login/" + encodeURIComponent(email) + "/" + encodeURIComponent(password);
+    }
 })
 
 btn_createAccount.addEventListener("click", e => {
+    deleteCookies();
     validateAccountCreation();
 })
 
 addEventListener("load", e => {
-    let cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-        document.cookie = cookies[i] += "=;expires=8 Aug 2013";
-    }
+    validateLogin();
 })
