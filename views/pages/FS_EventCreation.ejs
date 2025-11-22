@@ -1,18 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <%- include('../partials/FS_Standard_Head'); %>
+    <%- include('../partials/FS_Standard_Head'); %>
     <title>Event Creation - Fellowships</title>
+    <link rel="stylesheet" href="/css/FS_Events.css">
+    <script src="/js/FS_EventCreation.js" defer></script>    
 </head>
 
 <header>
-  <%- include('../partials/FS_Header'); %>
+    <%- include('../partials/FS_Header'); %>
 </header>
 
 <div class="main-content-wrapper">
     <body>
         <div class="main_div">
-            Omg start creating those juicy events
+            <main class="container events-list">
+                <div class="events-header-row">
+                    <div class="page_header">New event</div>
+                </div>
+
+                <hr>
+
+                <form id="eventCreateForm" novalidate>
+                    <!-- Location row -->
+                    <div class="row mb-3 align-items-end">
+                        <div class="col-md-8">
+                            <label for="location" class="form-label">Location name <span class="text-danger">*</span></label>
+                            <input id="location" name="location" class="form-control" type="text" required />
+                            <div class="invalid-feedback">Location is required.</div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <button type="button" id="findOnMapBtn" class="btn btn-outline-secondary w-100">Find on map (pointless)</button>
+                        </div>
+                    </div>
+
+                    <!-- Lat / Lng row -->
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="lat" class="form-label">Latitude</label>
+                            <input id="lat" name="lat" class="form-control" type="text" inputmode="decimal" placeholder="e.g. 50.93069" />
+                            <div class="form-text">Optional, but if one coordinate is filled, both must be valid.</div>
+                            <div class="invalid-feedback" id="latFeedback"></div>
+                        </div>
+                        <div class="col-6">
+                            <label for="lng" class="form-label">Longitude</label>
+                            <input id="lng" name="lng" class="form-control" type="text" inputmode="decimal" placeholder="e.g. 5.332480" />
+                            <div class="invalid-feedback" id="lngFeedback"></div>
+                        </div>
+                    </div>
+
+                    <!-- Title -->
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Event title <span class="text-danger">*</span></label>
+                        <input id="title" name="title" class="form-control" type="text" required />
+                        <div class="invalid-feedback">Title is required.</div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description (optional)</label>
+                        <textarea id="description" name="description" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <!-- Date + times -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="date" class="form-label">Date <span class="text-danger">*</span></label>
+                            <input id="date" name="date" class="form-control" type="date" required />
+                            <div class="invalid-feedback" id="dateFeedback">Choose a date (not in the past).</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="startTime" class="form-label">Start time <span class="text-danger">*</span></label>
+                            <input id="startTime" name="startTime" class="form-control" type="time" required />
+                            <div class="invalid-feedback">Start time is required.</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="endTime" class="form-label">End time (optional)</label>
+                            <input id="endTime" name="endTime" class="form-control" type="time" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <button id="submitBtn" type="submit" class="btn btn-primary">Create event</button>
+                        <a href="/events" class="btn btn-link">Back to events</a>
+                    </div>
+                </form>
+
+            </main>
         </div>
     </body>
 </div>

@@ -1,0 +1,62 @@
+import express from 'express';
+import { db } from '../db.js'; // adjust path
+
+const router = express.Router();
+
+router.post('/events/create', (req, res) => {
+  try {
+    const { title, description, location, start_time, end_time, lat, lng } = req.body;
+
+    // simple server-side validations
+    if (!title || !location || !start_time) return res.status(400).json({ error: 'missing fields' });
+    const startMs = Number(start_time);
+    if (!Number.isFinite(startMs) || startMs < Date.now()) return res.status(400).json({ error: 'invalid start_time' });
+
+    let endMs = null;
+    if (end_time) {
+      endMs = Number(end_time);
+      if (!Number.isFinite(endMs) || endMs <= startMs) return res.status(400).json({ error: 'invalid end_time' });
+    }
+
+    // lat/lng rule
+    const hasLat = (lat !== undefined && lat !== null && lat !== '');
+    const hasLng = (lng !== undefined && lng !== null && lng !== '');
+    if (hasLat !== hasLng) return res.status(400).json({ error: 'lat and lng must both be present or both absent' });
+    let latNum = null, lngNum = null;
+    if (hasLat && hasLng) {
+      latNum = Number(lat);
+      lngNum = Number(lng);
+      if (!Number.isFinite(latNum) || latNum < -90 || latNum > 90) return res.status(400).json({ error: 'invalid lat' });
+      if (!Number.isFinite(lngNum) || lngNum < -180 || lngNum > 180) return res.status(400).json({ error: 'invalid lng' });
+    }
+
+    // Default group_id / creator_id - change to your defaults
+    const DEFAULT_GROUP_ID = 1;
+    const DEFAULT_CREATOR_ID = null; // or some id if you have a system user
+
+    // insert
+    const insert = db.prepare(`
+      INSERT INTO events (creator_id, group_id, title, description, start_time, end_time, status, location, location_lat, location_lng)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+    const info = insert.run(
+      DEFAULT_CREATOR_ID,
+      DEFAULT_GROUP_ID,
+      title,
+      description || null,
+      startMs,
+      endMs,
+      'planned',
+      location || null,
+      latNum,
+      lngNum
+    );
+
+    return res.status(201).json({ id: info.lastInsertRowid });
+  } catch (err) {
+    console.error('create event error', err);
+    return res.status(500).json({ error: 'server error' });
+  }
+});
+
+export default router;
