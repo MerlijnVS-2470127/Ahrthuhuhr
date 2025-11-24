@@ -1,16 +1,22 @@
 // /public/js/FS_Map.js
 document.addEventListener("DOMContentLoaded", () => {
   // default center (Hasselt)
-  const DEFAULT = { lat: 50.93069, lng: 5.332480, zoom: 15 };
+  const DEFAULT = { lat: 50.93069, lng: 5.33248, zoom: 15 };
   const RADIUS = 700;
 
   // parse query params early
   const params = new URLSearchParams(window.location.search);
   const qLat = params.get("lat");
   const qLng = params.get("lng");
-  const qLabel = params.get("label") ? decodeURIComponent(params.get("label")) : '';
+  const qLabel = params.get("label")
+    ? decodeURIComponent(params.get("label"))
+    : "";
 
-  const hasQueryLocation = (qLat && qLng && !Number.isNaN(parseFloat(qLat)) && !Number.isNaN(parseFloat(qLng)));
+  const hasQueryLocation =
+    qLat &&
+    qLng &&
+    !Number.isNaN(parseFloat(qLat)) &&
+    !Number.isNaN(parseFloat(qLng));
 
   // create map centered on default for now
   const initialCenter = [DEFAULT.lat, DEFAULT.lng];
@@ -19,7 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // OpenStreetMap tiles
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
 
   // layers
@@ -32,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.appEventMarkerLayer = eventMarkerLayer;
 
   // helper to show an event location from anywhere in the app
-  window.showEventLocation = function(lat, lng, label = "") {
+  window.showEventLocation = function (lat, lng, label = "") {
     lat = Number(lat);
     lng = Number(lng);
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
@@ -50,20 +57,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // escape HTML for popup content
   function escapeHtml(s) {
-    return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
   // POI loader (as you had it)
   async function loadPOIs(lat, lng, radius = RADIUS) {
     try {
-      const res = await fetch(`/api/places?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&radius=${encodeURIComponent(radius)}`);
+      const res = await fetch(
+        `/api/places?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(
+          lng
+        )}&radius=${encodeURIComponent(radius)}`
+      );
       if (!res.ok) throw new Error("Failed to fetch POIs");
       const geojson = await res.json();
 
       poiLayer.clearLayers();
       if (!geojson || !Array.isArray(geojson.features)) return;
 
-      geojson.features.forEach(feature => {
+      geojson.features.forEach((feature) => {
         if (!feature.geometry || feature.geometry.type !== "Point") return;
         const [lngf, latf] = feature.geometry.coordinates;
         const tags = feature.properties.tags || {};
@@ -73,7 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
           <div>
             <strong>${escapeHtml(name)}</strong><br/>
             <small>${escapeHtml(type)}</small><br/>
-            <button data-lat="${latf}" data-lng="${lngf}" data-name="${escapeHtml(name)}" class="create-event-btn">
+            <button data-lat="${latf}" data-lng="${lngf}" data-name="${escapeHtml(
+          name
+        )}" class="create-event-btn">
               Create event here
             </button>
           </div>`;
@@ -91,14 +107,21 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", async (ev) => {
     const btn = ev.target.closest && ev.target.closest(".create-event-btn");
     if (!btn) return;
-    const lat = btn.dataset.lat, lng = btn.dataset.lng, name = btn.dataset.name;
+    const lat = btn.dataset.lat,
+      lng = btn.dataset.lng,
+      name = btn.dataset.name;
     if (!confirm(`Create event at "${name}"?`)) return;
 
     try {
       const res = await fetch("/api/events", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: `Event at ${name}`, lat, lng, placeName: name })
+        body: JSON.stringify({
+          title: `Event at ${name}`,
+          lat,
+          lng,
+          placeName: name,
+        }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: "unknown" }));
@@ -120,7 +143,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // center and mark
     map.setView([lat, lng], 15);
     eventMarkerLayer.clearLayers();
-    L.marker([lat, lng]).addTo(eventMarkerLayer).bindPopup(escapeHtml(qLabel || "Selected location")).openPopup();
+    L.marker([lat, lng])
+      .addTo(eventMarkerLayer)
+      .bindPopup(escapeHtml(qLabel || "Selected location"))
+      .openPopup();
 
     // load POIs around that point
     loadPOIs(lat, lng, RADIUS);
@@ -128,19 +154,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // scroll map into view for UX
     const mapEl = document.getElementById("map");
     if (mapEl) mapEl.scrollIntoView({ behavior: "smooth", block: "center" });
-
   } else {
     // no query coords — proceed with geolocation attempt (this will show permission prompt)
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        map.setView([lat, lng], 15);
-        loadPOIs(lat, lng, RADIUS);
-      }, (err) => {
-        console.warn("Geolocation failed or denied:", err);
-        loadPOIs(DEFAULT.lat, DEFAULT.lng, RADIUS);
-      }, { timeout: 8000 });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          map.setView([lat, lng], 15);
+          loadPOIs(lat, lng, RADIUS);
+        },
+        (err) => {
+          console.warn("Geolocation failed or denied:", err);
+          loadPOIs(DEFAULT.lat, DEFAULT.lng, RADIUS);
+        },
+        { timeout: 8000 }
+      );
     } else {
       // navigator not available — just load default POIs
       loadPOIs(DEFAULT.lat, DEFAULT.lng, RADIUS);
@@ -157,11 +186,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const provider = new window.GeoSearch.OpenStreetMapProvider();
   const search = new window.GeoSearch.GeoSearchControl({
     provider: provider,
-    style: 'bar',
+    style: "bar",
     showMarker: true,
     showPopup: true,
     autoClose: true,
-    searchLabel: 'Search location...'
+    searchLabel: "Search location...",
   });
   map.addControl(search);
 });

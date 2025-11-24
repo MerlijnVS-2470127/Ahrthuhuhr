@@ -31,8 +31,11 @@ router.get("/groups/:groupId/messages", (req, res) => {
 // ---------------------------
 router.post("/groups/:groupId/messages", (req, res) => {
   const groupId = req.params.groupId;
-  const user_name = (req.body.user_name && String(req.body.user_name).slice(0, 50)) || "Anonymous";
-  const content = (req.body.content && String(req.body.content).slice(0, 2000)) || "";
+  const user_name =
+    (req.body.user_name && String(req.body.user_name).slice(0, 50)) ||
+    "Anonymous";
+  const content =
+    (req.body.content && String(req.body.content).slice(0, 2000)) || "";
 
   if (!content.trim()) {
     return res.status(400).json({ error: "Message content required" });

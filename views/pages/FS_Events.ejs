@@ -1,78 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <%- include('../partials/FS_Standard_Head'); %>
     <title>Events - Fellowships</title>
-    <link rel="stylesheet" href="/css/FS_Events.css">
+    <link rel="stylesheet" href="/css/FS_Events.css" />
     <script src="/js/FS_Events.js"></script>
-</head>
+  </head>
 
-<header>
-  <%- include('../partials/FS_Header'); %>
-</header>
+  <header><%- include('../partials/FS_Header'); %></header>
 
-<div class="main-content-wrapper">
-  <body>
-    <div class="main_div">
-      <main class="events-list container">
-        <div class="events-header-row">
-          <div class="page_header">Events</div>
+  <div class="main-content-wrapper">
+    <body>
+      <div class="main_div">
+        <main class="events-list container">
+          <div class="events-header-row">
+            <div class="page_header">Events</div>
 
-          <a href="/events/eventcreation" class="btn btn-primary create-event-btn">
-            + Add Event
-          </a>
-        </div>
+            <a
+              href="/events/eventcreation"
+              class="btn btn-primary create-event-btn"
+            >
+              + Add Event
+            </a>
+          </div>
 
-        <hr>
+          <hr />
 
-        <% if (Array.isArray(events) && events.length) { %>
+          <% if (Array.isArray(events) && events.length) { %>
           <div class="events-grid">
             <% events.forEach(ev => { %>
-              <article class="event-tile" role="article" aria-labelledby="ev-<%= ev.id %>-title">
-                <div class="event-content">
-                  <h2 id="ev-<%= ev.id %>-title" class="event-title"><%= ev.title %></h2>
+            <article
+              class="event-tile"
+              role="article"
+              aria-labelledby="ev-<%= ev.id %>-title"
+            >
+              <div class="event-content">
+                <h2 id="ev-<%= ev.id %>-title" class="event-title">
+                  <%= ev.title %>
+                </h2>
 
-                  <div class="event-date" aria-hidden="true">
-                    <%= ev.start %>
-                    <% if (ev.end) { %> — <%= ev.end %> <% } %>
-                  </div>
-
-                  <div class="event-location-block">
-                    <span class="visually-hidden">Location: </span>
-                    <% if (ev.lat && ev.lng) { %>
-                      <a href="#map"
-                         class="event-location"
-                         data-lat="<%= ev.lat %>"
-                         data-lng="<%= ev.lng %>"
-                         data-label="<%= ev.location %>">
-                        <%= ev.location %>
-                      </a>
-                    <% } else { %>
-                      <span class="event-location-text"><%= ev.location %></span>
-                    <% } %>
-                  </div>
-
-                  <% if (ev.description) { %>
-                    <p class="event-description"><%= ev.description %></p>
-                  <% } %>
-
-                  <div class="event-actions">
-                    <a class="btn btn-primary event-button">Pointless button</a>
-                  </div>
+                <div class="event-date" aria-hidden="true">
+                  <%= ev.start %> <% if (ev.end) { %> — <%= ev.end %> <% } %>
                 </div>
-              </article>
+
+                <div class="event-location-block">
+                  <span class="visually-hidden">Location: </span>
+                  <% if (ev.lat && ev.lng) { %>
+                  <a
+                    href="#map"
+                    class="event-location"
+                    data-lat="<%= ev.lat %>"
+                    data-lng="<%= ev.lng %>"
+                    data-label="<%= ev.location %>"
+                  >
+                    <%= ev.location %>
+                  </a>
+                  <% } else { %>
+                  <span class="event-location-text"><%= ev.location %></span>
+                  <% } %>
+                </div>
+
+                <% if (ev.description) { %>
+                <p class="event-description"><%= ev.description %></p>
+                <% } %>
+
+                <div class="event-actions">
+                  <a class="btn btn-primary event-button">Pointless button</a>
+                </div>
+              </div>
+            </article>
             <% }) %>
           </div>
-        <% } else { %>
+          <% } else { %>
           <p>No events found.</p>
-        <% } %>
-      </main>
-    </div>
-  </body>
-</div>
+          <% } %>
+        </main>
+      </div>
+    </body>
+  </div>
 
-<footer>
-    <%- include('../partials/FS_Footer'); %>
-</footer>
-
+  <footer><%- include('../partials/FS_Footer'); %></footer>
 </html>

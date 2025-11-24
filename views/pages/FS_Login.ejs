@@ -1,81 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <%- include('../partials/FS_Standard_Head'); %>
-    <link rel="stylesheet" href="/css/FS_Login.css">
+    <link rel="stylesheet" href="/css/FS_Login.css" />
     <script src="/js/FS_Login.js" type="module"></script>
     <title>Login - Fellowships</title>
     <script>
-        window.email = "<%= email %>";
-        window.credentialValidity = "<%= credentialValidity %>";
-        window.mode = "<%= mode %>";
+      window.email = "<%= email %>";
+      window.credentialValidity = "<%= credentialValidity %>";
+      window.mode = "<%= mode %>";
     </script>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="centered">
-        <div class="seperator">
-            <div class="login-form collapse" id="collapsable-login">
+      <div class="seperator">
+        <div class="login-form collapse" id="collap sable-login">
+          <div class="page_header">Login</div>
 
-                <div class="page_header"> Login </div>
+          <form id="login">
+            <div class="mb-3">
+              <label for="userEmail" class="form-label">Email adress</label>
+              <input
+                type="email"
+                class="form-control"
+                id="userEmail"
+                name="userEmail"
+                aria-describedby="emailHelp"
+                placeholder="Email"
+              />
+              <div id="emailHelp" class="form-text">
+                We'll never share your email with anyone else.
+              </div>
+            </div>
 
-                <form id="login">
-                    <div class="mb-3">
-                        <label for="userEmail" class="form-label">Email adress</label>
-                        <input type="email"  class="form-control" id="userEmail" name="userEmail" aria-describedby="emailHelp" placeholder="Email">
-                        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="userPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="userPassword" placeholder="Password">
-                    </div>
-                    <!-- Persist button (not used)
+            <div class="mb-3">
+              <label for="userPassword" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="userPassword"
+                placeholder="Password"
+              />
+            </div>
+            <!-- Persist button (not used)
 
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="check_stayLoggedIn">
                         <label class="form-check-label" for="chek_stayLoggedIn">Stay logged in?</label>
                     </div>
                     -->
-                    <div class="error" id="loginError"></div>
-                    <button type="button" class="btn btn-primary" id="btn_login">Log in</button>
+            <div class="error" id="loginError"></div>
+            <button type="button" class="btn btn-primary" id="btn_login">
+              Log in
+            </button>
 
-                    <a class="btn btn-primary" role="button" data-bs-toggle="collapse" data-bs-target=".login-form" aria-expanded="false" aria-controls="collapsable-login collapsable-create">Create account</a>
-                </form>
-            </div>
+            <a
+              class="btn btn-primary"
+              role="button"
+              data-bs-toggle="collapse"
+              data-bs-target=".login-form"
+              aria-expanded="false"
+              aria-controls="collapsable-login collapsable-create"
+              >Create account</a
+            >
+          </form>
         </div>
+      </div>
 
-        <div class="seperator">
+      <div class="seperator">
+        <div class="login-form collapse" id="collapsable-create">
+          <div class="page_header">Register</div>
 
-            <div class="login-form collapse" id="collapsable-create">
-
-                <div class="page_header"> Register </div>
-
-                <form id="createAccount">
-                    <div class="mb-3">
-                        <label for="userEmail" class="form-label">Email adress</label>
-                        <input type="email" class="form-control" id="userEmail" name="fname" aria-describedby="emailHelp" placeholder="email">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="userPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="userPassword" placeholder="Password">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="userPassword" class="form-label">Confirm password</label>
-                        <input type="password" class="form-control" id="userConfirmPassword" placeholder="Confirm password">
-                        <div class="error" id="createError"></div>
-                    </div>
-
-                    <button type="button" class="btn btn-primary" id="btn_createAccount">Create Account</button>
-
-                    <a class="btn btn-primary" role="button" data-bs-toggle="collapse" data-bs-target=".login-form" aria-expanded="false" aria-controls="collapsable-login collapsable-create">Login instead</a>
-                </form>
+          <form id="createAccount">
+            <div class="mb-3">
+              <label for="userEmail" class="form-label">Email adress</label>
+              <input
+                type="email"
+                class="form-control"
+                id="userEmail"
+                name="fname"
+                aria-describedby="emailHelp"
+                placeholder="email"
+              />
             </div>
+
+            <div class="mb-3">
+              <label for="userPassword" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="userPassword"
+                placeholder="Password"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="userPassword" class="form-label"
+                >Confirm password</label
+              >
+              <input
+                type="password"
+                class="form-control"
+                id="userConfirmPassword"
+                placeholder="Confirm password"
+              />
+              <div class="error" id="createError"></div>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="btn_createAccount"
+            >
+              Create Account
+            </button>
+
+            <a
+              class="btn btn-primary"
+              role="button"
+              data-bs-toggle="collapse"
+              data-bs-target=".login-form"
+              aria-expanded="false"
+              aria-controls="collapsable-login collapsable-create"
+              >Login instead</a
+            >
+          </form>
         </div>
-    </div>    
-
-</body>
-
+      </div>
+    </div>
+  </body>
 </html>

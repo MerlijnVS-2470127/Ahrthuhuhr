@@ -28,7 +28,7 @@ function overpassQuery(lat, lng, radius) {
 
       // entertainment: cinemas and theatres
       node(around:${radius},${lat},${lng})[amenity~"cinema|theatre"];
-      way(around:${radius},${lat},${lng})[amenity~"cinema|theatre"];
+      way(around:${radius},${lat},${lng})[amenity~"cinema|theatre"]; 
     );
     out center;
   `;
@@ -40,14 +40,15 @@ router.get("/api/places", async (req, res) => {
     const lat = Number(req.query.lat);
     const lng = Number(req.query.lng);
     const radius = Number(req.query.radius || 1000);
-    if (!lat || !lng) return res.status(400).json({ error: "lat,lng required" });
+    if (!lat || !lng)
+      return res.status(400).json({ error: "lat,lng required" });
 
     const key = cacheKey(lat, lng, radius);
     const now = Date.now();
 
     // return cache if fresh
     const cached = cache.get(key);
-    if (cached && (now - cached.t) < CACHE_TTL_MS) {
+    if (cached && now - cached.t < CACHE_TTL_MS) {
       return res.json(cached.geojson);
     }
 
@@ -60,16 +61,21 @@ router.get("/api/places", async (req, res) => {
     const data = await r.json();
 
     // convert to GeoJSON FeatureCollection
-    const features = (data.elements || []).map(el => {
-      let coords = null;
-      if (el.type === "node") coords = [el.lon, el.lat];
-      else if (el.type === "way" && el.center) coords = [el.center.lon, el.center.lat];
-      return coords ? {
-        type: "Feature",
-        geometry: { type: "Point", coordinates: coords },
-        properties: { id: el.id, tags: el.tags || {}, osm_type: el.type }
-      } : null;
-    }).filter(Boolean);
+    const features = (data.elements || [])
+      .map((el) => {
+        let coords = null;
+        if (el.type === "node") coords = [el.lon, el.lat];
+        else if (el.type === "way" && el.center)
+          coords = [el.center.lon, el.center.lat];
+        return coords
+          ? {
+              type: "Feature",
+              geometry: { type: "Point", coordinates: coords },
+              properties: { id: el.id, tags: el.tags || {}, osm_type: el.type },
+            }
+          : null;
+      })
+      .filter(Boolean);
 
     const geojson = { type: "FeatureCollection", features };
 
@@ -82,14 +88,12 @@ router.get("/api/places", async (req, res) => {
   }
 });
 
-
-
-
 // Simple event creation route (adapt to your DB schema)
 router.post("/api/events", async (req, res) => {
   // ensure body parser is enabled (app.use(express.json()))
   const { title, lat, lng, placeName } = req.body;
-  if (!title || !lat || !lng) return res.status(400).json({ error: "missing fields" });
+  if (!title || !lat || !lng)
+    return res.status(400).json({ error: "missing fields" });
 
   try {
     const created_at = Date.now();
@@ -99,7 +103,9 @@ router.post("/api/events", async (req, res) => {
     // return res.status(201).json({ id: info.lastInsertRowid, title, placeName });
 
     // temporary stub response (if you haven't hooked DB yet)
-    return res.status(201).json({ id: -1, title, placeName, lat, lng, created_at });
+    return res
+      .status(201)
+      .json({ id: -1, title, placeName, lat, lng, created_at });
   } catch (err) {
     console.error("create event error", err);
     res.status(500).json({ error: "server error" });

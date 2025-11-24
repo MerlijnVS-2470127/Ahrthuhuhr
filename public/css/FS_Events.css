@@ -1,7 +1,10 @@
 /* Events grid + responsive tiles */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* increased min width so date fits */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(300px, 1fr)
+  ); /* increased min width so date fits */
   gap: 1.25rem;
   max-width: 1100px;
   margin: 1.5rem auto;
@@ -13,7 +16,7 @@
   background: #ffffff;
   border: 1px solid #e6e6e6;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   padding: 1rem 1.1rem;
   display: flex;
   flex-direction: column;
@@ -25,13 +28,13 @@
 .event-content {
   display: flex;
   flex-direction: column;
-  gap: 0.10rem;
+  gap: 0.1rem;
 }
 
 /* Title — bigger & bolder */
 .event-title {
-  font-size: 1.35rem;   /* larger */
-  font-weight: 700;     /* bold */
+  font-size: 1.35rem; /* larger */
+  font-weight: 700; /* bold */
   margin: 0;
   color: var(--bs-primary, #216477);
   line-height: 1.15;
@@ -40,13 +43,13 @@
 /* Date — small, light grey, visually under title */
 .event-date {
   font-size: 0.9rem;
-  color: #8b8b8b;       /* light grey */
+  color: #8b8b8b; /* light grey */
   margin-top: 0rem; /* tuck under title slightly */
 }
 
 /* Location — less bold, a little smaller */
 .event-location-block {
-    margin-top: -0.50rem;
+  margin-top: -0.5rem;
 }
 
 .event-location-text {
@@ -56,7 +59,7 @@
 
 .event-location {
   font-size: 0.95rem;
-  font-weight: 400;     /* regular weight */
+  font-weight: 400; /* regular weight */
   color: #444;
   text-decoration: underline;
   cursor: pointer;
@@ -89,7 +92,8 @@
 /* Accessibility helper (Bootstrap has .sr-only / .visually-hidden; include fallback) */
 .visually-hidden {
   position: absolute !important;
-  height: 1px; width: 1px;
+  height: 1px;
+  width: 1px;
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
   white-space: nowrap;
@@ -103,15 +107,15 @@
 }
 
 /* container adjustments */
-.events-list { 
-  max-width: 980px; 
-  margin: 2rem auto; 
+.events-list {
+  max-width: 980px;
+  margin: 2rem auto;
 }
 
 /* Link hover */
 .event-location:hover {
   text-decoration: none;
-  color: var(--bs-secondary, #728FCE);
+  color: var(--bs-secondary, #728fce);
 }
 
 /* Responsive tweaks */
@@ -132,13 +136,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 .create-event-btn {
-  padding: .45rem 1rem;
+  padding: 0.45rem 1rem;
   font-size: 1.5rem;
   border-radius: 8px;
   font-weight: 600;
 }
-

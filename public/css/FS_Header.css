@@ -2,35 +2,34 @@
     styling specifically for the navbar/header 
 */
 
-    header {
-        position: sticky;
-        top: 0;
-    }
+header {
+  position: sticky;
+  top: 0;
+}
 
-    .custom-nav {
-        list-style-type: none;
-        display: flex;
-        align-items: center;
-    }
+.custom-nav {
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+}
 
-    .nav-link {
-        color: white;
-        text-decoration: none;
-        margin-right: 40px;
-        border-radius: 7px;
-        line-height: 45px;
-    }
+.nav-link {
+  color: white;
+  text-decoration: none;
+  margin-right: 40px;
+  border-radius: 7px;
+  line-height: 45px;
+}
 
-    .page-link:hover {
-        color: var(--bs-primary);
-        background-color: white;
-        transition: 0.25s;
-    }
+.page-link:hover {
+  color: var(--bs-primary);
+  background-color: white;
+  transition: 0.25s;
+}
 
-    .user-dropdown {
-        color: white;
-    }
-    .user-dropdown:hover {
-        color: white;
-    }
-
+.user-dropdown {
+  color: white;
+}
+.user-dropdown:hover {
+  color: white;
+}

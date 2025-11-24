@@ -14,10 +14,30 @@ export function seedExampleData() {
   if (isTableEmpty("users")) {
     const exampleUsers = [
       { email: "admin", username: "admin", password: "admin", last_login: now },
-      { email: "john@example.com", username: "John Doe", password: "password1", last_login: now },
-      { email: "gerben@example.com", username: "Gerben Geurts", password: "password2", last_login: now },
-      { email: "merlijn@example.com", username: "Merlijn van Suetendael", password: "password3", last_login: now },
-      { email: "kitty@example.com", username: "Kitty2610", password: "password4", last_login: now },
+      {
+        email: "john@example.com",
+        username: "John Doe",
+        password: "password1",
+        last_login: now,
+      },
+      {
+        email: "gerben@example.com",
+        username: "Gerben Geurts",
+        password: "password2",
+        last_login: now,
+      },
+      {
+        email: "merlijn@example.com",
+        username: "Merlijn van Suetendael",
+        password: "password3",
+        last_login: now,
+      },
+      {
+        email: "kitty@example.com",
+        username: "Kitty2610",
+        password: "password4",
+        last_login: now,
+      },
     ];
 
     const insertUser = db.prepare(`
@@ -40,12 +60,26 @@ export function seedExampleData() {
   // ---------------------------
   if (isTableEmpty("groups")) {
     // Fetch user IDs for owner data
-    const users = db.prepare("SELECT id, username FROM users ORDER BY id").all();
+    const users = db
+      .prepare("SELECT id, username FROM users ORDER BY id")
+      .all();
 
     const exampleGroups = [
-      { owner_id: users[0].id,  name: "Test Group",        description: "A test group" },
-      { owner_id: users[1].id,  name: "New York trip",     description: "Planning for NYC" },
-      { owner_id: users[2].id,  name: "Uitstap Hasselt",   description: "Daguitstap naar Hasselt" },
+      {
+        owner_id: users[0].id,
+        name: "Test Group",
+        description: "A test group",
+      },
+      {
+        owner_id: users[1].id,
+        name: "New York trip",
+        description: "Planning for NYC",
+      },
+      {
+        owner_id: users[2].id,
+        name: "Uitstap Hasselt",
+        description: "Daguitstap naar Hasselt",
+      },
     ];
 
     const insertGroup = db.prepare(`
@@ -54,9 +88,7 @@ export function seedExampleData() {
     `);
 
     const insertMany = db.transaction((groups) => {
-      groups.forEach((g) =>
-        insertGroup.run(g.owner_id, g.name, g.description)
-      );
+      groups.forEach((g) => insertGroup.run(g.owner_id, g.name, g.description));
     });
 
     insertMany(exampleGroups);
@@ -103,7 +135,7 @@ export function seedExampleData() {
     const groups = db.prepare("SELECT id FROM groups ORDER BY id").all();
 
     const cpStart = Date.UTC(2025, 5, 1, 12, 0);
-    const cpEnd   = Date.UTC(2025, 5, 1, 15, 0);
+    const cpEnd = Date.UTC(2025, 5, 1, 15, 0);
 
     const exampleEvents = [
       {
@@ -116,7 +148,7 @@ export function seedExampleData() {
         status: "planned",
         location: "The Great Lawn, Central Park, Manhattan, NY",
         location_lat: 40.785091,
-        location_lng: -73.968285
+        location_lng: -73.968285,
       },
       {
         creator_id: users[0].id,
@@ -128,7 +160,7 @@ export function seedExampleData() {
         status: "planned",
         location: "Community Center, Test City",
         location_lat: null,
-        location_lng: null
+        location_lng: null,
       },
       {
         creator_id: users[2].id,
@@ -140,8 +172,8 @@ export function seedExampleData() {
         status: "planned",
         location: "Dusartplein Hasselt, Hasselt, BE",
         location_lat: 50.9327603,
-        location_lng: 5.3429212
-      }
+        location_lng: 5.3429212,
+      },
     ];
 
     const insertEvent = db.prepare(`
@@ -149,8 +181,8 @@ export function seedExampleData() {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    const insertMany = db.transaction(events => {
-      events.forEach(e =>
+    const insertMany = db.transaction((events) => {
+      events.forEach((e) =>
         insertEvent.run(
           e.creator_id,
           e.group_id,
@@ -205,9 +237,21 @@ export function seedExampleData() {
     const groups = db.prepare("SELECT id FROM groups ORDER BY id").all();
 
     const exampleMessages = [
-      { group_id: groups[1].id, user_name: "Gerben Geurts", content: "Who will bring plates?" },
-      { group_id: groups[1].id, user_name: "Merlijn van Suetendael", content: "I can take blankets!" },
-      { group_id: groups[1].id, user_name: "Kitty2610", content: "I will bring drinks." },
+      {
+        group_id: groups[1].id,
+        user_name: "Gerben Geurts",
+        content: "Who will bring plates?",
+      },
+      {
+        group_id: groups[1].id,
+        user_name: "Merlijn van Suetendael",
+        content: "I can take blankets!",
+      },
+      {
+        group_id: groups[1].id,
+        user_name: "Kitty2610",
+        content: "I will bring drinks.",
+      },
     ];
 
     const insertMessage = db.prepare(`
@@ -215,8 +259,8 @@ export function seedExampleData() {
       VALUES (?, ?, ?, ?)
     `);
 
-    const insertMany = db.transaction(messages => {
-      messages.forEach(m =>
+    const insertMany = db.transaction((messages) => {
+      messages.forEach((m) =>
         insertMessage.run(m.group_id, m.user_name, m.content, now)
       );
     });

@@ -1,6 +1,6 @@
 import express from "express";
 import { InitializeDatabase } from "./db.js";
-import {seedExampleData} from "./exampleData.js";
+import { seedExampleData } from "./exampleData.js";
 import viewRenders from "./viewRenders.js";
 import mapRouter from "./routes/mapRouter.js";
 import chatmessagesRouter from "./routes/chatmessagesRouter.js";
@@ -42,9 +42,7 @@ app.use("/", chatmessagesRouter);
 app.use("/", eventsRouter);
 
 //Middleware to check if a user is logged in
-app.use((request, response, next) => {
-  
-});
+app.use((request, response, next) => {});
 
 // Middleware for unknown routes
 // Must be last in pipeline

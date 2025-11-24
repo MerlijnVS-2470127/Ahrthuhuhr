@@ -2,77 +2,73 @@
 This file contains the main ccs conventions used throughout the whole fellowships site 
 */
 
-    /*bootstrap overrides*/
-    :root {
-        --bs-primary: #216477 !important;
-        --bs-primary-rgb: 33, 100, 119 !important;
+/*bootstrap overrides*/
+:root {
+  --bs-primary: #216477 !important;
+  --bs-primary-rgb: 33, 100, 119 !important;
 
-        --bs-secondary: #728FCE !important;
-        --bs-secondary-rgb: 114, 143, 206 !important;
+  --bs-secondary: #728fce !important;
+  --bs-secondary-rgb: 114, 143, 206 !important;
 
-        --bs-tertiary: #728FCE !important;
-        --bs-tertiary-rgb: 114, 143, 206 !important;
-    }
+  --bs-tertiary: #728fce !important;
+  --bs-tertiary-rgb: 114, 143, 206 !important;
+}
 
-    .text-tertiary {
-        --bs-text-opacity: 1;
-        color: rgba(var(--bs-tertiary-rgb), var(--bs-text-opacity)) !important;
-    }
+.text-tertiary {
+  --bs-text-opacity: 1;
+  color: rgba(var(--bs-tertiary-rgb), var(--bs-text-opacity)) !important;
+}
 
-    .btn-primary {
-        --bs-btn-color: whitesmoke;
-        --bs-btn-bg: var(--bs-primary);
-        --bs-btn-border-color: var(--bs-primary);
-        --bs-btn-hover-color: whitesmoke;
-        --bs-btn-hover-bg: var(--bs-primary);
-        --bs-btn-hover-border-color: var(--bs-primary);
-        --bs-btn-active-color: whitesmoke;
-        --bs-btn-active-bg: var(--bs-primary);
-        --bs-btn-active-border-color: var(--bs-primary)
-    }
+.btn-primary {
+  --bs-btn-color: whitesmoke;
+  --bs-btn-bg: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-color: whitesmoke;
+  --bs-btn-hover-bg: var(--bs-primary);
+  --bs-btn-hover-border-color: var(--bs-primary);
+  --bs-btn-active-color: whitesmoke;
+  --bs-btn-active-bg: var(--bs-primary);
+  --bs-btn-active-border-color: var(--bs-primary);
+}
 
-    /*end of bootstrap overrides*/
+/*end of bootstrap overrides*/
 
+.main-content-wrapper {
+  flex-grow: 1;
+}
 
-    .main-content-wrapper {
-        flex-grow: 1;
-    }
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 
-    body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
+  background-color: whitesmoke; /*#E5E4E2*/
 
-        background-color: whitesmoke; /*#E5E4E2*/
-        
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 20px;
-        color: black;
-        
-    }
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  color: black;
+}
 
-    .main_div {
-        padding: 30px 50px;
-    }
+.main_div {
+  padding: 30px 50px;
+}
 
-    hr {
-        margin: 30px 0px;
-        color: var(--bs-primary);
-    }
+hr {
+  margin: 30px 0px;
+  color: var(--bs-primary);
+}
 
-    .page_header{
-        font-size: 50px;
-        color: var(--bs-primary);
-        font-weight: bold;
-    }
+.page_header {
+  font-size: 50px;
+  color: var(--bs-primary);
+  font-weight: bold;
+}
 
-    .tab_header {
-        font-size: 34px;
-        color: var(--bs-secondary);
-    }
+.tab_header {
+  font-size: 34px;
+  color: var(--bs-secondary);
+}
 
-    .hidden {
-        visibility: hidden;
-    }
-    
-    
+.hidden {
+  visibility: hidden;
+}

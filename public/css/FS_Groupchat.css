@@ -1,10 +1,52 @@
 /* FS_Groupchat.css */
-.chat { border: 1px solid #e0e0e0; padding: 1rem; background: #fff; border-radius: 6px; }
-.messages { height: 380px; overflow-y: auto; padding: .6rem; background: #fafafa; border: 1px solid #eee; border-radius: 4px; }
-.message { margin-bottom: .8rem; padding-bottom: .3rem; border-bottom: 1px dashed #eee; }
-.message .meta { font-size: .85rem; color: #555; margin-bottom: .25rem; }
-.message .content { white-space: pre-wrap; color: #111; }
-.composer { margin-top: 1rem; display:flex; gap:8px; align-items:center; }
-.composer input[type="text"] { flex: 1; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
-.composer button { padding: 0.5rem 0.9rem; border-radius: 4px; border: none; background: #007bff; color: #fff; cursor:pointer; }
-.composer button:active { transform: translateY(1px); }
+.chat {
+  border: 1px solid #e0e0e0;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 6px;
+}
+.messages {
+  height: 380px;
+  overflow-y: auto;
+  padding: 0.6rem;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+.message {
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px dashed #eee;
+}
+.message .meta {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+.message .content {
+  white-space: pre-wrap;
+  color: #111;
+}
+.composer {
+  margin-top: 1rem;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.composer input[type="text"] {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.composer button {
+  padding: 0.5rem 0.9rem;
+  border-radius: 4px;
+  border: none;
+  background: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+.composer button:active {
+  transform: translateY(1px);
+}

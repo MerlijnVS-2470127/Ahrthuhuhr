@@ -24,7 +24,9 @@
     div.dataset.id = msg.id;
     const meta = document.createElement("div");
     meta.className = "meta";
-    meta.innerHTML = `<strong>${escapeHtml(msg.user_name)}</strong> — ${new Date(msg.created_at).toLocaleString()}`;
+    meta.innerHTML = `<strong>${escapeHtml(
+      msg.user_name
+    )}</strong> — ${new Date(msg.created_at).toLocaleString()}`;
     const content = document.createElement("div");
     content.className = "content";
     content.textContent = msg.content;
@@ -37,11 +39,13 @@
 
   async function fetchNewMessages() {
     try {
-      const res = await fetch(`/groups/${encodeURIComponent(groupId)}/messages?since=${lastFetch}`);
+      const res = await fetch(
+        `/groups/${encodeURIComponent(groupId)}/messages?since=${lastFetch}`
+      );
       if (!res.ok) throw new Error("Network error");
       const rows = await res.json();
       if (rows.length) {
-        rows.forEach(r => renderMessage(r));
+        rows.forEach((r) => renderMessage(r));
         lastFetch = rows[rows.length - 1].created_at;
       }
     } catch (err) {
@@ -56,14 +60,20 @@
     const user_name = userInput.value.trim() || "Anonymous";
 
     try {
-      const res = await fetch(`/groups/${encodeURIComponent(groupId)}/messages`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_name, content })
-      });
+      const res = await fetch(
+        `/groups/${encodeURIComponent(groupId)}/messages`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_name, content }),
+        }
+      );
 
       if (!res.ok) {
-        console.error("Send failed", await res.json().catch(()=>({error:"unknown"})));
+        console.error(
+          "Send failed",
+          await res.json().catch(() => ({ error: "unknown" }))
+        );
         return;
       }
       const msg = await res.json();

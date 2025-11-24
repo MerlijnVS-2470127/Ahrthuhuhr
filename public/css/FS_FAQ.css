@@ -5,46 +5,46 @@ This file contains the ccs conventions used in the faq page
 */
 
 div {
-    transition: font-size .20s ease;
+  transition: font-size 0.2s ease;
 }
 
 .revealable_list {
-    padding-left: 10px;
+  padding-left: 10px;
 }
 
 .revealable_list_item {
-    margin-top: 20px;
-    list-style: none;
+  margin-top: 20px;
+  list-style: none;
 }
 
 .revealable_list_item_header:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .revealable_list_item_header {
-    padding: 10px;
+  padding: 10px;
 }
 
 .chevron {
-    padding-left: 10px;
-    padding-right: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 #chevron-up {
-    display: none;
+  display: none;
 }
 
 #chevron-down {
-    display: inline;
+  display: inline;
 }
 
 #revealable_list_item_contents {
-    padding-top: 0px;
-    padding-left: 40px;
+  padding-top: 0px;
+  padding-left: 40px;
 
-    font-size: 0px;
+  font-size: 0px;
 }
 
 .removeThis {
-    font-size: 20px !important;
+  font-size: 20px !important;
 }
