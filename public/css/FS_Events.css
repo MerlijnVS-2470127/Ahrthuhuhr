@@ -129,6 +129,15 @@
   .event-date {
     font-size: 0.85rem;
   }
+  .event-location-row .col-9,
+  .event-location-row .col-3 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  #toggleEndBtn,
+  #removeEndBtn {
+    text-align: left;
+  }
 }
 
 /* Header row: title left, button right */
@@ -144,4 +153,28 @@
   font-size: 1.5rem;
   border-radius: 8px;
   font-weight: 600;
+}
+
+/* ensure location row uses full width nicely */
+.event-location-row .form-control {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* tighten spacing for end row when visible */
+#endRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: end;
+}
+
+/* style for find on map button */
+#createOnMapBtn,
+#findOnMapBtn {
+  white-space: nowrap;
+}
+
+/* toast styling fallback: keep toasts visible on dark bg */
+.toast {
+  border-radius: 8px;
 }

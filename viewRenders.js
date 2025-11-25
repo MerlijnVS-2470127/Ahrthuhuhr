@@ -157,7 +157,7 @@ views.get("/events", (request, response) => {
 
 //eventcreation pagina
 views.get("/events/eventcreation", (request, response) => {
-  response.render("pages/FS_EventCreation");
+  response.redirect("/events/new");
 });
 
 export default views;

@@ -12,7 +12,7 @@
   <div class="main-content-wrapper">
     <body>
       <div class="main_div">
-        <main class="container events-list">
+        <main class="container-fluid events-list">
           <div class="events-header-row">
             <div class="page_header">New event</div>
           </div>
@@ -20,9 +20,9 @@
           <hr />
 
           <form id="eventCreateForm" novalidate>
-            <!-- Location row -->
-            <div class="row mb-3 align-items-end">
-              <div class="col-md-8">
+            <!-- Location row: full width + map button -->
+            <div class="row mb-3 align-items-end event-location-row">
+              <div class="col-9 col-sm-10">
                 <label for="location" class="form-label"
                   >Location name <span class="text-danger">*</span></label
                 >
@@ -36,19 +36,20 @@
                 <div class="invalid-feedback">Location is required.</div>
               </div>
 
-              <div class="col-md-4">
+              <div class="col-3 col-sm-2">
+                <!-- find on map now redirects to /map with label (map page handles query) -->
                 <a
-                  href="/events/eventcreation"
-                  class="btn btn-primary create-event-btn"
+                  id="findOnMapBtn"
+                  class="btn btn-outline-primary w-100"
+                  role="button"
+                  >Find on map</a
                 >
-                  Find on map
-                </a>
               </div>
             </div>
 
             <!-- Lat / Lng row -->
             <div class="row mb-3">
-              <div class="col-6">
+              <div class="col-md-6">
                 <label for="lat" class="form-label">Latitude</label>
                 <input
                   id="lat"
@@ -58,12 +59,9 @@
                   inputmode="decimal"
                   placeholder="e.g. 50.93069"
                 />
-                <div class="form-text">
-                  Optional, but if one coordinate is filled, both must be valid.
-                </div>
                 <div class="invalid-feedback" id="latFeedback"></div>
               </div>
-              <div class="col-6">
+              <div class="col-md-6">
                 <label for="lng" class="form-label">Longitude</label>
                 <input
                   id="lng"
@@ -92,11 +90,31 @@
               <div class="invalid-feedback">Title is required.</div>
             </div>
 
+            <!-- Group dropdown -->
+            <div class="mb-3">
+              <label for="groupSelect" class="form-label"
+                >Group <span class="text-danger">*</span></label
+              >
+              <select
+                id="groupSelect"
+                name="group_id"
+                class="form-select"
+                required
+              >
+                <% if (!groups || groups.length === 0) { %>
+                <option value="">No groups available</option>
+                <% } else { %>
+                <option value="">Select a group</option>
+                <% groups.forEach(g => { %>
+                <option value="<%= g.id %>"><%= g.name %></option>
+                <% }) %> <% } %>
+              </select>
+              <div class="invalid-feedback">Choose a group.</div>
+            </div>
+
             <!-- Description -->
             <div class="mb-3">
-              <label for="description" class="form-label"
-                >Description (optional)</label
-              >
+              <label for="description" class="form-label">Description</label>
               <textarea
                 id="description"
                 name="description"
@@ -105,20 +123,20 @@
               ></textarea>
             </div>
 
-            <!-- Date + times -->
-            <div class="row mb-3">
+            <!-- Start date+time row -->
+            <div class="row mb-2">
               <div class="col-md-4">
-                <label for="date" class="form-label"
-                  >Date <span class="text-danger">*</span></label
+                <label for="startDate" class="form-label"
+                  >Start date <span class="text-danger">*</span></label
                 >
                 <input
-                  id="date"
-                  name="date"
+                  id="startDate"
+                  name="startDate"
                   class="form-control"
                   type="date"
                   required
                 />
-                <div class="invalid-feedback" id="dateFeedback">
+                <div class="invalid-feedback" id="startDateFeedback">
                   Choose a date (not in the past).
                 </div>
               </div>
@@ -135,16 +153,54 @@
                 />
                 <div class="invalid-feedback">Start time is required.</div>
               </div>
+
+              <div class="col-md-4 d-flex align-items-end">
+                <div class="w-100 text-end">
+                  <button
+                    id="toggleEndBtn"
+                    type="button"
+                    class="btn btn-link p-0"
+                  >
+                    Add end time
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- End date+time (hidden by default) -->
+            <div id="endRow" class="row mb-3" style="display: none">
               <div class="col-md-4">
-                <label for="endTime" class="form-label"
-                  >End time (optional)</label
-                >
+                <label for="endDate" class="form-label">End date</label>
+                <input
+                  id="endDate"
+                  name="endDate"
+                  class="form-control"
+                  type="date"
+                />
+                <div class="invalid-feedback" id="endDateFeedback">
+                  End date cannot be before start.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="endTime" class="form-label">End time</label>
                 <input
                   id="endTime"
                   name="endTime"
                   class="form-control"
                   type="time"
                 />
+                <div class="invalid-feedback" id="endTimeFeedback"></div>
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <div class="w-100 text-end">
+                  <button
+                    id="removeEndBtn"
+                    type="button"
+                    class="btn btn-link text-danger p-0"
+                  >
+                    Remove end time
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -152,12 +208,40 @@
               <button id="submitBtn" type="submit" class="btn btn-primary">
                 Create event
               </button>
-              <a href="/events" class="btn btn-link">Back to events</a>
+              <a href="/events" class="btn btn-link">Cancel</a>
             </div>
           </form>
         </main>
       </div>
     </body>
+  </div>
+
+  <!-- Bootstrap toast container -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
+    <div id="toastContainer"></div>
+  </div>
+
+  <!-- Confirmation modal (Bootstrap) -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          Are you sure you want to create this event?
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button id="confirmCreateBtn" type="button" class="btn btn-primary">
+            Yes, create
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <footer><%- include('../partials/FS_Footer'); %></footer>
