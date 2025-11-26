@@ -1,4 +1,3 @@
-// /public/js/FS_Map.js
 document.addEventListener("DOMContentLoaded", () => {
   // default center (Hasselt)
   const DEFAULT = { lat: 50.93069, lng: 5.33248, zoom: 15 };
@@ -93,9 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
               Create event here
             </button>
           </div>`;
-        L.marker([latf, latf ? latf : 0]).addTo(poiLayer); // safety - though coords exist
-        L.marker([latf, latf ? latf : 0]).bindPopup(popup); // we will replace with correct usage below
-        // correct marker creation:
         L.marker([latf, lngf]).addTo(poiLayer).bindPopup(popup);
       });
     } catch (err) {
@@ -103,36 +99,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // click handler for create-event buttons
-  document.addEventListener("click", async (ev) => {
+  // click handler for create-event buttons -> redirect to event creation page with query params
+  document.addEventListener("click", (ev) => {
     const btn = ev.target.closest && ev.target.closest(".create-event-btn");
     if (!btn) return;
     const lat = btn.dataset.lat,
       lng = btn.dataset.lng,
-      name = btn.dataset.name;
-    if (!confirm(`Create event at "${name}"?`)) return;
+      name = btn.dataset.name || "";
 
-    try {
-      const res = await fetch("/api/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: `Event at ${name}`,
-          lat,
-          lng,
-          placeName: name,
-        }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "unknown" }));
-        alert("Failed to create event: " + (err.error || "server error"));
-        return;
-      }
-      alert("Event created!");
-    } catch (err) {
-      console.error(err);
-      alert("Network error creating event");
-    }
+    // optional confirm (keeps previous UX); remove if you prefer direct redirect
+    if (!confirm(`Create event at "${name}"? Redirect to creation page?`))
+      return;
+
+    // build query preserving label (encoded)
+    const q = new URLSearchParams({
+      lat: String(lat),
+      lng: String(lng),
+      label: String(name),
+    }).toString();
+
+    // navigate to the event creation page which is served at /events/new
+    window.location.href = `/events/new?${q}`;
   });
 
   // If URL contains coords, focus there and don't request geolocation permission

@@ -4,7 +4,7 @@ import { seedExampleData } from "./exampleData.js";
 import viewRenders from "./viewRenders.js";
 import mapRouter from "./routes/mapRouter.js";
 import chatmessagesRouter from "./routes/chatmessagesRouter.js";
-import eventsRouter from "./routes/eventcreationRouter";
+import eventsRouter from "./routes/eventcreationRouter.js";
 
 const app = express();
 const port = process.env.PORT || 8080; // Set by Docker Entrypoint or use 8080

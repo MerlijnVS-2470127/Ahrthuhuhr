@@ -1,6 +1,5 @@
 (() => {
   const form = document.getElementById("eventCreateForm");
-  const findBtn = document.getElementById("findOnMapBtn");
   const toggleEndBtn = document.getElementById("toggleEndBtn");
   const removeEndBtn = document.getElementById("removeEndBtn");
   const endRow = document.getElementById("endRow");
@@ -10,6 +9,55 @@
   const confirmCreateBtn = document.getElementById("confirmCreateBtn");
   const toastContainer = document.getElementById("toastContainer");
 
+  (function autofillFromQuery() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const qLat = params.get("lat");
+      const qLng = params.get("lng");
+      const qLabel = params.get("label")
+        ? decodeURIComponent(params.get("label"))
+        : "";
+
+      const latEl = document.getElementById("lat");
+      const lngEl = document.getElementById("lng");
+      const locationEl = document.getElementById("location");
+
+      let filled = false;
+
+      if (qLat && qLng && latEl && lngEl) {
+        // basic numeric validation, but keep as string in inputs
+        const nLat = Number(qLat);
+        const nLng = Number(qLng);
+        if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
+          latEl.value = String(qLat);
+          lngEl.value = String(qLng);
+          filled = true;
+        }
+      }
+
+      if (qLabel && locationEl) {
+        // If location already filled we do not override it unless it was empty
+        if (!locationEl.value.trim()) {
+          locationEl.value = qLabel;
+          filled = true;
+        } else {
+          // if the existing location is empty it will be set above, otherwise leave user's value
+        }
+      }
+
+      if (filled) {
+        // ensure user sees that coords are prefilled
+        showToast("Location pre-filled from map.", "info", 2500);
+        // scroll to form for better UX
+        const firstField = document.getElementById("location");
+        if (firstField)
+          firstField.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    } catch (err) {
+      // non-fatal
+      console.error("Autofill error", err);
+    }
+  })();
   // bootstrap modal instance (assumes bootstrap.js present)
   let confirmModal = null;
 
@@ -62,16 +110,6 @@
     t.show();
     el.addEventListener("hidden.bs.toast", () => el.remove());
   }
-
-  // find on map: redirect to /map with label param; map script will handle lat/lng optionally
-  findBtn.addEventListener("click", (ev) => {
-    ev.preventDefault();
-    const label = encodeURIComponent(
-      document.getElementById("location").value.trim() || ""
-    );
-    // redirect with label even if empty (map handles defaults)
-    window.location.href = `/map?label=${label}`;
-  });
 
   // toggle end row
   toggleEndBtn.addEventListener("click", () => {
@@ -237,16 +275,10 @@
     const result = validateAndBuild();
     if (!result.ok) return;
 
-    // show confirmation modal
+    // use the shared pendingPayload + global confirmCreateBtn handler:
     if (confirmModal) {
-      confirmModal.show();
-      // attach one-time handler
-      const handler = async () => {
-        confirmModal.hide();
-        confirmCreateBtn.removeEventListener("click", handler);
-        await sendCreate(result.payload);
-      };
-      confirmCreateBtn.addEventListener("click", handler);
+      pendingPayload = result.payload; // <- set payload for the global handler
+      confirmModal.show(); // show modal; global handler will pick it up
     } else {
       // fallback: use window.confirm
       if (!window.confirm("Are you sure you want to create this event?"))
@@ -255,7 +287,14 @@
     }
   });
 
+  let _sendInFlight = false;
+
   async function sendCreate(payload) {
+    if (_sendInFlight) {
+      console.warn("sendCreate already in-flight, ignoring duplicate call");
+      return;
+    }
+    _sendInFlight = true;
     try {
       const res = await fetch("/events/create", {
         method: "POST",
@@ -275,6 +314,8 @@
     } catch (err) {
       console.error(err);
       showToast("Network error while creating event.", "danger");
+    } finally {
+      _sendInFlight = false;
     }
   }
 })();

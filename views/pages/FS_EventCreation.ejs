@@ -38,10 +38,7 @@
 
               <div class="col-3 col-sm-2">
                 <!-- find on map now redirects to /map with label (map page handles query) -->
-                <a
-                  id="findOnMapBtn"
-                  class="btn btn-outline-primary w-100"
-                  role="button"
+                <a href="/map" class="btn btn-primary w-100" role="button"
                   >Find on map</a
                 >
               </div>
@@ -153,17 +150,16 @@
                 />
                 <div class="invalid-feedback">Start time is required.</div>
               </div>
-
-              <div class="col-md-4 d-flex align-items-end">
-                <div class="w-100 text-end">
-                  <button
-                    id="toggleEndBtn"
-                    type="button"
-                    class="btn btn-link p-0"
-                  >
-                    Add end time
-                  </button>
-                </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <div class="text-end">
+                <button
+                  id="toggleEndBtn"
+                  type="button"
+                  class="btn btn-link p-0"
+                >
+                  Add end time
+                </button>
               </div>
             </div>
 
@@ -192,7 +188,7 @@
                 <div class="invalid-feedback" id="endTimeFeedback"></div>
               </div>
               <div class="col-md-4 d-flex align-items-end">
-                <div class="w-100 text-end">
+                <div class="w-100">
                   <button
                     id="removeEndBtn"
                     type="button"
@@ -208,7 +204,6 @@
               <button id="submitBtn" type="submit" class="btn btn-primary">
                 Create event
               </button>
-              <a href="/events" class="btn btn-link">Cancel</a>
             </div>
           </form>
         </main>
