@@ -1,28 +1,51 @@
 
-let ids = window.ids.split(",");
-let names = window.names.split(","); 
+let ids = window.ids;
+let names = window.names; 
+let descriptions = window.descriptions;
 
+function decodeString(string) {
+  let arr = string.split(",");
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = decodeURIComponent(arr[i]);
+  }
+  return arr;
+}
 
 //<img src="../../public/images/albert2.jpg" class="card-img-top" alt="...">
 function loadGroups() {
   let parent = document.getElementById("repeating_cards");
 
   for (let i = 0; i < ids.length; i++) {
-    parent.innerHTML += '<div class="card" style="width: 18rem">' +
-        '<div class="card-body">' +
+    parent.innerHTML += 
+      '<div class="card" style="width: 18rem">' +
+        '<div class="card-header">' +
           '<h1 class="card-title">' + names[i] + '</h1>' +
-          '<button class="group-button btn btn-primary" type="button" id="' + ids[i] + '">' +
-            "Open chat" +
-         ' </button>' +
         '</div>' +
+        '<ul class="list-group list-group-flush">' +
+          '<li class="list-group-item">' +
+            descriptions[i] +
+          '</li>' +
+          '<li class="list-group-item">' +
+            '<button class="group-button btn btn-primary" type="button" id="' + ids[i] + '">' +
+              "Open chat" +
+            ' </button>' +
+          '</li>' +
+        '</ul>' +
+          
+          
       '</div>';
   }
 }
 
 
 addEventListener("load", (e) => {
-  loadGroups();
   let buttons = document.getElementsByClassName("group-button");
+
+  ids = decodeString(ids);
+  names = decodeString(names);
+  descriptions = decodeString(descriptions);
+
+  loadGroups();
 
   for (const button of buttons) {
     button.addEventListener("click", (e) => {

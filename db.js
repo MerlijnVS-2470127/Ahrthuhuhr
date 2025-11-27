@@ -15,7 +15,13 @@ export function InitializeDatabase() {
   // db.prepare(`DROP TABLE eventusers`).run();
   // db.prepare(`DROP TABLE groupusers`).run();
   // db.prepare(`DROP TABLE groups`).run();
-  //db.prepare(`DROP TABLE users`).run();
+  // db.prepare(`DROP TABLE users`).run();
+
+  //let groepInsert = db.prepare('INSERT INTO groupusers (group_id, user_id, role) VALUES (?,?,?)');
+
+  //for (let i = 4; i <= 6; i++) {
+  //  groepInsert.run(i, 3, "owner");
+  //}
 
   //prepare users
   db.prepare(

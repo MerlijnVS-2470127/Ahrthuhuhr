@@ -13,7 +13,8 @@ import {
   checkUsername
  } from "./public/js/profileModification.js";
 import {
-  getGroupData
+  getGroupData,
+  formatToEncodedString
  } from "./public/js/groupModule.js";
 import cookieParser from "cookie-parser";
 
@@ -151,9 +152,16 @@ views.get("/groups", (request, response) => {
 
   let IDs = getGroupData(db, email, "id");
   let names = getGroupData(db, email, "name");
+  let descriptions = getGroupData(db, email, "description");
+
+  IDs = formatToEncodedString(IDs);
+  names = formatToEncodedString(names);
+  descriptions = formatToEncodedString(descriptions);
 
   response.render("pages/FS_Groups", {
-     ids: IDs, names: names
+     ids: IDs, 
+     names: names,
+     descriptions: descriptions
   });
 });
 

@@ -3,6 +3,25 @@
 //--------------------------------------------//
 "use strict";
 
+export function formatToEncodedString(arr){
+    if (arr.length <= 1) {
+        return arr;
+    }
+
+    let encodedString = encodeURIComponent(arr[0])
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i] != "") {
+            encodedString += "," + encodeURIComponent(arr[i]);
+        }
+        else{
+            encodedString += ", ";
+        }
+        
+    }
+    
+    return encodedString;
+}
+
 export function getGroupData(db, email, dataType) {
 
     const users = db
@@ -19,17 +38,20 @@ export function getGroupData(db, email, dataType) {
 
     for (let i = 0; i < groupIDs.length; i++) {
         groups = db
-        .prepare(`SELECT id, name FROM groups WHERE id = ?`)
+        .prepare(`SELECT id, name, description FROM groups WHERE id = ?`)
         .all(groupIDs[i].group_id);
 
         if (dataType === "id") {
             groupData.push(groups[0].id);
         }
         else{
-            groupData.push(groups[0].name);
+            if (dataType === "name") {
+                groupData.push(groups[0].name);
+            }
+            else{
+                groupData.push(groups[0].description);
+            }
         }
-
-        groups = "";
     }
 
     return groupData;

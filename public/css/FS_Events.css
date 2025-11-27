@@ -110,6 +110,7 @@
 .events-list {
   max-width: 980px;
   margin: 2rem auto;
+  margin-top: 0;
 }
 
 /* Link hover */

@@ -1,26 +1,57 @@
-/*Bootstrap overwrite*/
-.card-title {
-  --bs-card-title-color: var(--bs-primary) !important;
+/*
+  Bootstrap overwrites
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: var(--bs-card-height);
+  color: var(--bs-body-color);
+*/
+
+.card{
+  /*margin: 20px;*/
+  /*max-height: 25%;*/
+  max-width: 30%;
+  position: relative;
+  display: flex;
+  margin: 1%;
 }
 
 .card-body {
   padding: 25px;
 }
 
-.card{
-  margin: 20px;
-  /*max-height: 25%;*/
-  max-width: 30%;
+.card-title {
+  --bs-card-title-color: var(--bs-primary) !important;
 }
 
-#repeating-cards{
-  display: block;
+/*
+  End of bootstrap overwrites
+*/
+
+#btn_createGroup{
+  padding: 0.45rem 1rem;
+  font-size: 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.groups-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+#repeating_cards{
+  display: flex;
+  flex-wrap: wrap;
 }
 
 
 .groups-list {
-  max-width: 800px;
-  margin: 2rem auto;
+  max-width: 75%;
 }
 
 .group-item {

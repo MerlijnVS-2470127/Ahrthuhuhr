@@ -9,6 +9,7 @@
     <script>
       window.ids = "<%= ids %>";
       window.names = "<%= names %>";
+      window.descriptions = "<%= descriptions %>";
     </script>
   </head>
 
@@ -18,8 +19,12 @@
     <body>
       <div class="main_div">
         <main class="groups-list container">
-          <div class="page_header">Groups</div>
-
+          <div class="groups-header-row">
+            <div class="page_header">Groups</div>
+            <a class="btn btn-primary" id="btn_createGroup">
+                + Add Group
+            </a>
+          </div>
           <hr />
 
           <div id="repeating_cards">
