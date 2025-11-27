@@ -53,7 +53,7 @@ export function InitializeDatabase() {
     `CREATE TABLE IF NOT EXISTS groupusers (
       group_id INTEGER NOT NULL,
       user_id INTEGER NOT NULL,
-      role TEXT NOT NULL DEFAULT 'member', -- lurker|member|admin|owner
+      role TEXT NOT NULL DEFAULT 'member', -- lurker||member||admin||owner
       PRIMARY KEY (group_id, user_id),
       FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE,
       FOREIGN KEY(user_id)  REFERENCES users(id)  ON DELETE CASCADE
@@ -71,7 +71,7 @@ export function InitializeDatabase() {
       description TEXT,
       start_time INTEGER NOT NULL,
       end_time INTEGER,
-      status TEXT NOT NULL DEFAULT 'planned', -- planned||ended||cancelled
+      status TEXT NOT NULL DEFAULT 'planned', -- planned||happening now||ended||cancelled
       location TEXT, -- location: leesbare string voor weer te geven op de site, lat en lng voor coördinaten op te slaan
       location_lat REAL,
       location_lng REAL,
