@@ -24,11 +24,16 @@
 
 .card-title {
   --bs-card-title-color: var(--bs-primary) !important;
+  overflow: hidden;
 }
 
 /*
   End of bootstrap overwrites
 */
+
+.list-group-item {
+  overflow: auto;
+}
 
 #btn_createGroup {
   padding: 0.45rem 1rem;
