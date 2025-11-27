@@ -82,6 +82,7 @@ function checkEmailValidity(email) {
 }
 
 function checkPasswordValidity(password) {
+  //password requirements toe te voegen
   return true;
 }
 

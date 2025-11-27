@@ -6,15 +6,25 @@ import {
   checkCredentails,
   checkEmailAvailability,
   checkInputValidity,
-  createNewAccount,
+  createNewAccount  
 } from "./public/js/authenticate.js";
+import { 
+  changeData,
+  checkUsername
+ } from "./public/js/profileModification.js";
 import cookieParser from "cookie-parser";
 
 const views = express();
 views.use(cookieParser());
 
 views.get("/", (request, response) => {
-  response.render("pages/FS_Home");
+  let userCookie = request.headers.cookie.split(";")[0].substring(5);
+
+  let username = checkUsername(db, userCookie)
+
+  response.render("pages/FS_Home", {
+    username: username
+  });
 });
 
 views.get("/faq", (request, response) => {
@@ -79,6 +89,39 @@ views.get("/login/:email/:password/:mode", (request, response) => {
     });
   }
 });
+
+//--------------------------//
+// Edit Profile page render //
+//--------------------------//
+views.get("/profile/:data/:changed/:email", (request, response) => {
+
+  let changed = decodeURIComponent(request.params.changed);
+  let data = decodeURIComponent(request.params.data);
+  let email = decodeURIComponent(request.params.email);
+
+  let changeStatus = true;
+  let currentUsername = "error loading username";
+
+  if (isAuthorized(request, response, db)) {
+    if (changed != "null" && data!= "null") {
+      changeStatus = changeData(request, response, db, data, changed, email);
+    }
+
+    if (changeStatus) {
+      currentUsername = checkUsername(db, email);
+    }
+    
+    response.render("pages/FS_Profile", {
+      changeStatus: changeStatus,
+      email: email,
+      currentUsername: currentUsername
+    });
+  } else {
+    goToLogin(request, response);
+  }
+});
+
+
 
 views.get("/map", (request, response) => {
   response.render("pages/FS_Map");

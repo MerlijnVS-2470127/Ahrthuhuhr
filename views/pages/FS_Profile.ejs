@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/FS_Standard_Head'); %>
+    <link rel="stylesheet" href="/css/FS_Profile.css" />
+    <script src="/js/FS_Profile.js" type="module"></script>
+    <title>FAQ - Fellowships</title>
+    <script>
+      window.changedStatus = "<%= changeStatus %>";
+      window.email = "<%= email %>";
+      window.currentUsername = "<%= currentUsername %>";
+    </script>
+  </head>
+
+  <header><%- include('../partials/FS_Header'); %></header>
+
+
+  <div class="main-content-wrapper">
+    <body>
+      <div class="main_div">
+        <div class="page_header">Profile</div>
+
+        <div class="main_tab">
+          <h1 id="username_display">
+            Username: 
+          </h1>
+          <div>
+            <div class="usernameChange-form" id="usernameChange">
+
+            <form id="changeData">
+                <div class="mb-3">
+                <label for="newUsername_input" class="form-label">Change username</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="newUsername_input"
+                    name="newUsername_input"
+                    placeholder="New username" 
+                /> 
+                </div>
+
+                <div class="error" id="changeError"></div>
+                <button type="button" class="btn btn-primary" id="btn_change">
+                    Change
+                </button>
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+  </div>
+
+  <footer><%- include('../partials/FS_Footer'); %></footer>
+</html>

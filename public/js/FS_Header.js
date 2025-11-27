@@ -4,7 +4,7 @@
 
 function logout() {
   sessionStorage.removeItem("user");
-  document.cookie = "user=; expires=8 Aug 2013";
+  deleteCookies();
   window.location.href =
     "/login/" +
     encodeURIComponent("null") +
@@ -18,9 +18,16 @@ function logout() {
 // General functions //
 // ------------------//
 
+function deleteCookies() {
+  let cookies = document.cookie.split(";");
+  for (let i = 0; i < cookies.length; i++) {
+    document.cookie = cookies[i] += "=;expires=8 Aug 2013";
+  }
+}
+
 function checkUsername() {
-  if (getCookieByName("user") != null) {
-    let username = getCookieByName("user");
+  if (getCookieByName("username") != null) {
+    let username = getCookieByName("username");
     let usernameDiv = document.getElementById("username");
     usernameDiv.innerText = username;
   }
@@ -43,10 +50,16 @@ export function getCookieByName(name) {
 // ----------------//
 
 let logoutButton = document.getElementById("btn_logout");
-let loginButton = document.getElementById("btn_login");
+let profileButton = document.getElementById("btn_editProfile");
 
 logoutButton.addEventListener("click", (e) => {
   logout();
+});
+
+profileButton.addEventListener("click", (e) => {
+  let email = getCookieByName("user");
+  window.location.href =
+    "/profile/null/null/" + encodeURIComponent(email);
 });
 
 addEventListener("load", (e) => {

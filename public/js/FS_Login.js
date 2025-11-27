@@ -83,7 +83,7 @@ function createSessionCookie(email) {
 function deleteCookies() {
   let cookies = document.cookie.split(";");
   for (let i = 0; i < cookies.length; i++) {
-    document.cookie = cookies[i] += "=;expires=8 Aug 2013";
+    document.cookie = cookies[i] += "=; expires=8 Aug 2013;";
   }
 }
 
