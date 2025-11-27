@@ -6,21 +6,17 @@ import {
   checkCredentails,
   checkEmailAvailability,
   checkInputValidity,
-  createNewAccount  
+  createNewAccount,
 } from "./public/js/authenticate.js";
-import { 
-  changeData,
-  checkUsername
- } from "./public/js/profileModification.js";
+import { changeData, checkUsername } from "./public/js/profileModification.js";
 import {
   getGroupData,
-  formatToEncodedString
- } from "./public/js/groupModule.js";
+  formatToEncodedString,
+} from "./public/js/groupModule.js";
 import cookieParser from "cookie-parser";
 
 const views = express();
 views.use(cookieParser());
-
 
 //------------------//
 // Home page render //
@@ -31,7 +27,7 @@ views.get("/", (request, response) => {
   let username = checkUsername(db, userCookie);
 
   response.render("pages/FS_Home", {
-    username: username
+    username: username,
   });
 });
 
@@ -45,7 +41,6 @@ views.get("/faq", (request, response) => {
     goToLogin(request, response);
   }
 });
-
 
 //-------------------//
 // Login page render //
@@ -109,7 +104,6 @@ views.get("/login/:email/:password/:mode", (request, response) => {
 // Edit Profile page render //
 //--------------------------//
 views.get("/profile/:data/:changed/:email", (request, response) => {
-
   let changed = decodeURIComponent(request.params.changed);
   let data = decodeURIComponent(request.params.data);
   let email = decodeURIComponent(request.params.email);
@@ -118,37 +112,39 @@ views.get("/profile/:data/:changed/:email", (request, response) => {
   let currentUsername = "error loading username";
 
   if (isAuthorized(request, response, db)) {
-    if (changed != "null" && data!= "null") {
+    if (changed != "null" && data != "null") {
       changeStatus = changeData(request, response, db, data, changed, email);
     }
 
     if (changeStatus) {
       currentUsername = checkUsername(db, email);
     }
-    
+
     response.render("pages/FS_Profile", {
       changeStatus: changeStatus,
       email: email,
-      currentUsername: currentUsername
+      currentUsername: currentUsername,
     });
   } else {
     goToLogin(request, response);
   }
 });
 
-
+//-----------------//
+// Map page render //
+//-----------------//
 
 views.get("/map", (request, response) => {
   response.render("pages/FS_Map");
 });
 
-//--------------------//
-// groups page render //
-//--------------------//
+//---------------------//
+// groups pages render //
+//---------------------//
+
+//general group page
 views.get("/groups", (request, response) => {
-
   let email = request.headers.cookie.split(";")[0].substring(5);
-
 
   let IDs = getGroupData(db, email, "id");
   let names = getGroupData(db, email, "name");
@@ -159,9 +155,9 @@ views.get("/groups", (request, response) => {
   descriptions = formatToEncodedString(descriptions);
 
   response.render("pages/FS_Groups", {
-     ids: IDs, 
-     names: names,
-     descriptions: descriptions
+    ids: IDs,
+    names: names,
+    descriptions: descriptions,
   });
 });
 
@@ -176,6 +172,10 @@ views.get("/groups/:groupId", (request, response) => {
     .all(groupId);
   response.render("pages/FS_Groupchat", { groupId, messages });
 });
+
+//---------------------//
+// Events pages render //
+//---------------------//
 
 //algemene events pagina
 views.get("/events", (request, response) => {
