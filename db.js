@@ -86,7 +86,7 @@ export function InitializeDatabase() {
     `CREATE TABLE IF NOT EXISTS eventusers(
       event_id INTEGER NOT NULL,
       user_id INTEGER NOT NULL,
-      status TEXT NOT NULL DEFAULT 'going',   -- 'going'|'interested'|'declined' (intrested: voor mensen die enkel notificaties willen ontvangen, ideaal voor thuisblijvers)
+      status TEXT NOT NULL DEFAULT 'going',   -- 'going'||'interested'||'declined' (intrested: voor mensen die enkel notificaties willen ontvangen, ideaal voor thuisblijvers)
       joined_at INTEGER NOT NULL DEFAULT (cast(strftime('%s','now') as integer) * 1000),
       PRIMARY KEY(event_id, user_id),
       FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE,

@@ -38,6 +38,48 @@ export function seedExampleData() {
         password: "password4",
         last_login: now,
       },
+      {
+        email: "yara@example.com",
+        username: "Yara van HOI",
+        password: "password5",
+        last_login: now,
+      },
+      {
+        email: "maria@example.com",
+        username: "Rob",
+        password: "password6",
+        last_login: now,
+      },
+      {
+        email: "linux@example.com",
+        username: "Michael",
+        password: "password7",
+        last_login: now,
+      },
+      {
+        email: "rooster@example.com",
+        username: "Joost",
+        password: "password8",
+        last_login: now,
+      },
+      {
+        email: "ranjot@example.com",
+        username: "Ronny",
+        password: "password9",
+        last_login: now,
+      },
+      {
+        email: "vanshpreet@example.com",
+        username: "Vansh",
+        password: "password10",
+        last_login: now,
+      },
+      {
+        email: "lone@wolf.com",
+        username: "Lone wolf",
+        password: "iamsolonely",
+        last_login: now,
+      },
     ];
 
     const insertUser = db.prepare(`
@@ -66,19 +108,30 @@ export function seedExampleData() {
 
     const exampleGroups = [
       {
-        owner_id: users[0].id,
+        owner_id: users[1].id, //John Doe
         name: "Test Group",
         description: "A test group",
       },
       {
-        owner_id: users[1].id,
+        owner_id: users[1].id, //John Doe
         name: "New York trip",
         description: "Planning for NYC",
       },
       {
-        owner_id: users[2].id,
+        owner_id: users[3].id, //Merlijn
         name: "Uitstap Hasselt",
         description: "Daguitstap naar Hasselt",
+      },
+      {
+        owner_id: users[4].id, //Elric
+        name: "Kroegentocht scherpenheuvel (titel extra lang maken met onnodige tekst :D)",
+        description:
+          "We gaan te voet naar scherpenheuvel, jaja te voet naar scherpenheuvel. En wanneer komen wij daar aan, met zo veel kroegen langs de baan?",
+      },
+      {
+        owner_id: users[2].id, //Gerben
+        name: "Roadtrip Riemst",
+        description: "Moak kennis mit ut bürendurp Riems",
       },
     ];
 
@@ -103,13 +156,50 @@ export function seedExampleData() {
     const groups = db.prepare("SELECT * FROM groups ORDER BY id").all();
 
     const exampleGroupUsers = [
-      { group_id: groups[0].id, user_id: users[0].id, role: "owner" },
-      { group_id: groups[0].id, user_id: users[1].id, role: "member" },
-      { group_id: groups[1].id, user_id: users[1].id, role: "owner" },
-      { group_id: groups[1].id, user_id: users[2].id, role: "member" },
-      { group_id: groups[1].id, user_id: users[3].id, role: "member" },
-      { group_id: groups[2].id, user_id: users[2].id, role: "owner" },
-      { group_id: groups[2].id, user_id: users[0].id, role: "member" },
+      //testgroup
+      { group_id: groups[0].id, user_id: users[1].id, role: "owner" }, //John
+      { group_id: groups[0].id, user_id: users[2].id, role: "admin" }, //Gerben
+      { group_id: groups[0].id, user_id: users[3].id, role: "admin" }, //Merlijn
+      { group_id: groups[0].id, user_id: users[5].id, role: "member" }, //Yara
+      { group_id: groups[0].id, user_id: users[9].id, role: "lurker" }, //Ronny
+
+      //new york trip
+      { group_id: groups[1].id, user_id: users[1].id, role: "owner" }, //John
+      { group_id: groups[1].id, user_id: users[2].id, role: "member" }, //Gerben
+      { group_id: groups[1].id, user_id: users[3].id, role: "member" }, //Merlijn
+      { group_id: groups[1].id, user_id: users[5].id, role: "lurker" }, //Yara
+
+      //uitstap hasselt
+      { group_id: groups[2].id, user_id: users[3].id, role: "owner" }, //Merlijn
+      { group_id: groups[2].id, user_id: users[9].id, role: "admin" }, //Ronny
+      { group_id: groups[2].id, user_id: users[10].id, role: "admin" }, //Vansh
+      { group_id: groups[2].id, user_id: users[2].id, role: "member" }, //Gerben
+      { group_id: groups[2].id, user_id: users[4].id, role: "member" }, //Elric
+      { group_id: groups[2].id, user_id: users[5].id, role: "member" }, //Yara
+      { group_id: groups[2].id, user_id: users[6].id, role: "member" }, //Rob
+      { group_id: groups[2].id, user_id: users[7].id, role: "member" }, //Michael
+      { group_id: groups[2].id, user_id: users[8].id, role: "member" }, //Joost
+      { group_id: groups[2].id, user_id: users[1].id, role: "lurker" }, //John
+
+      //kroegentocht scherpenheuvel
+      { group_id: groups[3].id, user_id: users[4].id, role: "owner" }, //Elric
+      { group_id: groups[3].id, user_id: users[2].id, role: "admin" }, //Gerben
+      { group_id: groups[3].id, user_id: users[3].id, role: "member" }, //Merlijn
+      { group_id: groups[3].id, user_id: users[7].id, role: "member" }, //Michael
+      { group_id: groups[3].id, user_id: users[8].id, role: "member" }, //Joost
+      { group_id: groups[3].id, user_id: users[6].id, role: "lurker" }, //Rob
+      { group_id: groups[3].id, user_id: users[10].id, role: "lurker" }, //Vansh
+
+      //roadtrip riemst
+      { group_id: groups[4].id, user_id: users[2].id, role: "owner" }, //Gerben
+      { group_id: groups[4].id, user_id: users[3].id, role: "admin" }, //Merlijn
+      { group_id: groups[4].id, user_id: users[6].id, role: "admin" }, //Rob
+      { group_id: groups[4].id, user_id: users[4].id, role: "member" }, //Elric
+      { group_id: groups[4].id, user_id: users[7].id, role: "member" }, //Michael
+      { group_id: groups[4].id, user_id: users[8].id, role: "member" }, //Joost
+      { group_id: groups[4].id, user_id: users[9].id, role: "member" }, //Ronny
+      { group_id: groups[4].id, user_id: users[10].id, role: "member" }, //Vansh
+      { group_id: groups[4].id, user_id: users[1].id, role: "lurker" }, //John
     ];
 
     const insertGroupUser = db.prepare(`
@@ -134,45 +224,128 @@ export function seedExampleData() {
     const users = db.prepare("SELECT id FROM users ORDER BY id").all();
     const groups = db.prepare("SELECT id FROM groups ORDER BY id").all();
 
-    const cpStart = Date.UTC(2025, 5, 1, 12, 0);
-    const cpEnd = Date.UTC(2025, 5, 1, 15, 0);
+    const oneHour = 1000 * 60 * 60;
+    const oneDay = 24 * oneHour;
 
     const exampleEvents = [
+      //testgroup
       {
-        creator_id: users[1].id,
-        group_id: groups[1].id,
-        title: "Central Park picknick",
-        description: "Bring food and blankets.",
-        start_time: cpStart,
-        end_time: cpEnd,
-        status: "planned",
-        location: "The Great Lawn, Central Park, Manhattan, NY",
-        location_lat: 40.785091,
-        location_lng: -73.968285,
-      },
-      {
-        creator_id: users[0].id,
+        creator_id: users[1].id, //John
         group_id: groups[0].id,
         title: "Test Group meetup",
         description: "Short meetup to test the app.",
-        start_time: Date.UTC(2025, 6, 10, 18, 0),
-        end_time: Date.UTC(2025, 6, 10, 20, 0),
+        start_time: now,
+        end_time: now + oneHour * 2,
         status: "planned",
         location: "Community Center, Test City",
         location_lat: null,
         location_lng: null,
       },
       {
-        creator_id: users[2].id,
+        creator_id: users[2].id, //Gerben
+        group_id: groups[0].id,
+        title: "Event in the very distant future",
+        description: "Guys I don't think this will ever take place",
+        start_time: now + oneDay * 30,
+        end_time: now + oneDay * 31,
+        status: "planned",
+        location: "Community Center, Test City",
+        location_lat: null,
+        location_lng: null,
+      },
+      {
+        creator_id: users[3].id, //Merlijn
+        group_id: groups[0].id,
+        title: "Event in the very distant past",
+        description: "Guys I can't even remember this happening",
+        start_time: now - oneDay * 30,
+        end_time: now - oneDay * 29,
+        status: "planned",
+        location: "Community Center, Test City",
+        location_lat: null,
+        location_lng: null,
+      },
+
+      //new york trip
+      {
+        creator_id: users[1].id, //John
+        group_id: groups[1].id,
+        title: "Central Park picknick",
+        description: "Bring food and blankets.",
+        start_time: now,
+        end_time: now + oneDay,
+        status: "planned",
+        location: "The Great Lawn, Central Park, Manhattan, NY",
+        location_lat: 40.785091,
+        location_lng: -73.968285,
+      },
+      {
+        creator_id: users[2].id, //Gerben
+        group_id: groups[1].id,
+        title: "Guys we should eat here",
+        description: "Jamaican blessing",
+        start_time: now,
+        end_time: now + oneHour,
+        status: "planned",
+        location: "Jamaica Breeze",
+        location_lat: 40.7611692,
+        location_lng: -73.8662092,
+      },
+
+      //uitstap hasselt
+      {
+        creator_id: users[3].id, //Merlijn
         group_id: groups[2].id,
         title: "Hasselt uitstap lunch",
         description: "Lunch in Hasselt followed by a walk.",
-        start_time: Date.UTC(2025, 7, 5, 11, 30),
-        end_time: Date.UTC(2025, 7, 5, 14, 0),
+        start_time: now,
+        end_time: now + oneDay,
         status: "planned",
         location: "Dusartplein Hasselt, Hasselt, BE",
         location_lat: 50.9327603,
         location_lng: 5.3429212,
+      },
+      {
+        creator_id: users[2].id, //Gerben
+        group_id: groups[2].id,
+        title: "Friet in Rooierheide",
+        description:
+          "Dit is een heeeeeeeeeeeeeeeeel lange beschrijving om de voorstelling in de eventview uit te testen. Wist je dat de Michelin sterren uitgevonden zijn door het bedrijf dat de banden maakt van dezelfde naam? Ze gaven meer sterren aan restaurants buiten de stad zodat men meer heen en weer reed en ze sneller nieuwe banden moesten kopen. Crazy!",
+        start_time: now,
+        end_time: now + oneHour,
+        status: "planned",
+        location: "Frituur Passerel",
+        location_lat: 50.9369045,
+        location_lng: 5.4185441,
+      },
+
+      //kroegentocht scherpenheuvel
+      {
+        creator_id: users[4].id, //Elric
+        group_id: groups[3].id,
+        title: "Te voet naar scherpenheuvel",
+        description:
+          "En wanneer komen wij daar aan, met al die kroegen langs de baan?",
+        start_time: now,
+        end_time: now + oneDay * 10,
+        status: "planned",
+        location: "Kathedraal scherpenheuvel",
+        location_lat: null,
+        location_lng: null,
+      },
+
+      //roadtrip riemst
+      {
+        creator_id: users[2].id, //Gerben
+        group_id: groups[4].id,
+        title: "Riemsters drupke",
+        description: "Bokke laaie met de manne",
+        start_time: now,
+        end_time: now + oneHour * 8,
+        status: "planned",
+        location: "Barry's sportbar",
+        location_lat: null,
+        location_lng: null,
       },
     ];
 
@@ -206,13 +379,14 @@ export function seedExampleData() {
   // EVENT USERS
   // ---------------------------
   if (isTableEmpty("eventusers")) {
-    const event = db.prepare("SELECT * FROM events LIMIT 1").get();
-    const users = db.prepare("SELECT * FROM users ORDER BY id").all();
+    const users = db.prepare("SELECT id FROM users ORDER BY id").all();
+    const events = db.prepare("SELECT id FROM events ORDER BY id").all();
 
     const exampleEventUsers = [
-      { event_id: event.id, user_id: users[1].id, status: "going" },
-      { event_id: event.id, user_id: users[2].id, status: "interested" },
-      { event_id: event.id, user_id: users[3].id, status: "declined" },
+      //test group meetup
+      { event_id: events[0].id, user_id: users[1].id, status: "going" }, //John
+      { event_id: events[0].id, user_id: users[2].id, status: "interested" }, //Gerben
+      { event_id: events[0].id, user_id: users[9].id, status: "declined" }, //Ronny
     ];
 
     const insertEventUser = db.prepare(`
