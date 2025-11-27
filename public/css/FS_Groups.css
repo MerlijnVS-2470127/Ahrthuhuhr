@@ -1,3 +1,23 @@
+/*Bootstrap overwrite*/
+.card-title {
+  --bs-card-title-color: var(--bs-primary) !important;
+}
+
+.card-body {
+  padding: 25px;
+}
+
+.card{
+  margin: 20px;
+  /*max-height: 25%;*/
+  max-width: 30%;
+}
+
+#repeating-cards{
+  display: block;
+}
+
+
 .groups-list {
   max-width: 800px;
   margin: 2rem auto;

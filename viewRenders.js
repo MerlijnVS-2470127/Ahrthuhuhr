@@ -12,21 +12,31 @@ import {
   changeData,
   checkUsername
  } from "./public/js/profileModification.js";
+import {
+  getGroupData
+ } from "./public/js/groupModule.js";
 import cookieParser from "cookie-parser";
 
 const views = express();
 views.use(cookieParser());
 
+
+//------------------//
+// Home page render //
+//------------------//
 views.get("/", (request, response) => {
   let userCookie = request.headers.cookie.split(";")[0].substring(5);
 
-  let username = checkUsername(db, userCookie)
+  let username = checkUsername(db, userCookie);
 
   response.render("pages/FS_Home", {
     username: username
   });
 });
 
+//-----------------//
+// FAQ page render //
+//-----------------//
 views.get("/faq", (request, response) => {
   if (isAuthorized(request, response, db)) {
     response.render("pages/FS_FAQ");
@@ -35,6 +45,10 @@ views.get("/faq", (request, response) => {
   }
 });
 
+
+//-------------------//
+// Login page render //
+//-------------------//
 views.get("/login/:email/:password/:mode", (request, response) => {
   const email = decodeURIComponent(request.params.email);
   const password = decodeURIComponent(request.params.password);
@@ -127,10 +141,19 @@ views.get("/map", (request, response) => {
   response.render("pages/FS_Map");
 });
 
-//algemene groups pagina
+//--------------------//
+// groups page render //
+//--------------------//
 views.get("/groups", (request, response) => {
+
+  let email = request.headers.cookie.split(";")[0].substring(5);
+
+
+  IDs = getGroupData(db, email, "id");
+  names = getGroupData(db, email, "name");
+
   response.render("pages/FS_Groups", {
-    groups: [{ id: "testgroup", name: "Test Group" }],
+     ids: IDs, names: names
   });
 });
 
