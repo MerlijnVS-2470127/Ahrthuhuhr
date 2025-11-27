@@ -1,14 +1,15 @@
 /* Events grid + responsive tiles */
 .events-grid {
-  display: grid;
   grid-template-columns: repeat(
     auto-fit,
     minmax(300px, 1fr)
   ); /* increased min width so date fits */
   gap: 1.25rem;
-  max-width: 1100px;
-  margin: 1.5rem auto;
-  padding: 0 1rem;
+  max-width: 100%;
+  padding: 1%;
+
+  display: flex;
+  flex-wrap: wrap;
 }
 
 /* Individual tile */
@@ -108,7 +109,7 @@
 
 /* container adjustments */
 .events-list {
-  max-width: 980px;
+  max-width: 75%;
   margin: 2rem auto;
   margin-top: 0;
 }
@@ -117,6 +118,13 @@
 .event-location:hover {
   text-decoration: none;
   color: var(--bs-secondary, #728fce);
+}
+
+.event-tile {
+  max-width: 30%;
+  position: relative;
+  display: flex;
+  margin: 1%;
 }
 
 /* Responsive tweaks */
