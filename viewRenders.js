@@ -149,8 +149,8 @@ views.get("/groups", (request, response) => {
   let email = request.headers.cookie.split(";")[0].substring(5);
 
 
-  IDs = getGroupData(db, email, "id");
-  names = getGroupData(db, email, "name");
+  let IDs = getGroupData(db, email, "id");
+  let names = getGroupData(db, email, "name");
 
   response.render("pages/FS_Groups", {
      ids: IDs, names: names
