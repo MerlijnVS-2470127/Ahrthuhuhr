@@ -152,7 +152,15 @@
                   <% } %>
 
                   <div class="event-actions">
-                    <a class="btn btn-primary event-button">Pointless button</a>
+                    <a
+                      href="/events/<%= ev.id %>"
+                      class="btn btn-primary event-button"
+                      role="button"
+                      title="View event: <%= ev.title %>"
+                      aria-label="View event <%= ev.title %>"
+                    >
+                      View event
+                    </a>
                   </div>
                 </div>
               </article>

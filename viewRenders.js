@@ -283,6 +283,94 @@ views.get("/events", (request, response) => {
   }
 });
 
+//event view pagina per event
+views.get("/events/:id", (req, res) => {
+  const eventId = Number(req.params.id);
+  if (!Number.isFinite(eventId)) return res.status(400).send("invalid id");
+  try {
+    const eventId = Number(req.params.id);
+    if (!Number.isFinite(eventId)) return res.status(400).send("invalid id");
+
+    // parse cookie user
+    const cookies = req.cookies || {};
+    const userEmail = cookies.user || "";
+    const userRow = userEmail
+      ? db
+          .prepare("SELECT id, email, username FROM users WHERE email = ?")
+          .get(userEmail)
+      : null;
+    const userId = userRow ? userRow.id : null;
+    const username = userRow ? userRow.username : "";
+
+    // fetch event
+    const evRow = db
+      .prepare(
+        `SELECT e.*, g.name AS group_name
+       FROM events e
+       LEFT JOIN groups g ON e.group_id = g.id
+       WHERE e.id = ?`
+      )
+      .get(eventId);
+
+    if (!evRow) return res.status(404).send("Event not found");
+
+    // format times
+    const startMs = evRow.start_time ? Number(evRow.start_time) : null;
+    const endMs = evRow.end_time ? Number(evRow.end_time) : null;
+
+    const start = startMs
+      ? new Date(startMs).toLocaleString("en-GB", {
+          dateStyle: "medium",
+          timeStyle: "short",
+          hour12: false,
+        })
+      : "TBD";
+    const end = endMs
+      ? new Date(endMs).toLocaleString("en-GB", {
+          dateStyle: "medium",
+          timeStyle: "short",
+          hour12: false,
+        })
+      : "";
+
+    const event = {
+      id: evRow.id,
+      title: evRow.title,
+      description: evRow.description,
+      start,
+      end,
+      status: evRow.status,
+      location: evRow.location || "",
+      lat: evRow.location_lat != null ? Number(evRow.location_lat) : null,
+      lng: evRow.location_lng != null ? Number(evRow.location_lng) : null,
+      group_id: evRow.group_id,
+      group_name: evRow.group_name,
+      creator_id: evRow.creator_id,
+    };
+
+    // fetch current user's attendance (if logged in)
+    let myAttendance = null;
+    if (userId) {
+      const a = db
+        .prepare(
+          "SELECT status FROM eventusers WHERE event_id = ? AND user_id = ?"
+        )
+        .get(eventId, userId);
+      if (a && a.status) myAttendance = a.status;
+    }
+
+    res.render("pages/FS_EventView", {
+      event,
+      myAttendance,
+      username,
+      userId,
+    });
+  } catch (err) {
+    console.error("Error rendering event view", err);
+    res.status(500).send("Server error");
+  }
+});
+
 //eventcreation pagina
 views.get("/events/eventcreation", (request, response) => {
   response.redirect("/events/new");

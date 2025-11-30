@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/FS_Standard_Head'); %>
+    <title><%= event.title %> - Fellowships</title>
+    <link rel="stylesheet" href="/css/FS_Events.css" />
+    <script src="/js/FS_EventView.js" defer></script>
+  </head>
+
+  <header><%- include('../partials/FS_Header'); %></header>
+
+  <div class="main-content-wrapper">
+    <body>
+      <div class="main_div">
+        <main class="container events-list">
+          <div class="events-header-row">
+            <div class="page_header"><%= event.title %></div>
+          </div>
+
+          <hr />
+
+          <section class="event-details">
+            <!-- Group badge above date -->
+            <div class="mb-2">
+              <small
+                class="badge bg-light text-muted"
+                title="<%= event.group_name %>"
+              >
+                <%= event.group_name %>
+              </small>
+            </div>
+
+            <!-- Date -->
+            <div class="mb-2">
+              <strong>Date:</strong>
+              <span
+                ><%= event.start %><% if (event.end) { %> — <%= event.end %><% }
+                %></span
+              >
+            </div>
+
+            <!-- Location -->
+            <div class="mb-2">
+              <strong>Location:</strong>
+              <% if (event.lat && event.lng) { %>
+              <a
+                href="/map?lat=<%= event.lat %>&lng=<%= event.lng %>&label=<%= encodeURIComponent(event.location) %>"
+              >
+                <%= event.location %>
+              </a>
+              <% } else { %>
+              <span><%= event.location || "—" %></span>
+              <% } %>
+            </div>
+
+            <!-- Description -->
+            <% if (event.description) { %>
+            <div class="mb-3">
+              <strong>Description:</strong>
+              <p><%= event.description %></p>
+            </div>
+            <% } %>
+
+            <!-- Status -->
+            <div class="mb-3">
+              <strong>Status:</strong>
+              <span class="badge bg-light text-muted"><%= event.status %></span>
+            </div>
+
+            <!-- Attendance controls -->
+            <div class="mb-3">
+              <label class="form-label"><strong>Your attendance</strong></label>
+              <div
+                id="attendanceControls"
+                class="d-flex gap-2 align-items-center"
+              >
+                <div class="form-check">
+                  <input class="form-check-input attendance-radio" type="radio"
+                  name="attendance" id="att_going" value="going" <%=
+                  myAttendance === 'going' ? 'checked' : '' %> />
+                  <label class="form-check-label" for="att_going">Going</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input attendance-radio" type="radio"
+                  name="attendance" id="att_interested" value="interested" <%=
+                  myAttendance === 'interested' ? 'checked' : '' %> />
+                  <label class="form-check-label" for="att_interested"
+                    >Interested</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input attendance-radio" type="radio"
+                  name="attendance" id="att_declined" value="declined" <%=
+                  myAttendance === 'declined' ? 'checked' : '' %> />
+                  <label class="form-check-label" for="att_declined"
+                    >Declined</label
+                  >
+                </div>
+
+                <button id="saveAttendanceBtn" class="btn btn-primary btn-sm">
+                  Save
+                </button>
+                <button
+                  id="viewAttendeesBtn"
+                  class="btn btn-outline-secondary btn-sm"
+                >
+                  View attendees
+                </button>
+              </div>
+            </div>
+          </section>
+          <!-- Flavor text -->
+          <div class="mb-3 text-muted">
+            <em>Resources coming soon!</em>
+          </div>
+          <div id="attendanceMsg" class="mt-2"></div>
+
+          <!-- Attendees modal -->
+          <div
+            class="modal fade"
+            id="attendeesModal"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Attendees</h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body" id="attendeesList">
+                  <!-- Filled by JS -->
+                  <div class="text-center text-muted">Loading…</div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Toast container -->
+          <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
+            <div id="toastContainer"></div>
+          </div>
+        </main>
+      </div>
+    </body>
+  </div>
+
+  <footer><%- include('../partials/FS_Footer'); %></footer>
+</html>

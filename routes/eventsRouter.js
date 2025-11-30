@@ -21,6 +21,7 @@ function parseCookieCookie(req) {
     }, {});
 }
 
+// Event creation routers
 // GET /events/new  -> render creation page with groups filtered for user
 router.get("/events/new", (req, res) => {
   const cookies = parseCookieCookie(req);
@@ -151,6 +152,77 @@ router.post("/events/create", (req, res) => {
     return res.status(201).json({ id: info.lastInsertRowid });
   } catch (err) {
     console.error("create event error", err);
+    return res.status(500).json({ error: "server error" });
+  }
+});
+
+//Event view routings
+// POST /events/:id/attendance
+router.post("/events/:id/attendance", (req, res) => {
+  const eventId = Number(req.params.id);
+  if (!Number.isFinite(eventId)) return res.status(400).send("invalid id");
+  try {
+    // simple cookie parser function already in file: parseCookieCookie(req)
+    const cookies = parseCookieCookie(req);
+    const userEmail = cookies.user || "";
+    if (!userEmail) return res.status(401).json({ error: "not authenticated" });
+
+    const userRow = db
+      .prepare("SELECT id FROM users WHERE email = ?")
+      .get(userEmail);
+    if (!userRow) return res.status(401).json({ error: "invalid user" });
+    const userId = userRow.id;
+
+    const eventId = Number(req.params.id);
+    if (!Number.isFinite(eventId))
+      return res.status(400).json({ error: "invalid id" });
+
+    const status = String(req.body.status || "").trim();
+    if (!["going", "interested", "declined"].includes(status))
+      return res.status(400).json({ error: "invalid status" });
+
+    // Upsert into eventusers (better-sqlite3: try update, then insert)
+    const update = db.prepare(
+      `UPDATE eventusers SET status = ?, joined_at = ? WHERE event_id = ? AND user_id = ?`
+    );
+    const now = Date.now();
+    const ures = update.run(status, now, eventId, userId);
+    if (ures.changes === 0) {
+      const insert = db.prepare(
+        `INSERT INTO eventusers (event_id, user_id, status, joined_at) VALUES (?, ?, ?, ?)`
+      );
+      insert.run(eventId, userId, status, now);
+    }
+
+    return res.json({ ok: true, status });
+  } catch (err) {
+    console.error("attendance error", err);
+    return res.status(500).json({ error: "server error" });
+  }
+});
+
+// GET /events/:id/attendees
+router.get("/events/:id/attendees", (req, res) => {
+  const eventId = Number(req.params.id);
+  if (!Number.isFinite(eventId)) return res.status(400).send("invalid id");
+  try {
+    const eventId = Number(req.params.id);
+    if (!Number.isFinite(eventId))
+      return res.status(400).json({ error: "invalid id" });
+
+    const rows = db
+      .prepare(
+        `SELECT eu.user_id, u.username, eu.status, eu.joined_at
+       FROM eventusers eu
+       JOIN users u ON u.id = eu.user_id
+       WHERE eu.event_id = ?
+       ORDER BY eu.joined_at ASC`
+      )
+      .all(eventId);
+
+    return res.json({ ok: true, attendees: rows });
+  } catch (err) {
+    console.error("attendees error", err);
     return res.status(500).json({ error: "server error" });
   }
 });

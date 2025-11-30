@@ -4,7 +4,7 @@ import { seedExampleData } from "./exampleData.js";
 import viewRenders from "./viewRenders.js";
 import mapRouter from "./routes/mapRouter.js";
 import chatmessagesRouter from "./routes/chatmessagesRouter.js";
-import eventsRouter from "./routes/eventcreationRouter.js";
+import eventsRouter from "./routes/eventsRouter.js";
 import "./jobs/eventStatusChecker.js";
 
 const app = express();
