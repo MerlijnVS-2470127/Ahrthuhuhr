@@ -124,9 +124,9 @@ export function seedExampleData() {
       },
       {
         owner_id: users[4].id, //Elric
-        name: "Kroegentocht scherpenheuvel (titel extra lang maken met onnodige tekst :D)",
+        name: "Kroegentocht scherpenheuvel (titel extra lang maken met onnodige tekst :D)AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         description:
-          "We gaan te voet naar scherpenheuvel, jaja te voet naar scherpenheuvel. En wanneer komen wij daar aan, met zo veel kroegen langs de baan?",
+          "We gaan te voet naar scherpenheuvel, jaja te voet naar scherpenheuvel. En wanneer komen wij daar aan, met al die kroegen langs de baan?AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
       },
       {
         owner_id: users[2].id, //Gerben
@@ -158,6 +158,7 @@ export function seedExampleData() {
     const exampleGroupUsers = [
       //testgroup
       { group_id: groups[0].id, user_id: users[1].id, role: "owner" }, //John
+      { group_id: groups[0].id, user_id: users[0].id, role: "admin" }, //admin
       { group_id: groups[0].id, user_id: users[2].id, role: "admin" }, //Gerben
       { group_id: groups[0].id, user_id: users[3].id, role: "admin" }, //Merlijn
       { group_id: groups[0].id, user_id: users[5].id, role: "member" }, //Yara
@@ -165,12 +166,14 @@ export function seedExampleData() {
 
       //new york trip
       { group_id: groups[1].id, user_id: users[1].id, role: "owner" }, //John
+      { group_id: groups[1].id, user_id: users[0].id, role: "admin" }, //admin
       { group_id: groups[1].id, user_id: users[2].id, role: "member" }, //Gerben
       { group_id: groups[1].id, user_id: users[3].id, role: "member" }, //Merlijn
       { group_id: groups[1].id, user_id: users[5].id, role: "lurker" }, //Yara
 
       //uitstap hasselt
       { group_id: groups[2].id, user_id: users[3].id, role: "owner" }, //Merlijn
+      { group_id: groups[2].id, user_id: users[0].id, role: "admin" }, //admin
       { group_id: groups[2].id, user_id: users[9].id, role: "admin" }, //Ronny
       { group_id: groups[2].id, user_id: users[10].id, role: "admin" }, //Vansh
       { group_id: groups[2].id, user_id: users[2].id, role: "member" }, //Gerben
@@ -183,6 +186,7 @@ export function seedExampleData() {
 
       //kroegentocht scherpenheuvel
       { group_id: groups[3].id, user_id: users[4].id, role: "owner" }, //Elric
+      { group_id: groups[3].id, user_id: users[0].id, role: "admin" }, //admin
       { group_id: groups[3].id, user_id: users[2].id, role: "admin" }, //Gerben
       { group_id: groups[3].id, user_id: users[3].id, role: "member" }, //Merlijn
       { group_id: groups[3].id, user_id: users[7].id, role: "member" }, //Michael
@@ -192,6 +196,7 @@ export function seedExampleData() {
 
       //roadtrip riemst
       { group_id: groups[4].id, user_id: users[2].id, role: "owner" }, //Gerben
+      { group_id: groups[4].id, user_id: users[0].id, role: "admin" }, //admin
       { group_id: groups[4].id, user_id: users[3].id, role: "admin" }, //Merlijn
       { group_id: groups[4].id, user_id: users[6].id, role: "admin" }, //Rob
       { group_id: groups[4].id, user_id: users[4].id, role: "member" }, //Elric
@@ -246,8 +251,8 @@ export function seedExampleData() {
         group_id: groups[0].id,
         title: "Event in the very distant future",
         description: "Guys I don't think this will ever take place",
-        start_time: now + oneDay * 30,
-        end_time: now + oneDay * 31,
+        start_time: now + oneDay * 100,
+        end_time: now + oneDay * 101,
         status: "planned",
         location: "Community Center, Test City",
         location_lat: null,

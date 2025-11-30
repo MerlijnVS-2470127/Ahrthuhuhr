@@ -4,7 +4,7 @@
     <%- include('../partials/FS_Standard_Head'); %>
     <title>Events - Fellowships</title>
     <link rel="stylesheet" href="/css/FS_Events.css" />
-    <script src="/js/FS_Events.js"></script>
+    <script src="/js/FS_Events.js" defer></script>
   </head>
 
   <header><%- include('../partials/FS_Header'); %></header>
@@ -26,53 +26,145 @@
 
           <hr />
 
-          <% if (Array.isArray(events) && events.length) { %>
-          <div class="events-grid">
-            <% events.forEach(ev => { %>
-            <article
-              class="event-tile"
-              role="article"
-              aria-labelledby="ev-<%= ev.id %>-title"
-            >
-              <div class="event-content">
-                <h2 id="ev-<%= ev.id %>-title" class="event-title">
-                  <%= ev.title %>
-                </h2>
-
-                <div class="event-date" aria-hidden="true">
-                  <%= ev.start %> <% if (ev.end) { %> — <%= ev.end %> <% } %>
-                </div>
-
-                <div class="event-location-block">
-                  <span class="visually-hidden">Location: </span>
-                  <% if (ev.lat && ev.lng) { %>
-                  <a
-                    href="#map"
-                    class="event-location"
-                    data-lat="<%= ev.lat %>"
-                    data-lng="<%= ev.lng %>"
-                    data-label="<%= ev.location %>"
-                  >
-                    <%= ev.location %>
-                  </a>
-                  <% } else { %>
-                  <span class="event-location-text"><%= ev.location %></span>
-                  <% } %>
-                </div>
-
-                <% if (ev.description) { %>
-                <p class="event-description"><%= ev.description %></p>
-                <% } %>
-
-                <div class="event-actions">
-                  <a class="btn btn-primary event-button">Pointless button</a>
-                </div>
+          <!-- FILTERS -->
+          <div
+            class="mb-3 d-flex flex-column flex-sm-row gap-2 align-items-start align-items-sm-center"
+          >
+            <div class="d-flex gap-2 align-items-center">
+              <label class="me-2 fw-semibold">Status:</label>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input status-filter"
+                  type="checkbox"
+                  id="filter_planned"
+                  value="planned"
+                />
+                <label class="form-check-label" for="filter_planned"
+                  >Planned</label
+                >
               </div>
-            </article>
-            <% }) %>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input status-filter"
+                  type="checkbox"
+                  id="filter_happening-now"
+                  value="happening now"
+                />
+                <label class="form-check-label" for="filter_happening-now"
+                  >Happening now</label
+                >
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input status-filter"
+                  type="checkbox"
+                  id="filter_ended"
+                  value="ended"
+                />
+                <label class="form-check-label" for="filter_ended">Ended</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input status-filter"
+                  type="checkbox"
+                  id="filter_cancelled"
+                  value="cancelled"
+                />
+                <label class="form-check-label" for="filter_cancelled"
+                  >Cancelled</label
+                >
+              </div>
+            </div>
+
+            <div class="ms-auto">
+              <label for="groupFilter" class="form-label visually-hidden"
+                >Group filter</label
+              >
+              <select id="groupFilter" class="form-select">
+                <option value="all">All groups</option>
+                <% if (Array.isArray(userGroups)) { %> <%
+                userGroups.forEach(function(g) { const gAbbrev = (g.abbrev !==
+                undefined) ? g.abbrev : (g.name && g.name.length > 15 ?
+                g.name.slice(0,14) + '…' : g.name); %>
+                <option value="<%= g.id %>" title="<%= g.name %>">
+                  <%= gAbbrev %>
+                </option>
+                <% }) %> <% } %>
+              </select>
+            </div>
+          </div>
+
+          <!-- EVENTS GRID -->
+          <% if (Array.isArray(events) && events.length) { %>
+          <div id="eventsGridWrapper">
+            <div id="eventsGrid" class="events-grid">
+              <% events.forEach(function(ev) { %> <% var statusClass =
+              (ev.status || 'planned').replace(/\s+/g, '-').toLowerCase(); %>
+              <article
+                class="event-tile"
+                role="article"
+                aria-labelledby="ev-<%= ev.id %>-title"
+                data-status="<%= ev.status %>"
+                data-group-id="<%= ev.group_id %>"
+              >
+                <div class="event-content">
+                  <h2
+                    id="ev-<%= ev.id %>-title"
+                    class="event-title status-<%= statusClass %>"
+                    title="<%= ev.title %>"
+                  >
+                    <%= ev.title %>
+                  </h2>
+
+                  <!-- Group name above date -->
+                  <div class="mb-1">
+                    <small
+                      class="badge bg-light text-muted"
+                      title="<%= ev.group_name || '' %>"
+                    >
+                      <%= ev.group_name_abbrev || ev.group_name || '—' %>
+                    </small>
+                  </div>
+
+                  <div class="event-date" aria-hidden="true">
+                    <%= ev.start %> <% if (ev.end) { %> — <%= ev.end %> <% } %>
+                  </div>
+
+                  <div class="event-location-block">
+                    <span class="visually-hidden">Location: </span>
+                    <% if (ev.lat && ev.lng) { %>
+                    <a
+                      href="#map"
+                      class="event-location"
+                      data-lat="<%= ev.lat %>"
+                      data-lng="<%= ev.lng %>"
+                      data-label="<%= ev.location %>"
+                    >
+                      <%= ev.location %>
+                    </a>
+                    <% } else { %>
+                    <span class="event-location-text"><%= ev.location %></span>
+                    <% } %>
+                  </div>
+
+                  <% if (ev.description) { %>
+                  <p class="event-description"><%= ev.description %></p>
+                  <% } %>
+
+                  <div class="event-actions">
+                    <a class="btn btn-primary event-button">Pointless button</a>
+                  </div>
+                </div>
+              </article>
+              <% }) %>
+            </div>
+
+            <p id="noMatchMsg" style="display: none">
+              No events match your filters.
+            </p>
           </div>
           <% } else { %>
-          <p>No events found.</p>
+          <p id="noEventsServer">No events found.</p>
           <% } %>
         </main>
       </div>

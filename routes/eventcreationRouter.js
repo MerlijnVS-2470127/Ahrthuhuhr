@@ -2,6 +2,12 @@ import express from "express";
 import { db } from "../db.js"; // pad aanpassen indien nodig
 const router = express.Router();
 
+function abbreviate(name, max = 25) {
+  if (!name) return "";
+  const s = String(name);
+  return s.length > max ? s.slice(0, max - 1) + "…" : s;
+}
+
 // helper: parse cookie header quickly (server-side)
 function parseCookieCookie(req) {
   const header = req.headers.cookie || "";
@@ -18,40 +24,33 @@ function parseCookieCookie(req) {
 // GET /events/new  -> render creation page with groups filtered for user
 router.get("/events/new", (req, res) => {
   const cookies = parseCookieCookie(req);
-  const userEmail = cookies.user || ""; // cookie format: user=<email>
+  const userEmail = cookies.user || "";
 
-  // find user id (if any)
   const userRow = userEmail
     ? db
         .prepare("SELECT id, email, username FROM users WHERE email = ?")
         .get(userEmail)
     : null;
+
   let groups = [];
 
   if (userRow) {
-    if (userRow.email === "admin") {
-      // admin sees all groups
-      groups = db.prepare("SELECT id, name FROM groups ORDER BY name").all();
-    } else {
-      // groups where user is a member
-      groups = db
-        .prepare(
-          `
-        SELECT g.id, g.name
-        FROM groups g
-        JOIN groupusers gu ON gu.group_id = g.id
-        WHERE gu.user_id = ?
-        ORDER BY g.name
-      `
-        )
-        .all(userRow.id);
-    }
+    groups = db
+      .prepare(
+        `
+      SELECT g.id, g.name
+      FROM groups g
+      JOIN groupusers gu ON gu.group_id = g.id
+      WHERE gu.user_id = ?
+      ORDER BY g.name
+    `
+      )
+      .all(userRow.id)
+      .map((g) => ({ id: g.id, name: g.name, abbrev: abbreviate(g.name, 25) })); // abbrev for select
   } else {
-    // not logged in or unknown user: show no groups (or you may decide to show public groups)
     groups = [];
   }
 
-  // pass creator id (to show in form hidden or not) — we won't trust client, but helpful for UI
   const creator_id = userRow ? userRow.id : null;
 
   res.render("pages/FS_EventCreation", { groups, creator_id, userEmail });
@@ -122,25 +121,14 @@ router.post("/events/create", (req, res) => {
 
     // ensure group_id is a group the user may post to (admin or member)
     const gidNum = Number(group_id);
-    if (!Number.isFinite(gidNum))
-      return res.status(400).json({ error: "invalid group" });
+    const member = db
+      .prepare("SELECT 1 FROM groupusers WHERE group_id = ? AND user_id = ?")
+      .get(gidNum, creatorId);
 
-    // check membership or admin
-    const userRow = db
-      .prepare("SELECT id, email FROM users WHERE id = ?")
-      .get(creatorId);
-    if (!userRow) return res.status(401).json({ error: "invalid user" });
-
-    if (userRow.email !== "admin") {
-      const member = db
-        .prepare("SELECT 1 FROM groupusers WHERE group_id = ? AND user_id = ?")
-        .get(gidNum, creatorId);
-      if (!member)
-        return res
-          .status(403)
-          .json({ error: "not a member of the selected group" });
-    } else {
-      // admin ok
+    if (!member) {
+      return res
+        .status(403)
+        .json({ error: "not a member of the selected group" });
     }
 
     const insert = db.prepare(`

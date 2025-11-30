@@ -102,8 +102,10 @@
                 <option value="">No groups available</option>
                 <% } else { %>
                 <option value="">Select a group</option>
-                <% groups.forEach(g => { %>
-                <option value="<%= g.id %>"><%= g.name %></option>
+                <% groups.forEach(function(g) { %>
+                <option value="<%= g.id %>" title="<%= g.name %>">
+                  <%= (g.abbrev !== undefined ? g.abbrev : g.name) %>
+                </option>
                 <% }) %> <% } %>
               </select>
               <div class="invalid-feedback">Choose a group.</div>
