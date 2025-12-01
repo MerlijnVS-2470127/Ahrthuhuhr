@@ -350,8 +350,14 @@ views.get("/events", (request, response) => {
   }
 });
 
+//eventcreation pagina
+views.get("/events/eventcreation", (request, response) => {
+  response.redirect("/events/new");
+});
+
 //event view pagina per event
-views.get("/events/:id", (req, res) => {
+views.get("/events/:id", (req, res, next) => {
+  if (!/^\d+$/.test(String(req.params.id))) return next();
   const eventId = Number(req.params.id);
   if (!Number.isFinite(eventId)) return res.status(400).send("invalid id");
   try {
@@ -436,11 +442,6 @@ views.get("/events/:id", (req, res) => {
     console.error("Error rendering event view", err);
     res.status(500).send("Server error");
   }
-});
-
-//eventcreation pagina
-views.get("/events/eventcreation", (request, response) => {
-  response.redirect("/events/new");
 });
 
 export default views;
