@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/FS_Standard_Head'); %>
+    <title>Group Creation - Fellowships</title>
+    <script>
+      window.message = "<%= message %>";
+    </script>
+    <link rel="stylesheet" href="/css/FS_Groups.css" />
+    <script src="/js/FS_GroupCreation.js" defer></script>
+  </head>
+
+  <header><%- include('../partials/FS_Header'); %></header>
+
+  <div class="main-content-wrapper">
+    <body>
+      <div class="main_div">
+        <main class="groups-list container">
+          <div class="groups-header-row">
+            <div class="page_header">Groups</div>
+          </div>
+          <hr />
+          <!--Group name-->
+          <form id="groupCreateForm">
+            <label for="name" class="form-label"
+              >Group name <span class="text-danger">*</span></label
+            >
+            <input id="name" name="name" class="form-control" type="text" />
+            <div class="error" id="nameError"></div>
+
+            <!--Group description-->
+            <label for="description" class="form-label" id="description-label"
+              >Description</label
+            >
+            <input
+              id="description"
+              name="description"
+              class="form-control"
+              type="text"
+            />
+
+            <!--Submit button-->
+            <button type="button" id="submitBtn" class="btn btn-primary">
+              Create group
+            </button>
+          </form>
+        </main>
+      </div>
+    </body>
+  </div>
+
+  <footer><%- include('../partials/FS_Footer'); %></footer>
+</html>

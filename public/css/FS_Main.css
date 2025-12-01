@@ -72,3 +72,15 @@ hr {
 .hidden {
   visibility: hidden;
 }
+
+/*Gives all inputs a box shadow*/
+input {
+  box-shadow: 5px 5px 20px var(--bs-secondary);
+}
+
+/*Gives all errors the same style*/
+.error {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 15px;
+}

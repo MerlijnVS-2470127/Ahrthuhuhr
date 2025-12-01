@@ -11,29 +11,32 @@
 
 .card {
   /*margin: 20px;*/
-  max-height: 25%;
-  max-width: 30%;
+  max-height: 400px;
+  width: 22%;
   position: relative;
   display: flex;
   margin: 1%;
 }
 
 .card-body {
-  padding: 25px;
+  padding: 15px;
+  overflow: scroll;
 }
 
 .card-title {
   --bs-card-title-color: var(--bs-primary) !important;
-  overflow: hidden;
+  max-height: 110px;
+  overflow: scroll;
+  margin-bottom: 0;
+}
+
+.list-group-item {
+  overflow: scroll;
 }
 
 /*
   End of bootstrap overwrites
 */
-
-.list-group-item {
-  overflow: auto;
-}
 
 #btn_createGroup {
   padding: 0.45rem 1rem;
@@ -69,4 +72,13 @@
   text-decoration: none;
   font-weight: 600;
   color: var(--bs-secondary);
+}
+
+/* create group page */
+#description-label {
+  margin-top: 20px;
+}
+
+#submitBtn {
+  margin-top: 20px;
 }

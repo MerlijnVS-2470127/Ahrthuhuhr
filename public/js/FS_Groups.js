@@ -1,6 +1,14 @@
+// ---------------------------------//
+// JS functions for the groups page //
+// ---------------------------------//
+
 let ids = window.ids;
 let names = window.names;
 let descriptions = window.descriptions;
+
+// ------------------//
+// General functions //
+// ------------------//
 
 function decodeString(string) {
   if (string.length != 0) {
@@ -24,28 +32,32 @@ function loadGroups() {
   } else {
     for (let i = 0; i < ids.length; i++) {
       parent.innerHTML +=
-        '<div class="card" style="width: 18rem">' +
-        '<div class="card-header">' +
+        '<div class="card" style="">' +
+        '<div class="card-header list-group-header">' +
         '<h1 class="card-title">' +
         names[i] +
         "</h1>" +
         "</div>" +
-        '<ul class="list-group list-group-flush">' +
-        '<li class="list-group-item">' +
+        '<div class="card-body">' +
         descriptions[i] +
-        "</li>" +
-        '<li class="list-group-item">' +
+        "</div>" +
+        '<div class="card-footer">' +
         '<button class="group-button btn btn-primary" type="button" id="' +
         ids[i] +
         '">' +
         "Open chat" +
         " </button>" +
-        "</li>" +
-        "</ul>" +
+        "</div>" +
         "</div>";
     }
   }
 }
+
+// ----------------//
+// Event listeners //
+// ----------------//
+
+btn_createGroup = document.getElementById("btn_createGroup");
 
 addEventListener("load", (e) => {
   let buttons = document.getElementsByClassName("group-button");

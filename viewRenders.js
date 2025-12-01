@@ -13,6 +13,11 @@ import {
   getGroupData,
   formatToEncodedString,
 } from "./public/js/groupModule.js";
+import {
+  getIdbyEmail,
+  getCurrentUser,
+  getCookieByName,
+} from "./public/js/getUserInfo.js";
 import cookieParser from "cookie-parser";
 
 const views = express();
@@ -22,20 +27,24 @@ views.use(cookieParser());
 // Home page render //
 //------------------//
 views.get("/", (request, response) => {
-  let userCookie = request.headers.cookie.split(";")[0].substring(5);
+  if (isAuthorized(request, db)) {
+    let userCookie = request.headers.cookie.split(";")[0].substring(5);
 
-  let username = checkUsername(db, userCookie);
+    let username = checkUsername(db, userCookie);
 
-  response.render("pages/FS_Home", {
-    username: username,
-  });
+    response.render("pages/FS_Home", {
+      username: username,
+    });
+  } else {
+    goToLogin(request, response);
+  }
 });
 
 //-----------------//
 // FAQ page render //
 //-----------------//
 views.get("/faq", (request, response) => {
-  if (isAuthorized(request, response, db)) {
+  if (isAuthorized(request, db)) {
     response.render("pages/FS_FAQ");
   } else {
     goToLogin(request, response);
@@ -111,7 +120,7 @@ views.get("/profile/:data/:changed/:email", (request, response) => {
   let changeStatus = true;
   let currentUsername = "error loading username";
 
-  if (isAuthorized(request, response, db)) {
+  if (isAuthorized(request, db)) {
     if (changed != "null" && data != "null") {
       changeStatus = changeData(request, response, db, data, changed, email);
     }
@@ -144,7 +153,8 @@ views.get("/map", (request, response) => {
 
 //general group page
 views.get("/groups", (request, response) => {
-  let email = request.headers.cookie.split(";")[0].substring(5);
+  let email = getCurrentUser(request);
+  console.log("email: " + email);
 
   let IDs = getGroupData(db, email, "id");
   let names = getGroupData(db, email, "name");
@@ -159,6 +169,63 @@ views.get("/groups", (request, response) => {
     names: names,
     descriptions: descriptions,
   });
+});
+
+//group creation page
+views.get("/groups/create", (request, response) => {
+  if (isAuthorized(request, db)) {
+    let message = false;
+    response.render("pages/FS_GroupCreation", {
+      message: message,
+    });
+  } else {
+    goToLogin(request, response);
+  }
+});
+
+views.get("/groups/create/:name/:description", (request, response) => {
+  if (isAuthorized(request, db)) {
+    let email = request.headers.cookie.split(";")[0].substring(5);
+
+    const name = decodeURIComponent(request.params.name);
+    let description = decodeURIComponent(request.params.description);
+
+    if (description === "null") {
+      description = "";
+    }
+
+    email = getCurrentUser(request, db);
+
+    let owner_id = getIdbyEmail(db, email);
+
+    let newGroup = db
+      .prepare(
+        `INSERT INTO groups (owner_id, name, description) VALUES (?, ?, ?)`
+      )
+      .run(owner_id, name, description);
+
+    const newGroup_ids = db
+      .prepare(
+        `SELECT id FROM groups WHERE owner_id = ? AND name = ? AND description = ?`
+      )
+      .all(owner_id, name, description);
+
+    let newGroup_id = newGroup_ids[newGroup_ids.length - 1].id;
+
+    newGroup = db
+      .prepare(
+        `INSERT INTO groupusers (group_id, user_id, role) VALUES (?, ?, ?)`
+      )
+      .run(newGroup_id, owner_id, "owner");
+
+    let message = true;
+
+    response.render("pages/FS_GroupCreation", {
+      message: message,
+    });
+  } else {
+    goToLogin(request, response);
+  }
 });
 
 //chatpagina per groep

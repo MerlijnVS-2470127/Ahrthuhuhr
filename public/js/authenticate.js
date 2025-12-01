@@ -1,16 +1,19 @@
 "use strict";
 import express from "express";
 import cookieParser from "cookie-parser";
+import {
+  getIdbyEmail,
+  getCurrentUser,
+  getCookieByName,
+} from "./getUserInfo.js";
 
 let app = express();
 app.use(cookieParser());
 
-export function isAuthorized(req, res, db) {
+export function isAuthorized(req, db) {
   if (req.headers.cookie != undefined) {
-    if (
-      req.headers.cookie.startsWith("user=") &&
-      checkUserCookieValidity(req.headers.cookie.split(";")[0], db)
-    ) {
+    let email = getCurrentUser(req);
+    if (email != null && checkUserCookieValidity(email, db)) {
       return true;
     }
   }
@@ -86,9 +89,7 @@ function checkPasswordValidity(password) {
   return true;
 }
 
-function checkUserCookieValidity(userCookie, db) {
-  let email = userCookie.substring(5);
-
+function checkUserCookieValidity(email, db) {
   const users = db
     .prepare(`SELECT email FROM users WHERE email = ?`)
     .all(email);
