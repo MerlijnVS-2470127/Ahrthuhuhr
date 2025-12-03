@@ -356,6 +356,10 @@ views.get("/events/eventcreation", (request, response) => {
 });
 
 //Shippy pagina
+views.get("/shippy", (request, response) => {
+  response.render("pages/FS_Shippy.ejs");
+});
+
 views.get("/events/shippy", (request, response) => {
   response.render("pages/FS_Shippy.ejs");
 });
