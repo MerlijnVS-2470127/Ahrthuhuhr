@@ -355,6 +355,11 @@ views.get("/events/eventcreation", (request, response) => {
   response.redirect("/events/new");
 });
 
+//Shippy pagina
+views.get("/events/shippy", (request, response) => {
+  response.render("pages/FS_Shippy.ejs");
+});
+
 //event view pagina per event
 views.get("/events/:id", (req, res, next) => {
   if (!/^\d+$/.test(String(req.params.id))) return next();
