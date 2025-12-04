@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const saveBtn = document.getElementById("saveAttendanceBtn");
   const viewBtn = document.getElementById("viewAttendeesBtn");
+  const calenderBtn = document.getElementById("saveToCalenderBtn");
   const attendanceRadios = Array.from(
     document.querySelectorAll(".attendance-radio")
   );
@@ -129,6 +130,69 @@ document.addEventListener("DOMContentLoaded", () => {
     viewBtn.addEventListener("click", async () => {
       await loadAttendees();
       if (attendeesModal) attendeesModal.show();
+    });
+  }
+
+  if (calenderBtn) {
+    calenderBtn.addEventListener("click", async () => {
+      //get Data for calender entry
+      let titleText = document.getElementById("txt_eventTitle");
+      let dateStartText = document.getElementById("txt_eventDateStart");
+      let dateEndText = document.getElementById("txt_eventDateEnd");
+      let locationText = document.getElementById("txt_eventLocation");
+      let descriptionText = document.getElementById("txt_eventDescription");
+
+      let start, end, month, day;
+      let date = "";
+
+      //2025-12-02T20:18:00.000Z
+      //2013'11'24'T'01'00'00Z/20131124T020000Z
+
+      if (titleText) titleText = titleText.innerText;
+
+      if (dateStartText) {
+        start = new Date(dateStartText.innerText)
+          .toISOString()
+          .replace(/-|:|\.\d\d\d/g, "");
+
+        date = start + "/";
+      }
+
+      if (dateEndText) {
+        if (dateEndText.innerText != "") {
+          end = new Date(dateEndText.innerText)
+            .toISOString()
+            .replace(/-|:|\.\d\d\d/g, "");
+
+          date += end;
+        } else {
+          if (dateStartText) {
+            end = new Date(dateStartText.innerText).setHours(23);
+            end = new Date(end).setMinutes(59);
+            end = new Date(end).toISOString().replace(/-|:|\.\d\d\d/g, "");
+
+            date += end;
+          }
+        }
+      }
+
+      if (locationText) locationText = locationText.innerText.substring(10);
+
+      if (descriptionText) descriptionText = descriptionText.innerText;
+
+      //save to google calender
+      window.open(
+        "https://www.google.com/calendar/" +
+          "render?action=TEMPLATE&text=" +
+          encodeURIComponent(titleText) + //title
+          "&dates=" +
+          date +
+          "&details=" +
+          encodeURIComponent(descriptionText) + //description
+          "&location=" +
+          encodeURIComponent(locationText), //location
+        "_blank"
+      );
     });
   }
 });

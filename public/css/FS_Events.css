@@ -247,3 +247,8 @@
   outline: 3px solid rgba(33, 100, 119, 0.18);
   outline-offset: 2px;
 }
+
+#txt_eventGroup {
+  overflow: hidden;
+  max-width: 100%;
+}

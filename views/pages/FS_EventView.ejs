@@ -14,7 +14,9 @@
       <div class="main_div">
         <main class="container events-list">
           <div class="events-header-row">
-            <div class="page_header"><%= event.title %></div>
+            <div class="page_header" id="txt_eventTitle">
+              <%= event.title %>
+            </div>
           </div>
 
           <hr />
@@ -25,6 +27,7 @@
               <small
                 class="badge bg-light text-muted"
                 title="<%= event.group_name %>"
+                id="txt_eventGroup"
               >
                 <%= event.group_name %>
               </small>
@@ -34,13 +37,15 @@
             <div class="mb-2">
               <strong>Date:</strong>
               <span
-                ><%= event.start %><% if (event.end) { %> — <%= event.end %><% }
-                %></span
+                ><span id="txt_eventDateStart"><%= event.start %></span>
+                <% if (event.end) { %> —
+                <span id="txt_eventDateEnd"><%= event.end %></span>
+                <% } %></span
               >
             </div>
 
             <!-- Location -->
-            <div class="mb-2">
+            <div class="mb-2" id="txt_eventLocation">
               <strong>Location:</strong>
               <% if (event.lat && event.lng) { %>
               <a
@@ -57,7 +62,7 @@
             <% if (event.description) { %>
             <div class="mb-3">
               <strong>Description:</strong>
-              <p><%= event.description %></p>
+              <p id="txt_eventDescription"><%= event.description %></p>
             </div>
             <% } %>
 
@@ -107,6 +112,14 @@
                   View attendees
                 </button>
               </div>
+            </div>
+
+            <!-- Google Calender -->
+            <div class="mb-3">
+              <strong>Google Calender:</strong>
+              <button id="saveToCalenderBtn" class="btn btn-primary btn-sm">
+                Save to calender
+              </button>
             </div>
           </section>
           <!-- Flavor text -->
