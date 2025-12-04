@@ -142,27 +142,25 @@ document.addEventListener("DOMContentLoaded", () => {
       let locationText = document.getElementById("txt_eventLocation");
       let descriptionText = document.getElementById("txt_eventDescription");
 
-      let start, end, month, day;
       let date = "";
-
-      //2025-12-02T20:18:00.000Z
-      //2013'11'24'T'01'00'00Z/20131124T020000Z
 
       if (titleText) titleText = titleText.innerText;
 
+      //add start time to date
       if (dateStartText) {
-        start = new Date(dateStartText.innerText)
+        let start = new Date(dateStartText.innerText)
           .toISOString()
-          .replace(/-|:|\.\d\d\d/g, "");
+          .replace(/-|:|\.\d\d\d/g, ""); //regex van stack overflow https://stackoverflow.com/questions/10488831/link-to-add-to-google-calendar
 
         date = start + "/";
       }
 
+      //if an end time exists, add end time to date. Else, add the end of the day of the start time as end time to date
       if (dateEndText) {
         if (dateEndText.innerText != "") {
-          end = new Date(dateEndText.innerText)
+          let end = new Date(dateEndText.innerText)
             .toISOString()
-            .replace(/-|:|\.\d\d\d/g, "");
+            .replace(/-|:|\.\d\d\d/g, ""); //regex van stack overflow https://stackoverflow.com/questions/10488831/link-to-add-to-google-calendar
 
           date += end;
         } else {
