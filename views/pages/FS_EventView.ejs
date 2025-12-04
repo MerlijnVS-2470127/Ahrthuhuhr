@@ -29,7 +29,12 @@
                 title="<%= event.group_name %>"
                 id="txt_eventGroup"
               >
-                <%= event.group_name %>
+                <a
+                  href="/groups/<%= event.group_id %>"
+                  class="bg-light text-muted"
+                  style="font-size: 18px; text-decoration: none"
+                  ><%= event.group_name %>
+                </a>
               </small>
             </div>
 

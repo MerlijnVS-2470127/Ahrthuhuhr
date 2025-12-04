@@ -122,7 +122,12 @@
                       class="badge bg-light text-muted"
                       title="<%= ev.group_name || '' %>"
                     >
-                      <%= ev.group_name_abbrev || ev.group_name || '—' %>
+                      <a
+                        href="/groups/<%= ev.group_id %>"
+                        class="bg-light text-muted"
+                        style="font-size: 0.75rem; text-decoration: none"
+                        ><%= ev.group_name_abbrev || ev.group_name || '—' %>
+                      </a>
                     </small>
                   </div>
 
