@@ -4,3 +4,6 @@
 # database temp files
 *-shm
 *-wal
+
+# groq api key
+.env
