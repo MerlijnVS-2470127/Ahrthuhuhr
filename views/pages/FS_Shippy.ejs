@@ -3,6 +3,8 @@
   <head>
     <%- include('../partials/FS_Standard_Head'); %>
     <title>Shippy - Fellowships</title>
+    <link rel="stylesheet" href="/css/FS_Events.css" />
+    <script src="/js/FS_Shippy.js" defer></script>
   </head>
 
   <header><%- include('../partials/FS_Header'); %></header>
@@ -10,7 +12,47 @@
   <div class="main-content-wrapper">
     <body>
       <div class="main_div">
-        <div class="page_header">Shippyyyyy</div>
+        <div class="page_header">Shippy: find events in no time!</div>
+
+        <div class="card p-3 my-3">
+          <form id="shippyForm" class="row g-2 align-items-end">
+            <div class="col-sm-6">
+              <label for="shippyType" class="form-label"
+                >What are you looking for?</label
+              >
+              <input
+                id="shippyType"
+                name="type"
+                class="form-control"
+                type="text"
+                placeholder="e.g. restaurant, hotel, museum"
+                required
+              />
+            </div>
+
+            <div class="col-sm-6">
+              <label for="shippyLocation" class="form-label"
+                >Near which place?</label
+              >
+              <input
+                id="shippyLocation"
+                name="location"
+                class="form-control"
+                type="text"
+                placeholder="e.g. Leuven, Hasselt station, Grote Markt"
+                required
+              />
+            </div>
+
+            <div class="col-12 mt-2 d-grid d-sm-block">
+              <button id="shippySubmit" class="btn btn-primary">
+                Ask Shippy
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div id="shippyResults" class="my-3"></div>
       </div>
     </body>
   </div>

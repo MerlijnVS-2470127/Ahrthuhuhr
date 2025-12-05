@@ -5,6 +5,7 @@ import viewRenders from "./viewRenders.js";
 import mapRouter from "./routes/mapRouter.js";
 import chatmessagesRouter from "./routes/chatmessagesRouter.js";
 import eventsRouter from "./routes/eventsRouter.js";
+import shippyRouter from "./routes/shippyRouter.js";
 import "./jobs/eventStatusChecker.js";
 
 const app = express();
@@ -41,6 +42,7 @@ app.use("/", viewRenders);
 app.use("/", mapRouter);
 app.use("/", chatmessagesRouter);
 app.use("/", eventsRouter);
+app.use("/", shippyRouter);
 
 //Middleware to check if a user is logged in
 app.use((request, response, next) => {});

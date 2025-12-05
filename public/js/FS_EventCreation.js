@@ -45,6 +45,24 @@
         }
       }
 
+      const qTitle = params.get("title");
+      const qDesc = params.get("description");
+      if (
+        qTitle &&
+        document.getElementById("title") &&
+        !document.getElementById("title").value
+      ) {
+        document.getElementById("title").value = decodeURIComponent(qTitle);
+      }
+      if (
+        qDesc &&
+        document.getElementById("description") &&
+        !document.getElementById("description").value
+      ) {
+        document.getElementById("description").value =
+          decodeURIComponent(qDesc);
+      }
+
       if (filled) {
         // ensure user sees that coords are prefilled
         showToast("Location pre-filled from map.", "info", 2500);
