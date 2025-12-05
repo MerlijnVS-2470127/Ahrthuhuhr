@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showBusy();
 
     try {
-      const res = await fetch("/api/shippy/groq", {
+      const res = await fetch("/api/shippy/groq-photon", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type, location }),
