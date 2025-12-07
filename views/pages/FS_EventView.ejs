@@ -17,8 +17,28 @@
             <div class="page_header" id="txt_eventTitle">
               <%= event.title %>
             </div>
-          </div>
 
+            <% const isCreator = (typeof userId !== 'undefined' &&
+            event.creator_id && Number(userId) === Number(event.creator_id)); %>
+            <% if (isCreator) { %>
+            <div class="d-flex gap-2">
+              <a
+                href="/events/<%= event.id %>"
+                class="btn btn-primary create-event-btn"
+              >
+                Edit event <i class="bi bi-pencil"></i>
+              </a>
+
+              <!-- button to open upload modal -->
+              <button
+                id="openUploadModalBtn"
+                class="btn btn-primary create-event-btn"
+              >
+                Add resources <i class="bi bi-upload"></i>
+              </button>
+            </div>
+            <% } %>
+          </div>
           <hr />
 
           <section class="event-details">
@@ -74,7 +94,7 @@
             <!-- Status -->
             <div class="mb-3">
               <strong>Status:</strong>
-              <span class="badge bg-light text-muted"><%= event.status %></span>
+              <span class="bg-light text-muted"><%= event.status %></span>
             </div>
 
             <!-- Attendance controls -->
@@ -119,19 +139,26 @@
               </div>
             </div>
 
-            <!-- Google Calender -->
+            <div id="attendanceMsg" class="mt-2"></div>
+
+            <!-- Google calender & pdf download -->
             <div class="mb-3">
-              <strong>Google Calender:</strong>
               <button id="saveToCalenderBtn" class="btn btn-primary btn-sm">
                 Save to calender
               </button>
+              <button class="btn btn-primary btn-sm">Download pdf</button>
             </div>
           </section>
-          <!-- Flavor text -->
-          <div class="mb-3 text-muted">
-            <em>Resources coming soon!</em>
-          </div>
-          <div id="attendanceMsg" class="mt-2"></div>
+
+          <section id="event-resources-section" class="mt-4">
+            <h4>Resources</h4>
+            <div id="event-resources-list" class="d-flex flex-column gap-3">
+              <!-- resource cards injected here by JS -->
+              <div id="resources-loading" class="text-muted">
+                Loading resources…
+              </div>
+            </div>
+          </section>
 
           <!-- Attendees modal -->
           <div
@@ -171,6 +198,127 @@
           <!-- Toast container -->
           <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
             <div id="toastContainer"></div>
+          </div>
+          <!-- Upload modal (Bootstrap) -->
+          <div
+            class="modal fade"
+            id="resourceUploadModal"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <form
+                id="resourceUploadForm"
+                class="modal-content"
+                enctype="multipart/form-data"
+              >
+                <div class="modal-header">
+                  <h5 class="modal-title">Upload resource</h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="resourceFiles" class="form-label"
+                      >Select image(s)</label
+                    >
+                    <input
+                      id="resourceFiles"
+                      name="resources"
+                      class="form-control"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      required
+                    />
+                    <div class="form-text">
+                      Allowed: JPG, PNG, GIF, WEBP. Max size enforced on server.
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="resourceTag" class="form-label"
+                      >Tag / Title for these resources</label
+                    >
+                    <input
+                      id="resourceTag"
+                      name="tag"
+                      class="form-control"
+                      type="text"
+                      placeholder="e.g. hotel pass / lunch menu"
+                      required
+                    />
+                    <div class="form-text">
+                      This tag will display on each created resource card.
+                    </div>
+                  </div>
+
+                  <div
+                    id="uploadWarning"
+                    class="text-danger small"
+                    style="display: none"
+                  ></div>
+                </div>
+
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    id="uploadResourcesBtn"
+                    type="submit"
+                    class="btn btn-primary"
+                  >
+                    Upload
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Image viewer modal (click image to open bigger) -->
+          <div
+            class="modal fade"
+            id="resourceImageModal"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+              <div class="modal-content">
+                <div class="modal-body p-0">
+                  <img
+                    id="resourceImageModalImg"
+                    src=""
+                    alt=""
+                    style="width: 100%; height: auto; display: block"
+                  />
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <a
+                    id="resourceImageModalDownload"
+                    class="btn btn-primary"
+                    href="#"
+                    download
+                    >Download</a
+                  >
+                </div>
+              </div>
+            </div>
           </div>
         </main>
       </div>

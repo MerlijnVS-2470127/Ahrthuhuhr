@@ -7,3 +7,6 @@
 
 # groq api key
 .env
+
+# temp uploaded resources
+**/uploads/

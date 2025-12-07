@@ -252,3 +252,29 @@
   overflow: hidden;
   max-width: 98%;
 }
+
+/* resource card */
+.resource-card {
+  background: #fff;
+  align-items: flex-start;
+}
+
+.resource-card img {
+  border: 1px solid #eee;
+}
+
+/* small responsive tweak */
+@media (max-width: 576px) {
+  .resource-card {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .resource-card > div[style*="flex: 0 0 120px"] {
+    max-width: 100%;
+    flex: 0 0 auto;
+  }
+  .resource-card img {
+    height: 160px;
+    object-fit: cover;
+  }
+}

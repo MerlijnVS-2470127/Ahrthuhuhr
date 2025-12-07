@@ -1,5 +1,5 @@
 import express from "express";
-import { db } from "../db.js"; // pad aanpassen indien nodig
+import { db } from "../db.js";
 const router = express.Router();
 
 function abbreviate(name, max = 25) {

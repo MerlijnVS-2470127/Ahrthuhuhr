@@ -369,11 +369,9 @@ views.get("/events/:id", (req, res, next) => {
   if (!/^\d+$/.test(String(req.params.id))) return next();
   const eventId = Number(req.params.id);
   if (!Number.isFinite(eventId)) return res.status(400).send("invalid id");
-  try {
-    const eventId = Number(req.params.id);
-    if (!Number.isFinite(eventId)) return res.status(400).send("invalid id");
 
-    // parse cookie user
+  try {
+    // --- get user from cookie ---
     const cookies = req.cookies || {};
     const userEmail = cookies.user || "";
     const userRow = userEmail
@@ -381,22 +379,43 @@ views.get("/events/:id", (req, res, next) => {
           .prepare("SELECT id, email, username FROM users WHERE email = ?")
           .get(userEmail)
       : null;
-    const userId = userRow ? userRow.id : null;
-    const username = userRow ? userRow.username : "";
 
-    // fetch event
+    if (!userRow) {
+      return res.redirect("/events");
+    }
+
+    const userId = userRow.id;
+
+    // --- get event + group ---
     const evRow = db
       .prepare(
-        `SELECT e.*, g.name AS group_name
-       FROM events e
-       LEFT JOIN groups g ON e.group_id = g.id
-       WHERE e.id = ?`
+        `
+        SELECT e.*, g.name AS group_name
+        FROM events e
+        LEFT JOIN groups g ON e.group_id = g.id
+        WHERE e.id = ?
+      `
       )
       .get(eventId);
 
     if (!evRow) return res.status(404).send("Event not found");
 
-    // format times
+    // --- check group membership ---
+    const isMember = db
+      .prepare(
+        `
+        SELECT 1 FROM groupusers 
+        WHERE group_id = ? AND user_id = ?
+      `
+      )
+      .get(evRow.group_id, userId);
+
+    if (!isMember) {
+      // user not part of this group
+      return res.redirect("/events");
+    }
+
+    // --- format dates ---
     const startMs = evRow.start_time ? Number(evRow.start_time) : null;
     const endMs = evRow.end_time ? Number(evRow.end_time) : null;
 
@@ -430,7 +449,7 @@ views.get("/events/:id", (req, res, next) => {
       creator_id: evRow.creator_id,
     };
 
-    // fetch current user's attendance (if logged in)
+    // --- get attendance ---
     let myAttendance = null;
     if (userId) {
       const a = db
@@ -441,10 +460,11 @@ views.get("/events/:id", (req, res, next) => {
       if (a && a.status) myAttendance = a.status;
     }
 
+    // render page
     res.render("pages/FS_EventView", {
       event,
       myAttendance,
-      username,
+      username: userRow.username,
       userId,
     });
   } catch (err) {

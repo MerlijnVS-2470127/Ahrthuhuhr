@@ -10,20 +10,6 @@ export function InitializeDatabase() {
   db.pragma("foreign_keys = true;");
   db.pragma("temp_store = memory;");
 
-  // drop tables (debug purposes)s
-
-  // db.prepare(`DROP TABLE events`).run();
-  // db.prepare(`DROP TABLE eventusers`).run();
-  // db.prepare(`DROP TABLE groupusers`).run();
-  // db.prepare(`DROP TABLE groups`).run();
-  // db.prepare(`DROP TABLE users`).run();
-
-  //let groepInsert = db.prepare('INSERT INTO groupusers (group_id, user_id, role) VALUES (?,?,?)');
-
-  //for (let i = 4; i <= 6; i++) {
-  //  groepInsert.run(i, 3, "owner");
-  //}
-
   //prepare users
   db.prepare(
     `
@@ -96,6 +82,25 @@ export function InitializeDatabase() {
   `
   ).run();
 
+  // prepare event resources
+  db.prepare(
+    `CREATE TABLE IF NOT EXISTS resources (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_id INTEGER NOT NULL,
+      filename TEXT NOT NULL,        -- original filename
+      storage_name TEXT NOT NULL,    -- actual file name on disk
+      path TEXT NOT NULL,            -- relative path (e.g. uploads/events/123/abc.jpg)
+      mime TEXT NOT NULL,
+      size INTEGER NOT NULL,
+      tag TEXT,
+      uploader_id INTEGER,
+      uploaded_at INTEGER NOT NULL DEFAULT (cast(strftime('%s','now') as integer) * 1000),
+      FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE,
+      FOREIGN KEY(uploader_id) REFERENCES users(id) ON DELETE SET NULL
+    ) STRICT;
+  `
+  ).run();
+
   //prepare messages
   db.prepare(
     `
@@ -144,12 +149,7 @@ export function InitializeDatabase() {
   db.prepare(
     `CREATE INDEX IF NOT EXISTS idx_eventusers_status ON eventusers(status);`
   ).run();
-
-  /*const exampleUsers = [
-    { email: "admin", password: "admin", last_login: "/" },
-  ];
-  const insertUser = db.prepare("INSERT INTO users (email, password, last_login) VALUES (?,?,?)");
-  exampleUsers.forEach((user) => {
-    insertUser.run(user.email, user.password, user.last_login);
-  });*/
+  db.prepare(
+    `CREATE INDEX IF NOT EXISTS idx_resources_event ON resources(event_id);`
+  ).run();
 }

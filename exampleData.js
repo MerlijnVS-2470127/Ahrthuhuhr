@@ -334,7 +334,7 @@ export function seedExampleData() {
         start_time: now,
         end_time: now + oneDay * 10,
         status: "planned",
-        location: "Kathedraal scherpenheuvel",
+        location: "Basiliek scherpenheuvel",
         location_lat: null,
         location_lng: null,
       },
