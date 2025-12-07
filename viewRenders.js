@@ -230,14 +230,75 @@ views.get("/groups/create/:name/:description", (request, response) => {
 
 //chatpagina per groep
 views.get("/groups/:groupId", (request, response) => {
-  const groupId = request.params.groupId;
+  const groupId = Math.floor(request.params.groupId);
+
   //berichten van groep ophalen
   const messages = db
     .prepare(
       `SELECT id, group_id, user_name, content, created_at FROM messages WHERE group_id = ? ORDER BY created_at ASC`
     )
     .all(groupId);
-  response.render("pages/FS_Groupchat", { groupId, messages });
+
+  //info van groep ophalen
+  const group = db
+    .prepare(`SELECT id, owner_id, name, description FROM groups WHERE id = ?`)
+    .get(groupId);
+
+  //info van events ophalen
+  const rows = db
+    .prepare(
+      `SELECT id, creator_id, title, description, start_time, end_time, status, location, location_lat, location_lng FROM events WHERE group_id = ?`
+    )
+    .all(groupId);
+
+  const events = rows.map((ev) => {
+    const startMs = ev.start_time ? Number(ev.start_time) : null;
+    const endMs = ev.end_time ? Number(ev.end_time) : null;
+
+    const start = startMs
+      ? new Date(startMs).toLocaleString("en-GB", {
+          dateStyle: "medium",
+          timeStyle: "short",
+          hour12: false,
+        })
+      : "TBD";
+    const end = endMs
+      ? new Date(endMs).toLocaleString("en-GB", {
+          dateStyle: "medium",
+          timeStyle: "short",
+          hour12: false,
+        })
+      : "";
+
+    const locationText = ev.location || ev.group_name || "—";
+
+    return {
+      id: ev.id,
+      title: ev.title,
+      description: ev.description,
+      start,
+      end,
+      status: ev.status,
+      location: locationText,
+    };
+  });
+
+  //info van de users ophalen
+  const userInfo = db.prepare(`SELECT id, email, username FROM users`).all();
+
+  //status van de users ophalen
+  const userStatus = db
+    .prepare(`SELECT user_id, role FROM groupusers WHERE group_id = ?`)
+    .all(groupId);
+
+  response.render("pages/FS_Groupchat", {
+    groupId,
+    messages,
+    group,
+    events,
+    userInfo,
+    userStatus,
+  });
 });
 
 //---------------------//
@@ -342,6 +403,8 @@ views.get("/events", (request, response) => {
         group_name_abbrev: abbreviate(ev.group_name),
       };
     });
+
+    console.log("-------------" + events + "--------------------");
 
     response.render("pages/FS_Events", { events, userGroups });
   } catch (err) {

@@ -414,20 +414,21 @@ export function seedExampleData() {
   // ---------------------------
   if (isTableEmpty("messages")) {
     const groups = db.prepare("SELECT id FROM groups ORDER BY id").all();
+    let floor = Math.floor;
 
     const exampleMessages = [
       {
-        group_id: groups[1].id,
+        group_id: floor(groups[1].id),
         user_name: "Gerben Geurts",
         content: "Who will bring plates?",
       },
       {
-        group_id: groups[1].id,
+        group_id: floor(groups[1].id),
         user_name: "Merlijn van Suetendael",
         content: "I can take blankets!",
       },
       {
-        group_id: groups[1].id,
+        group_id: floor(groups[1].id),
         user_name: "Kitty2610",
         content: "I will bring drinks.",
       },

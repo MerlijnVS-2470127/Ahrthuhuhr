@@ -87,7 +87,112 @@
   });
 
   // poll every 2.5s for new messages
-  setInterval(fetchNewMessages, 2500);
+  //setInterval(fetchNewMessages, 2500);
   // initial attempt to fetch new messages beyond server-rendered ones
   fetchNewMessages();
+
+  //-----------//
+  //Side panel //
+  //-----------//
+  let btn_changeSidePanel = document.getElementById("btn_changeSidePanel");
+  let loaded = "";
+  let sp_contents = document.getElementById("sp-contents");
+  const events = window.eventsInfo;
+  const groupName = window.__CHAT.groupName;
+
+  function loadEvents() {
+    sp_contents.innerHTML = "";
+    if (Array.isArray(events) && events.length) {
+      events.forEach(function (ev) {
+        var statusClass = (ev.status || "planned")
+          .replace(/\s+/g, "-")
+          .toLowerCase();
+        sp_contents.innerHTML +=
+          "<div" +
+          'class="event-tile"' +
+          'aria-labelledby="ev-' +
+          ev.id +
+          '-title"' +
+          'data-status="' +
+          ev.status +
+          '"' +
+          'data-group-id="' +
+          ev.group_id +
+          '" style="">' +
+          '<div class="event-content">' +
+          "<h2" +
+          'id="ev-' +
+          ev.id +
+          '-title"' +
+          'class="event-title status-' +
+          statusClass +
+          '"' +
+          'title="' +
+          ev.title +
+          '"' +
+          ">" +
+          ev.title + //title
+          "</h2>" +
+          "<!-- Group name above date -->";
+
+        if (ev.end) {
+          sp_contents.innerHTML +=
+            '<div class="event-date" aria-hidden="true">' +
+            ev.start +
+            "—" +
+            ev.end +
+            "</div>";
+        } else {
+          sp_contents.innerHTML +=
+            '<div class="event-date" aria-hidden="true">' + ev.start + "</div>";
+        }
+
+        if (ev.location) {
+          sp_contents.innerHTML +=
+            '<div class="event-location-block">' +
+            '<span class="" style="font-size: 18px;">Location: ' +
+            ev.location +
+            "</span>" +
+            "</div>";
+        }
+
+        sp_contents.innerHTML += "</div>";
+
+        if (ev.description) {
+          sp_contents.innerHTML +=
+            '<p class="event-description" style="margin-bottom: 20px">' +
+            ev.description +
+            "</p>";
+        }
+
+        sp_contents.innerHTML += "</div>" + "</div>";
+      });
+
+      sp_contents.innerHTML +=
+        "<div>" +
+        '<p id="noMatchMsg" style="display: none">' +
+        "No events match your filters." +
+        "</p>" +
+        "</div>";
+    } else {
+      sp_contents.innerHTML += '<p id="noEventsServer">No events found.</p>';
+    }
+  }
+
+  function loadGroupInfo() {}
+
+  addEventListener("load", () => {
+    loaded = "events";
+    loadEvents();
+  });
+
+  btn_changeSidePanel.addEventListener("click", () => {
+    if (loaded === "events") {
+      loaded = "groups";
+      loadGroupInfo();
+    } else {
+      loaded = "events";
+      loadEvents();
+    }
+  });
 })();

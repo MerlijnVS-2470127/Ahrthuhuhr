@@ -3,15 +3,18 @@
   <head>
     <%- include('../partials/FS_Standard_Head'); %>
     <title>Group chat: <%= groupId %></title>
-    <link rel="stylesheet" href="/css/FS_Groupchat.css" />
     <script>
       // hier kan vs code een syntax error geven, maar dat komt doordat het ejs binnen <script> niet herkend
       window.__CHAT = {
       groupId: "<%= groupId %>",
+      groupName: "<%= group.name %>",
       lastFetch: <%= messages.length ? messages[messages.length - 1].created_at : 0 %>
       };
+      window.eventsInfo = <%- JSON.stringify(events) %>;
     </script>
     <script src="/js/FS_Groupchat.js" defer></script>
+
+    <link rel="stylesheet" href="/css/FS_Groupchat.css" />
   </head>
 
   <header><%- include('../partials/FS_Header'); %></header>
@@ -19,9 +22,11 @@
   <div class="main-content-wrapper">
     <body>
       <div class="main_div">
-        <main class="container" style="max-width: 900px; margin: 2rem auto">
-          <h2>Group: <%= groupId %></h2>
+        <!--<main class="container" style="max-width: 900px; margin: 2rem auto">-->
+        <div class="page_header">Group: <%= group.name %></div>
+        <!-- <h2>Group: <%= groupId %></h2> -->
 
+        <div class="chat_division" style="width: 60%">
           <section id="chat" class="chat">
             <div id="messages" class="messages" aria-live="polite">
               <% messages.forEach(msg => { %>
@@ -51,7 +56,31 @@
               <button id="sendBtn">Send</button>
             </form>
           </section>
-        </main>
+        </div>
+
+        <div class="chat_division" id="side-panel" style="max-width: 30%">
+          <section>
+            <h1 class="card-title" id="sp-title">Events</h1>
+            <div class="mb-2 sp-description">
+              <small
+                class="badge bg-light text-muted"
+                id="sp-description"
+                style="font-size: 18px; text-decoration: none"
+              >
+                Events of the group.
+              </small>
+            </div>
+            <div
+              class="card sp-contents"
+              id="sp-contents"
+              style="overflow: scroll; max-height: 200px"
+            ></div>
+            <hr />
+            <button id="btn_changeSidePanel" class="btn btn-primary">
+              Change
+            </button>
+          </section>
+        </div>
       </div>
     </body>
   </div>

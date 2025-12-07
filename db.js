@@ -10,6 +10,8 @@ export function InitializeDatabase() {
   db.pragma("foreign_keys = true;");
   db.pragma("temp_store = memory;");
 
+  //db.prepare(`DROP TABLE messages`).run();
+
   //prepare users
   db.prepare(
     `
@@ -106,7 +108,7 @@ export function InitializeDatabase() {
     `
     CREATE TABLE IF NOT EXISTS messages (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      group_id TEXT NOT NULL,
+      group_id INTEGER NOT NULL,
       user_name TEXT NOT NULL,
       content TEXT NOT NULL,
       created_at INTEGER NOT NULL
