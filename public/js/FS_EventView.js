@@ -367,3 +367,15 @@ function initResourceUpload() {
     }
   });
 }
+
+const pdfBtn = document.getElementById("downloadPdfBtn");
+
+if (pdfBtn) {
+  pdfBtn.addEventListener("click", () => {
+    const match = window.location.pathname.match(/\/events\/(\d+)/);
+    if (!match) return;
+
+    const eventId = match[1];
+    window.open(`/events/${eventId}/pdf`, "_blank");
+  });
+}

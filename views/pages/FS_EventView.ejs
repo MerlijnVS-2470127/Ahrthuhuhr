@@ -44,8 +44,9 @@
           <section class="event-details">
             <!-- Group badge above date -->
             <div class="mb-2">
-              <small
-                class="badge bg-light text-muted"
+              <strong>Group:</strong>
+              <span
+                class="bg-light text-muted"
                 title="<%= event.group_name %>"
                 id="txt_eventGroup"
               >
@@ -55,7 +56,12 @@
                   style="font-size: 18px; text-decoration: none"
                   ><%= event.group_name %>
                 </a>
-              </small>
+              </span>
+            </div>
+
+            <div class="mb-2">
+              <strong>Created by:</strong>
+              <span class="bg-light text-muted"><%= event.creator_name %></span>
             </div>
 
             <!-- Date -->
@@ -146,7 +152,9 @@
               <button id="saveToCalenderBtn" class="btn btn-primary btn-sm">
                 Save to calender
               </button>
-              <button class="btn btn-primary btn-sm">Download pdf</button>
+              <button id="downloadPdfBtn" class="btn btn-primary btn-sm">
+                Download pdf
+              </button>
             </div>
           </section>
 

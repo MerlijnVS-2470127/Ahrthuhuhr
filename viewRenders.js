@@ -453,11 +453,15 @@ views.get("/events/:id", (req, res, next) => {
     const evRow = db
       .prepare(
         `
-        SELECT e.*, g.name AS group_name
-        FROM events e
-        LEFT JOIN groups g ON e.group_id = g.id
-        WHERE e.id = ?
-      `
+    SELECT 
+      e.*, 
+      g.name AS group_name,
+      u.username AS creator_name
+    FROM events e
+    LEFT JOIN groups g ON e.group_id = g.id
+    LEFT JOIN users u ON e.creator_id = u.id
+    WHERE e.id = ?
+  `
       )
       .get(eventId);
 
@@ -510,6 +514,7 @@ views.get("/events/:id", (req, res, next) => {
       group_id: evRow.group_id,
       group_name: evRow.group_name,
       creator_id: evRow.creator_id,
+      creator_name: evRow.creator_name || "Unknown",
     };
 
     // --- get attendance ---

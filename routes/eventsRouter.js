@@ -1,4 +1,7 @@
 import express from "express";
+import PDFDocument from "pdfkit";
+import fs from "fs";
+import path from "path";
 import { db } from "../db.js";
 const router = express.Router();
 
@@ -224,6 +227,133 @@ router.get("/events/:id/attendees", (req, res) => {
   } catch (err) {
     console.error("attendees error", err);
     return res.status(500).json({ error: "server error" });
+  }
+});
+
+// Download Event PDF
+router.get("/events/:id/pdf", (req, res) => {
+  try {
+    const eventId = Number(req.params.id);
+    if (!Number.isFinite(eventId)) {
+      return res.status(400).send("Invalid event id");
+    }
+
+    // --- Get event with creator + group ---
+    const event = db
+      .prepare(
+        `
+        SELECT 
+          e.*,
+          g.name AS group_name,
+          u.username AS creator_name
+        FROM events e
+        LEFT JOIN groups g ON e.group_id = g.id
+        LEFT JOIN users u ON e.creator_id = u.id
+        WHERE e.id = ?
+      `
+      )
+      .get(eventId);
+
+    if (!event) return res.status(404).send("Event not found");
+
+    const cookies = parseCookieCookie(req);
+    const userEmail = cookies.user || "";
+    const userRow = db
+      .prepare("SELECT id FROM users WHERE email = ?")
+      .get(userEmail);
+
+    const membership = db
+      .prepare("SELECT 1 FROM groupusers WHERE group_id = ? AND user_id = ?")
+      .get(event.group_id, userRow.id);
+
+    // deny pdf download if not in group
+    if (!membership) {
+      return res.status(403).send("Forbidden");
+    }
+
+    // --- Get resources ---
+    const resources = db
+      .prepare(
+        `
+        SELECT id, filename, path, tag
+        FROM resources
+        WHERE event_id = ?
+        ORDER BY uploaded_at ASC
+      `
+      )
+      .all(eventId);
+
+    // --- Create PDF ---
+    const doc = new PDFDocument({ autoFirstPage: true });
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="event-${eventId}.pdf"`
+    );
+
+    doc.pipe(res);
+
+    // ---- Title ----
+    doc.fontSize(26).text(event.title, { align: "center" });
+    doc.moveDown();
+
+    doc.fontSize(14).text(`Group: ${event.group_name || "-"}`);
+    doc.text(`Created by: ${event.creator_name || "-"}`);
+    doc.text(
+      `Date: ${new Date(Number(event.start_time)).toLocaleString("en-GB")}`
+    );
+    if (event.end_time) {
+      doc.text(
+        `End: ${new Date(Number(event.end_time)).toLocaleString("en-GB")}`
+      );
+    }
+    doc.text(`Location: ${event.location || "-"}`);
+    doc.moveDown();
+
+    // ---- Description ----
+    if (event.description) {
+      doc.fontSize(16).text("Description", { underline: true });
+      doc.moveDown(0.5);
+      doc.fontSize(12).text(event.description);
+      doc.moveDown();
+    }
+
+    // ---- Resources Section ----
+    if (resources.length > 0) {
+      doc.addPage();
+      doc.fontSize(18).text("Resources", { underline: true });
+      doc.moveDown();
+
+      for (const r of resources) {
+        doc.fontSize(12).text(`• ${r.tag || r.filename}`);
+        doc.moveDown(0.25);
+
+        const absPath = path.resolve(r.path);
+
+        if (fs.existsSync(absPath)) {
+          try {
+            doc.image(absPath, {
+              fit: [450, 300],
+              align: "center",
+            });
+            doc.moveDown();
+          } catch (e) {
+            doc.text("[Image could not be embedded]");
+            doc.moveDown();
+          }
+        } else {
+          doc.text("[Image file missing]");
+          doc.moveDown();
+        }
+
+        doc.moveDown();
+      }
+    }
+
+    doc.end();
+  } catch (err) {
+    console.error("PDF generation error:", err);
+    res.status(500).send("Failed to generate PDF");
   }
 });
 
