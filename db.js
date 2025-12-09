@@ -59,7 +59,7 @@ export function InitializeDatabase() {
       title TEXT NOT NULL,
       description TEXT,
       start_time INTEGER NOT NULL,
-      end_time INTEGER,
+      end_time INTEGER NOT NULL,
       status TEXT NOT NULL DEFAULT 'planned', -- planned||happening now||ended||cancelled
       location TEXT, -- location: leesbare string voor weer te geven op de site, lat en lng voor coördinaten op te slaan
       location_lat REAL,

@@ -248,6 +248,9 @@
         showToast("End must be after start", "danger");
         return { ok: false };
       }
+      // provide default endtime (starttime + 1 day)
+    } else {
+      endMs = startMs + 24 * 60 * 60 * 1000;
     }
 
     // lat/lng rule

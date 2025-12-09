@@ -379,3 +379,92 @@ if (pdfBtn) {
     window.open(`/events/${eventId}/pdf`, "_blank");
   });
 }
+
+// ===== Edit Event Logic =====
+const editBtn = document.getElementById("openEditModalBtn");
+const editModalEl = document.getElementById("editEventModal");
+const editForm = document.getElementById("editEventForm");
+const editError = document.getElementById("editError");
+
+let editModal = null;
+if (editModalEl && window.bootstrap) {
+  editModal = new bootstrap.Modal(editModalEl);
+}
+
+// Prefill date/time when modal opens
+if (editBtn && editModal) {
+  editBtn.addEventListener("click", () => {
+    const parseDate = (txt) => {
+      if (!txt) return "";
+      const d = new Date(txt);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    };
+
+    const parseTime = (txt) => {
+      if (!txt) return "";
+      const d = new Date(txt);
+      const hh = String(d.getHours()).padStart(2, "0");
+      const mi = String(d.getMinutes()).padStart(2, "0");
+      return `${hh}:${mi}`;
+    };
+
+    const startText = document.getElementById("txt_eventDateStart")?.innerText;
+    const endText = document.getElementById("txt_eventDateEnd")?.innerText;
+
+    document.getElementById("editStartDate").value = parseDate(startText);
+    document.getElementById("editStartTime").value = parseTime(startText);
+
+    if (endText) {
+      document.getElementById("editEndDate").value = parseDate(endText);
+      document.getElementById("editEndTime").value = parseTime(endText);
+    }
+
+    editModal.show();
+  });
+}
+
+// Submit form
+if (editForm) {
+  editForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    editError.classList.add("d-none");
+
+    const id = document.getElementById("editEventId").value;
+    const payload = {
+      title: document.getElementById("editTitle").value.trim(),
+      location: document.getElementById("editLocation").value.trim(),
+      description: document.getElementById("editDescription").value.trim(),
+      lat: document.getElementById("editLat").value.trim(),
+      lng: document.getElementById("editLng").value.trim(),
+      startDate: document.getElementById("editStartDate").value,
+      startTime: document.getElementById("editStartTime").value,
+      endDate: document.getElementById("editEndDate").value,
+      endTime: document.getElementById("editEndTime").value,
+    };
+
+    try {
+      const res = await fetch(`/events/${id}/edit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        editError.textContent = data.error || "Update failed";
+        editError.classList.remove("d-none");
+        return;
+      }
+
+      showToast("Event updated", "success");
+      setTimeout(() => window.location.reload(), 800);
+    } catch (err) {
+      console.error(err);
+      editError.textContent = "Network error";
+      editError.classList.remove("d-none");
+    }
+  });
+}

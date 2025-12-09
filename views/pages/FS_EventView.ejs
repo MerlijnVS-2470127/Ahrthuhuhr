@@ -18,12 +18,16 @@
               <%= event.title %>
             </div>
 
+            <!-- only display edit & upload buttons if the user is the creator of the event -->
+
             <% const isCreator = (typeof userId !== 'undefined' &&
             event.creator_id && Number(userId) === Number(event.creator_id)); %>
             <% if (isCreator) { %>
             <div class="d-flex gap-2">
+              <!-- button to open edit model -->
               <a
-                href="/events/<%= event.id %>"
+                href="javascript:void(0)"
+                id="openEditModalBtn"
                 class="btn btn-primary create-event-btn"
               >
                 Edit event <i class="bi bi-pencil"></i>
@@ -167,6 +171,140 @@
               </div>
             </div>
           </section>
+
+          <!-- Edit Event Modal -->
+          <div
+            class="modal fade"
+            id="editEventModal"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+              <form id="editEventForm" class="modal-content" novalidate>
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit Event</h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                  ></button>
+                </div>
+
+                <div class="modal-body">
+                  <input
+                    type="hidden"
+                    id="editEventId"
+                    value="<%= event.id %>"
+                  />
+
+                  <div class="mb-3">
+                    <label class="form-label">Title</label>
+                    <input
+                      id="editTitle"
+                      class="form-control"
+                      type="text"
+                      value="<%= event.title %>"
+                    />
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col">
+                      <label class="form-label">Start date</label>
+                      <input
+                        id="editStartDate"
+                        class="form-control"
+                        type="date"
+                      />
+                    </div>
+                    <div class="col">
+                      <label class="form-label">Start time</label>
+                      <input
+                        id="editStartTime"
+                        class="form-control"
+                        type="time"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col">
+                      <label class="form-label">End date</label>
+                      <input
+                        id="editEndDate"
+                        class="form-control"
+                        type="date"
+                      />
+                    </div>
+                    <div class="col">
+                      <label class="form-label">End time</label>
+                      <input
+                        id="editEndTime"
+                        class="form-control"
+                        type="time"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Location</label>
+                    <input
+                      id="editLocation"
+                      class="form-control"
+                      type="text"
+                      value="<%= event.location %>"
+                    />
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col">
+                      <label class="form-label">Latitude</label>
+                      <input
+                        id="editLat"
+                        class="form-control"
+                        type="text"
+                        value="<%= event.lat ?? '' %>"
+                      />
+                    </div>
+                    <div class="col">
+                      <label class="form-label">Longitude</label>
+                      <input
+                        id="editLng"
+                        class="form-control"
+                        type="text"
+                        value="<%= event.lng ?? '' %>"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea
+                      id="editDescription"
+                      class="form-control"
+                      rows="3"
+                    >
+                      <%= event.description || '' %></textarea
+                    >
+                  </div>
+
+                  <div id="editError" class="text-danger small d-none"></div>
+                </div>
+
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancel
+                  </button>
+                  <button
+                    id="saveEditBtn"
+                    type="submit"
+                    class="btn btn-primary"
+                  >
+                    Save changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
 
           <!-- Attendees modal -->
           <div

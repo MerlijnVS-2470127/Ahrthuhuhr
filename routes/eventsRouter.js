@@ -357,4 +357,133 @@ router.get("/events/:id/pdf", (req, res) => {
   }
 });
 
+// post event modifications through edit modal
+router.post("/events/:id/edit", (req, res) => {
+  try {
+    const eventId = Number(req.params.id);
+    if (!Number.isFinite(eventId)) {
+      return res.status(400).json({ error: "Invalid event id" });
+    }
+
+    const cookies = parseCookieCookie(req);
+    const userEmail = cookies.user || "";
+    const user = db
+      .prepare("SELECT id FROM users WHERE email = ?")
+      .get(userEmail);
+
+    if (!user) {
+      return res.status(401).json({ error: "Not logged in" });
+    }
+
+    const event = db.prepare("SELECT * FROM events WHERE id = ?").get(eventId);
+
+    if (!event || Number(event.creator_id) !== Number(user.id)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const {
+      title,
+      location,
+      description,
+      lat,
+      lng,
+      startDate,
+      startTime,
+      endDate,
+      endTime,
+    } = req.body;
+
+    const updates = {};
+    const params = [];
+
+    if (title) {
+      updates.title = title;
+    }
+    if (location) {
+      updates.location = location;
+    }
+    if (description !== undefined) {
+      updates.description = description;
+    }
+
+    // Parse dates
+    let startMs = null;
+    let endMs = null;
+
+    if (startDate && startTime) {
+      startMs = Date.parse(`${startDate}T${startTime}`);
+
+      console.log("look at this, punk: ", startMs, event.start_time);
+
+      if (startMs != event.start_time && startMs < Date.now()) {
+        return res
+          .status(400)
+          .json({ error: "Start time cannot be in the past" });
+      }
+      updates.start_time = startMs;
+    }
+
+    if (endDate) {
+      endMs = Date.parse(`${endDate}T${endTime || "00:00"}`);
+      if (startMs && endMs <= startMs) {
+        return res.status(400).json({ error: "End must be after start" });
+      }
+      updates.end_time = endMs;
+    }
+
+    // Coordinates
+    const latNum = lat !== "" ? Number(lat) : null;
+    const lngNum = lng !== "" ? Number(lng) : null;
+
+    if (
+      latNum !== null &&
+      (!Number.isFinite(latNum) || latNum < -90 || latNum > 90)
+    ) {
+      return res.status(400).json({ error: "Invalid latitude" });
+    }
+    if (
+      lngNum !== null &&
+      (!Number.isFinite(lngNum) || lngNum < -180 || lngNum > 180)
+    ) {
+      return res.status(400).json({ error: "Invalid longitude" });
+    }
+
+    if (latNum !== null) updates.location_lat = latNum;
+    if (lngNum !== null) updates.location_lng = lngNum;
+
+    // ---- Auto update status ----
+    if (startMs || endMs) {
+      const now = Date.now();
+      const finalStart = startMs || event.start_time;
+      const finalEnd = endMs ?? event.end_time;
+
+      let status = "planned";
+      if (finalEnd && now > finalEnd) status = "ended";
+      else if (now >= finalStart && (!finalEnd || now <= finalEnd))
+        status = "happening now";
+
+      updates.status = status;
+    }
+
+    // ---- Save ----
+    const keys = Object.keys(updates);
+    if (keys.length === 0) {
+      return res.json({ ok: true, message: "Nothing to update" });
+    }
+
+    const setClause = keys.map((k) => `${k} = ?`).join(", ");
+    const values = keys.map((k) => updates[k]);
+
+    db.prepare(`UPDATE events SET ${setClause} WHERE id = ?`).run(
+      ...values,
+      eventId
+    );
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Edit event error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 export default router;
