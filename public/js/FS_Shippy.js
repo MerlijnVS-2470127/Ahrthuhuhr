@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("shippyForm");
+  const formContainer = document.getElementById("shippyFormContainer");
+  const offlinePlaceholder = document.getElementById(
+    "shippyOfflinePlaceholder"
+  );
   const results = document.getElementById("shippyResults");
 
   function escapeHtml(s) {
@@ -75,49 +79,83 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  form.addEventListener("submit", async (ev) => {
-    ev.preventDefault();
-    const type = document.getElementById("shippyType").value.trim();
-    const location = document.getElementById("shippyLocation").value.trim();
-    if (!type || !location) {
-      showError("Please fill both fields.");
-      return;
+  // ---------- Offline/online UI handling ----------
+  function updateOnlineUI() {
+    const online = navigator.onLine;
+    if (!formContainer || !offlinePlaceholder) return;
+    if (!online) {
+      // offline: hide form, show placeholder, clear results
+      formContainer.style.display = "none";
+      offlinePlaceholder.style.display = "block";
+      results.innerHTML = "";
+    } else {
+      // online: show form, hide placeholder
+      formContainer.style.display = "block";
+      offlinePlaceholder.style.display = "none";
     }
+  }
 
-    showBusy();
+  // update initially
+  updateOnlineUI();
 
-    try {
-      const res = await fetch("/api/shippy/groq-photon", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type, location }),
-      });
+  // listen for network changes and update UI
+  window.addEventListener("online", updateOnlineUI);
+  window.addEventListener("offline", updateOnlineUI);
 
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        showError(json.message || json.error || "Server error");
+  // ---------- Form submission ----------
+  if (form) {
+    form.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+
+      // defensive: block submit when offline
+      if (!navigator.onLine) {
+        showError("Shippy is unavailable offline");
+        updateOnlineUI();
         return;
       }
 
-      if (json.status === "error") {
-        showError(json.message || "Shippy couldn't interpret your request.");
+      const type = document.getElementById("shippyType").value.trim();
+      const location = document.getElementById("shippyLocation").value.trim();
+      if (!type || !location) {
+        showError("Please fill both fields.");
         return;
       }
 
-      const suggestions = json.suggestions || [];
-      if (!Array.isArray(suggestions) || suggestions.length === 0) {
-        const note = json.note ? ` (${json.note})` : "";
-        showError(
-          "No suggestions returned. Try a broader location or different query." +
-            note
-        );
-        return;
-      }
+      showBusy();
 
-      renderSuggestions(suggestions);
-    } catch (err) {
-      console.error("Shippy fetch error", err);
-      showError("Network error contacting Shippy.");
-    }
-  });
+      try {
+        const res = await fetch("/api/shippy/groq-photon", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type, location }),
+        });
+
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          showError(json.message || json.error || "Server error");
+          return;
+        }
+
+        if (json.status === "error") {
+          showError(json.message || "Shippy couldn't interpret your request.");
+          return;
+        }
+
+        const suggestions = json.suggestions || [];
+        if (!Array.isArray(suggestions) || suggestions.length === 0) {
+          const note = json.note ? ` (${json.note})` : "";
+          showError(
+            "No suggestions returned. Try a broader location or different query." +
+              note
+          );
+          return;
+        }
+
+        renderSuggestions(suggestions);
+      } catch (err) {
+        console.error("Shippy fetch error", err);
+        showError("Network error contacting Shippy.");
+      }
+    });
+  }
 });
