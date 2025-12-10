@@ -468,3 +468,114 @@ if (editForm) {
     }
   });
 }
+
+// Utility to get event id from URL
+function getEventId() {
+  const m = window.location.pathname.match(/\/events\/(\d+)/);
+  return m ? m[1] : null;
+}
+
+// ============ CANCEL EVENT ============
+(function initCancelEventModal() {
+  const openBtn = document.getElementById("cancelEventBtn");
+  const confirmBtn = document.getElementById("confirmCancelEventBtn");
+  if (!openBtn || !confirmBtn) return;
+
+  openBtn.addEventListener("click", () => {
+    const modal = new bootstrap.Modal(
+      document.getElementById("cancelEventConfirmModal")
+    );
+    modal.show();
+  });
+
+  confirmBtn.addEventListener("click", async () => {
+    const eventId = getEventId();
+    if (!eventId) return showToast("Invalid event id", "danger");
+
+    try {
+      const res = await fetch(`/events/${eventId}/cancel`, { method: "POST" });
+      const json = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        showToast(
+          "Failed to cancel: " + (json.error || res.statusText),
+          "danger"
+        );
+        return;
+      }
+
+      showToast("Event cancelled", "success");
+
+      // close the confirm modal
+      bootstrap.Modal.getInstance(
+        document.getElementById("cancelEventConfirmModal")
+      ).hide();
+
+      // close the edit modal
+      const editModalEl = document.getElementById("editEventModal");
+      if (editModalEl) {
+        const m = bootstrap.Modal.getInstance(editModalEl);
+        if (m) m.hide();
+      }
+
+      // update UI
+      document.getElementById("attendanceBlock")?.remove();
+      const details = document.querySelector(".event-details");
+      if (details) {
+        const alertDiv = document.createElement("div");
+        alertDiv.className = "alert alert-danger mt-3";
+        alertDiv.innerHTML =
+          "This event has been <strong>cancelled</strong>. Attendance is closed.";
+        details.insertAdjacentElement("afterend", alertDiv);
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Network error during cancel", "danger");
+    }
+  });
+})();
+
+// ============ DELETE EVENT ============
+(function initDeleteEventModal() {
+  const openBtn = document.getElementById("deleteEventBtn");
+  const confirmBtn = document.getElementById("confirmDeleteEventBtn");
+  if (!openBtn || !confirmBtn) return;
+
+  openBtn.addEventListener("click", () => {
+    const modal = new bootstrap.Modal(
+      document.getElementById("deleteEventConfirmModal")
+    );
+    modal.show();
+  });
+
+  confirmBtn.addEventListener("click", async () => {
+    const eventId = getEventId();
+    if (!eventId) return showToast("Invalid event id", "danger");
+
+    try {
+      const res = await fetch(`/events/${eventId}/delete`, { method: "POST" });
+      const json = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        showToast(
+          "Failed to delete: " + (json.error || res.statusText),
+          "danger"
+        );
+        return;
+      }
+
+      showToast("Event deleted", "success");
+
+      // close modal immediately
+      bootstrap.Modal.getInstance(
+        document.getElementById("deleteEventConfirmModal")
+      ).hide();
+
+      // redirect
+      setTimeout(() => (window.location.href = "/events"), 600);
+    } catch (err) {
+      console.error(err);
+      showToast("Network error during delete", "danger");
+    }
+  });
+})();

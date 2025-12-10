@@ -486,4 +486,127 @@ router.post("/events/:id/edit", (req, res) => {
   }
 });
 
+// POST /events/:id/cancel
+router.post("/events/:id/cancel", (req, res) => {
+  try {
+    const eventId = Number(req.params.id);
+    if (!Number.isFinite(eventId))
+      return res.status(400).json({ error: "Invalid event id" });
+
+    // get user from cookie
+    const cookies = parseCookieCookie(req);
+    const userEmail = cookies.user || "";
+    const user = userEmail
+      ? db.prepare("SELECT id FROM users WHERE email = ?").get(userEmail)
+      : null;
+    if (!user) return res.status(401).json({ error: "Not logged in" });
+
+    // load event
+    const ev = db
+      .prepare("SELECT id, creator_id, status FROM events WHERE id = ?")
+      .get(eventId);
+    if (!ev) return res.status(404).json({ error: "Event not found" });
+
+    // only creator can cancel
+    if (Number(user.id) !== Number(ev.creator_id))
+      return res.status(403).json({ error: "Forbidden" });
+
+    // if already cancelled, no-op
+    if (ev.status === "cancelled") {
+      return res.json({ ok: true, message: "Already cancelled" });
+    }
+
+    // begin transaction to ensure atomicity
+    const tx = db.transaction(() => {
+      // set status to cancelled
+      db.prepare("UPDATE events SET status = ? WHERE id = ?").run(
+        "cancelled",
+        eventId
+      );
+
+      // delete all eventusers rows for this event
+      db.prepare("DELETE FROM eventusers WHERE event_id = ?").run(eventId);
+    });
+
+    tx();
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Cancel event error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// POST /events/:id/delete
+router.post("/events/:id/delete", (req, res) => {
+  try {
+    const eventId = Number(req.params.id);
+    if (!Number.isFinite(eventId))
+      return res.status(400).json({ error: "Invalid event id" });
+
+    // get user from cookie
+    const cookies = parseCookieCookie(req);
+    const userEmail = cookies.user || "";
+    const user = userEmail
+      ? db.prepare("SELECT id FROM users WHERE email = ?").get(userEmail)
+      : null;
+    if (!user) return res.status(401).json({ error: "Not logged in" });
+
+    // load event
+    const ev = db
+      .prepare("SELECT id, creator_id FROM events WHERE id = ?")
+      .get(eventId);
+    if (!ev) return res.status(404).json({ error: "Event not found" });
+
+    // only creator can delete
+    if (Number(user.id) !== Number(ev.creator_id))
+      return res.status(403).json({ error: "Forbidden" });
+
+    // fetch resources for this event (to delete files)
+    const resources = db
+      .prepare("SELECT id, path FROM resources WHERE event_id = ?")
+      .all(eventId);
+
+    // transaction: delete DB rows (event), remove files afterwards (but do file deletes inside transaction? we do DB delete in tx and then attempt to remove files - do file deletes before or after?)
+    // We'll delete files first (best-effort), then delete DB rows in a transaction.
+    for (const r of resources) {
+      try {
+        const abs = path.resolve(r.path);
+        if (fs.existsSync(abs)) {
+          fs.unlinkSync(abs);
+        }
+      } catch (err) {
+        // log and continue — file system cleanup is best-effort
+        console.error("Failed to unlink resource file:", r.path, err);
+      }
+    }
+
+    // attempt to remove directory for event (best-effort)
+    try {
+      const eventDir = path.resolve(`./uploads/events/${eventId}`);
+      if (fs.existsSync(eventDir)) {
+        // remove files if any leftover, then rmdir
+        fs.rmSync(eventDir, { recursive: true, force: true });
+      }
+    } catch (err) {
+      console.error("Failed to remove event upload dir:", err);
+    }
+
+    // Now remove DB rows (event + cascades). Use a transaction for safety.
+    const tx = db.transaction(() => {
+      // Delete resources rows explicitly if your resources table does not have ON DELETE CASCADE.
+      db.prepare("DELETE FROM resources WHERE event_id = ?").run(eventId);
+
+      // Delete the event row (this will cascade to eventusers if ON DELETE CASCADE is set)
+      db.prepare("DELETE FROM events WHERE id = ?").run(eventId);
+    });
+    tx();
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Delete event error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 export default router;

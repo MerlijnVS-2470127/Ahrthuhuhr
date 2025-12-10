@@ -107,8 +107,9 @@
               <span class="bg-light text-muted"><%= event.status %></span>
             </div>
 
-            <!-- Attendance controls -->
-            <div class="mb-3">
+            <!-- Attendance controls (hidden if cancelled) -->
+            <% if (event.status !== 'cancelled') { %>
+            <div class="mb-3" id="attendanceBlock">
               <label class="form-label"><strong>Your attendance</strong></label>
               <div
                 id="attendanceControls"
@@ -148,6 +149,14 @@
                 </button>
               </div>
             </div>
+            <% } else { %>
+            <div class="mb-3">
+              <div class="alert alert-danger mb-0">
+                This event has been <strong>cancelled</strong>. Attendance is
+                closed.
+              </div>
+            </div>
+            <% } %>
 
             <div id="attendanceMsg" class="mt-2"></div>
 
@@ -291,14 +300,33 @@
                 </div>
 
                 <div class="modal-footer">
-                  <button class="btn btn-secondary" data-bs-dismiss="modal">
+                  <button
+                    type="button"
+                    class="btn btn-secondary me-auto"
+                    data-bs-dismiss="modal"
+                  >
                     Cancel
                   </button>
+
+                  <!-- open cancel confirm modal -->
                   <button
-                    id="saveEditBtn"
-                    type="submit"
-                    class="btn btn-primary"
+                    id="cancelEventBtn"
+                    type="button"
+                    class="btn btn-danger"
                   >
+                    Cancel event
+                  </button>
+
+                  <!-- open delete confirm modal -->
+                  <button
+                    id="deleteEventBtn"
+                    type="button"
+                    class="btn btn-danger"
+                  >
+                    Delete event
+                  </button>
+
+                  <button type="submit" class="btn btn-primary">
                     Save changes
                   </button>
                 </div>
@@ -462,6 +490,88 @@
                     download
                     >Download</a
                   >
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- CANCEL EVENT CONFIRM MODAL -->
+          <div
+            class="modal fade"
+            id="cancelEventConfirmModal"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content border-danger">
+                <div class="modal-header bg-danger text-white">
+                  <h5 class="modal-title">Cancel Event</h5>
+                  <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to <strong>cancel</strong> this event?
+                  All attendees will be removed and attendance will be closed.
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-light"
+                    data-bs-dismiss="modal"
+                  >
+                    No, keep event
+                  </button>
+                  <button
+                    id="confirmCancelEventBtn"
+                    type="button"
+                    class="btn btn-danger"
+                  >
+                    Yes, cancel event
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DELETE EVENT CONFIRM MODAL -->
+          <div
+            class="modal fade"
+            id="deleteEventConfirmModal"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content border-danger">
+                <div class="modal-header bg-danger text-white">
+                  <h5 class="modal-title">Delete Event</h5>
+                  <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  This will permanently delete the event and all attached
+                  resources.
+                  <strong>This action cannot be undone.</strong>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-light"
+                    data-bs-dismiss="modal"
+                  >
+                    No, keep event
+                  </button>
+                  <button
+                    id="confirmDeleteEventBtn"
+                    type="button"
+                    class="btn btn-danger"
+                  >
+                    Yes, delete event
+                  </button>
                 </div>
               </div>
             </div>
