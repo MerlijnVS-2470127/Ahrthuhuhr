@@ -54,6 +54,10 @@ views.get("/faq", (request, response) => {
 //-------------------//
 // Login page render //
 //-------------------//
+views.get("/login", (request, response) => {
+  goToLogin(request, response);
+});
+
 views.get("/login/:email/:password/:mode", (request, response) => {
   const email = decodeURIComponent(request.params.email);
   const password = decodeURIComponent(request.params.password);
