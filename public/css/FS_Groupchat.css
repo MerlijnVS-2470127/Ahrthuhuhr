@@ -119,6 +119,8 @@ body {
   min-height: 120px; /* fits a one-line date comfortably */
   position: relative;
   /* ensure consistent tile sizing by letting grid control widths */
+  overflow: scroll;
+  max-height: 200px;
 }
 
 /* content wrapper (keeps spacing tidy) */

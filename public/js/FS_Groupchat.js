@@ -254,10 +254,8 @@
   }
 
   addEventListener("load", () => {
-    //loaded = "events";
-    loaded = "groups";
-    //loadEvents();
-    loadGroupInfo();
+    loaded = "events";
+    loadEvents();
   });
 
   btn_changeSidePanel.addEventListener("click", () => {
