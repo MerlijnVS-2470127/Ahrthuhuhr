@@ -103,6 +103,8 @@ body {
 #sp-contents {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
+  padding: 14px;
 }
 
 /* Events */

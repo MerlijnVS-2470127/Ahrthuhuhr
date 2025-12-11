@@ -220,10 +220,7 @@
     }
 
     //declare contents
-    contents +=
-      "<hr style='margin: 15px 0;'>" +
-      "<h2>Members</h2>" +
-      "<hr style='margin: 15px 0;'>";
+    contents += "<hr style='margin: 15px 0;'>" + "<h2>Members</h2>";
 
     for (const user of usersInfo) {
       contents +=
@@ -234,13 +231,60 @@
         "(" +
         user.role +
         ")" +
-        "</small></div>";
+        "</small>";
+
+      if (currentUserData.get("role") === "owner") {
+        if (user.role === "member") {
+          contents +=
+            "<button class='btn btn-primary' id='btnPromote'>Promote</button>";
+          contents +=
+            "<button class='btn btn-primary' id='btnLurk'>Lurk</button>";
+        } else {
+          if (user.role === "admin") {
+            contents +=
+              "<button class='btn btn-primary' id='btnDemote'>Demote</button>";
+            contents +=
+              "<button class='btn btn-primary' id='btnLurk'>Lurk</button>";
+          } else {
+            contents +=
+              "<button class='btn btn-primary' id='btnDelurk'>Delurk</button>";
+          }
+        }
+      }
+
+      contents += "</div>";
+    }
+
+    const btnPromote = document.getElementsByClassName("btnPromote");
+    const btnDemote = document.getElementsByClassName("btnPromote");
+    const btnLurk = document.getElementsByClassName("btnPromote");
+    const btnDelurk = document.getElementsByClassName("btnPromote");
+
+    //eventlisteners moeten toegevoegd worden en de role moet aangepast worden in de backend
+
+    if (
+      currentUserData.get("role") === "owner" ||
+      currentUserData.get("role") === "admin"
+    ) {
+      contents +=
+        "<hr style='margin: 15px 0;'>" +
+        "<h2>Add member</h2>" +
+        "<input id='userEmail' name='userEmail' class='form-control' type='text' style='margin: 0 100px 0 0' />" +
+        "<button class='btn btn-primary'" +
+        "id='btnAdd'" +
+        "style='margin: 20px 0 0 0;'>" +
+        "Add" +
+        "</button>";
     }
 
     if (currentUserData.get("role") != "owner") {
       contents +=
         "<hr style='margin: 15px 0;'>" +
-        "<button class='btn btn-primary' id='btnLeave' style='margin-bottom: 10px;'>Leave</button>";
+        "<button class='btn btn-primary'" +
+        "id='btnLeave'" +
+        "style='margin-bottom: 10px;'>" +
+        "Leave" +
+        "</button>";
     }
 
     //adding the contents to the page
@@ -250,6 +294,16 @@
     const btnLeave = document.getElementById("btnLeave");
     btnLeave.addEventListener("click", () => {
       window.location.href = "/groups/" + groupId + "/leave";
+    });
+
+    const btnAdd = document.getElementById("btnAdd");
+    btnLeave.addEventListener("click", () => {
+      let newUser = document.getElementById("userEmail").value;
+      //hier moet code om newUser toe te voegen aan de groep als:
+      //1. die nog geen lid is
+      //2. die bestaat
+      //
+      //die wordt toegevoegd als lid
     });
   }
 
