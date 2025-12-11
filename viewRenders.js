@@ -28,9 +28,9 @@ views.use(cookieParser());
 //------------------//
 views.get("/", (request, response) => {
   if (isAuthorized(request, db)) {
-    let userCookie = request.headers.cookie.split(";")[0].substring(5);
+    let email = getCurrentUser(request);
 
-    let username = checkUsername(db, userCookie);
+    let username = checkUsername(db, email);
 
     response.render("pages/FS_Home", {
       username: username,
