@@ -9,26 +9,11 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/leaflet-geosearch@3.1.0/dist/geosearch.css"
-    />
     <script
       src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
       defer
     ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/leaflet-geosearch@3.1.0/dist/bundle.min.js"
-      defer
-    ></script>
-    <style>
-      #map {
-        width: 100%;
-        height: 75vh;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-      }
-    </style>
+    <link rel="stylesheet" href="/css/FS_Map.css" />
     <script src="/js/FS_Map.js" defer></script>
   </head>
 
@@ -36,8 +21,77 @@
 
   <div class="main-content-wrapper">
     <body>
-      <div class="main_div">
-        <div id="map" aria-label="Map showing points of interest"></div>
+      <div class="main_div container">
+        <div class="map-topbar">
+          <div class="map-search">
+            <label for="mapSearchInput" class="visually-hidden">Search</label>
+            <input
+              id="mapSearchInput"
+              placeholder="Search location..."
+              autocomplete="off"
+            />
+            <div
+              id="mapSearchSuggestions"
+              class="suggestions"
+              style="display: none"
+            ></div>
+          </div>
+
+          <div class="type-filters" role="group" aria-label="POI type filters">
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input poi-filter"
+                type="checkbox"
+                id="filter_hotel"
+                value="hotel"
+              />
+              <label class="form-check-label" for="filter_hotel">Hotels</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input poi-filter"
+                type="checkbox"
+                id="filter_food"
+                value="food"
+              />
+              <label class="form-check-label" for="filter_food"
+                >Food / Restaurants</label
+              >
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input poi-filter"
+                type="checkbox"
+                id="filter_shops"
+                value="shops"
+              />
+              <label class="form-check-label" for="filter_shops">Shops</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input poi-filter"
+                type="checkbox"
+                id="filter_other"
+                value="other"
+              />
+              <label class="form-check-label" for="filter_other"
+                >Other (attractions, parks, cinema...)</label
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Map container (real map) -->
+        <div
+          id="map"
+          aria-label="Map showing points of interest"
+          style="display: none"
+        ></div>
+
+        <!-- Fallback placeholder shown if Leaflet fails to load -->
+        <div id="mapPlaceholder" class="map-placeholder" style="display: none">
+          Map is unavailable offline
+        </div>
       </div>
     </body>
   </div>

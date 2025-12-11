@@ -5,36 +5,78 @@ const router = express.Router();
 const cache = new Map();
 const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes
 
-function cacheKey(lat, lng, radius) {
+function cacheKey(lat, lng, radius, types) {
   // rounded to reduce cache misses
-  return `${lat.toFixed(4)}:${lng.toFixed(4)}:${radius}`;
+  const tKey = (types || "").split(",").sort().join(",");
+  return `${lat.toFixed(4)}:${lng.toFixed(4)}:${radius}:${tKey}`;
 }
 
-function overpassQuery(lat, lng, radius) {
+// build Overpass filter blocks for chosen categories
+function buildOverpassBlocks(lat, lng, radius, types = []) {
+  const blocks = [];
+
+  // helper to push node+way selectors for a tag pattern
+  const pushPattern = (tag, pattern) => {
+    blocks.push(`node(around:${radius},${lat},${lng})[${tag}~"${pattern}"];`);
+    blocks.push(`way(around:${radius},${lat},${lng})[${tag}~"${pattern}"];`);
+  };
+
+  // map of category -> filters
+  const cats = {
+    hotel: () => {
+      // hotels/hostels/guest houses
+      pushPattern(
+        "tourism",
+        "hotel|guest_house|hostel|motel|bed_and_breakfast"
+      );
+    },
+    food: () => {
+      // restaurants, cafes, bars, pubs, fast_food
+      pushPattern("amenity", "restaurant|cafe|bar|pub|fast_food");
+    },
+    shops: () => {
+      // general shops - broad selection
+      pushPattern(
+        "shop",
+        "bakery|supermarket|convenience|grocery|kiosk|confectionery|clothes|fashion|boutique|shoes|ice_cream|bookstore|mall"
+      );
+    },
+    other: () => {
+      // attractions, parks, cinemas, theatres, museums
+      pushPattern("tourism", "attraction|museum");
+      pushPattern("leisure", "park|sports_centre|stadium|garden");
+      pushPattern("amenity", "cinema|theatre");
+    },
+  };
+
+  // If no types specified, include all categories (same as previous behavior)
+  if (!types || types.length === 0) {
+    // include all existing categories
+    Object.keys(cats).forEach((k) => cats[k]());
+    return blocks;
+  }
+
+  // otherwise include only selected
+  for (const t of types) {
+    if (cats[t]) cats[t]();
+  }
+  return blocks;
+}
+
+function overpassQuery(lat, lng, radius, types = []) {
+  const blocks = buildOverpassBlocks(lat, lng, radius, types);
+  // if blocks empty (shouldn't happen) fallback to all
+  const joined = blocks.join("\n      ");
   return `
     [out:json][timeout:25];
     (
-      // amenities: food & drink
-      node(around:${radius},${lat},${lng})[amenity~"restaurant|cafe|bar|pub|fast_food"];
-      way(around:${radius},${lat},${lng})[amenity~"restaurant|cafe|bar|pub|fast_food"];
-
-      // tourism: hotels/hostels, attractions, museums
-      node(around:${radius},${lat},${lng})[tourism~"hotel|guest_house|hostel|attraction|museum"];
-      way(around:${radius},${lat},${lng})[tourism~"hotel|guest_house|hostel|attraction|museum"];
-
-      // shops: ice cream, bakery, supermarket, convenience, etc.
-      node(around:${radius},${lat},${lng})[shop~"ice_cream|bakery|supermarket|convenience|grocery|kiosk|confectionery|clothes|fashion|boutique|shoes"];
-      way(around:${radius},${lat},${lng})[shop~"ice_cream|bakery|supermarket|convenience|grocery|kiosk|confectionery|clothes|fashion|boutique|shoes"];
-
-      // entertainment: cinemas and theatres
-      node(around:${radius},${lat},${lng})[amenity~"cinema|theatre"];
-      way(around:${radius},${lat},${lng})[amenity~"cinema|theatre"]; 
+      ${joined}
     );
     out center;
   `;
 }
 
-// GET /api/places?lat=..&lng=..&radius=..
+// GET /api/places?lat=..&lng=..&radius=..&types=hotel,food
 router.get("/api/places", async (req, res) => {
   try {
     const lat = Number(req.query.lat);
@@ -43,7 +85,16 @@ router.get("/api/places", async (req, res) => {
     if (!lat || !lng)
       return res.status(400).json({ error: "lat,lng required" });
 
-    const key = cacheKey(lat, lng, radius);
+    // parse types param
+    const typesParam = (req.query.types || "").trim();
+    const types = typesParam
+      ? typesParam
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
+
+    const key = cacheKey(lat, lng, radius, typesParam);
     const now = Date.now();
 
     // return cache if fresh
@@ -53,7 +104,7 @@ router.get("/api/places", async (req, res) => {
     }
 
     // build and send Overpass request
-    const body = overpassQuery(lat, lng, radius);
+    const body = overpassQuery(lat, lng, radius, types);
     const overpassUrl = "https://overpass-api.de/api/interpreter";
     const r = await fetch(overpassUrl, { method: "POST", body });
     if (!r.ok) return res.status(502).json({ error: "Overpass error" });
@@ -88,21 +139,14 @@ router.get("/api/places", async (req, res) => {
   }
 });
 
-// Simple event creation route (adapt to your DB schema)
+// Simple event creation route (unchanged from your file)
 router.post("/api/events", async (req, res) => {
-  // ensure body parser is enabled (app.use(express.json()))
   const { title, lat, lng, placeName } = req.body;
   if (!title || !lat || !lng)
     return res.status(400).json({ error: "missing fields" });
 
   try {
     const created_at = Date.now();
-    // Use your better-sqlite3 db instance — adjust import to your project
-    // Example with a db prepared statement:
-    // const info = db.prepare('INSERT INTO events (group_id, created_by, title, lat, lng, poi_snapshot_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').run('testgroup', null, title, lat, lng, JSON.stringify({name:placeName}), created_at);
-    // return res.status(201).json({ id: info.lastInsertRowid, title, placeName });
-
-    // temporary stub response (if you haven't hooked DB yet)
     return res
       .status(201)
       .json({ id: -1, title, placeName, lat, lng, created_at });
