@@ -263,7 +263,7 @@ export function seedExampleData() {
         group_id: groups[0].id,
         title: "Event in the very distant past",
         description: "Guys I can't even remember this happening",
-        start_time: now - oneDay * 30,
+        start_time: now - oneDay * 100,
         end_time: now - oneDay * 29,
         status: "planned",
         location: "Community Center, Test City",

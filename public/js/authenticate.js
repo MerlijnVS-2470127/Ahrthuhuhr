@@ -21,7 +21,11 @@ export function isAuthorized(req, db) {
 }
 
 export function goToLogin(req, res, db) {
-  res.render("pages/FS_Login", { email: "null", mode: "login" });
+  res.render("pages/FS_Login", {
+    email: "null",
+    mode: "login",
+    credentialValidity: null,
+  });
 }
 
 export function checkCredentails(email, password, db) {
