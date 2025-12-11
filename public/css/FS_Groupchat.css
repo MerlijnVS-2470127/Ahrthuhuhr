@@ -308,3 +308,18 @@ body {
   text-overflow: ellipsis;
   vertical-align: middle;
 }
+
+/* role color helpers (bootstrap classes exist, but we add explicit role classes for clarity) */
+.role-lurker {
+  color: #9aa0a6;
+} /* lighter gray */
+.role-member {
+  color: #111;
+} /* default dark */
+.role-admin {
+  color: var(--bs-primary);
+} /* green (bootstrap success) */
+.role-owner {
+  color: var(--bs-danger, #dc3545);
+  font-weight: 700;
+} /* bold red */

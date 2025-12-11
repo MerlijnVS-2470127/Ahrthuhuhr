@@ -6,10 +6,10 @@
     <script>
       // hier kan vs code een syntax error geven, maar dat komt doordat het ejs binnen <script> niet herkend
       window.__CHAT = {
-      groupId: "<%= groupId %>",
-      groupName: "<%= group.name %>",
-      currentUser: "<%= currentUser %>",
-      lastFetch: <%= messages.length ? messages[messages.length - 1].created_at : 0 %>
+        groupId: "<%= groupId %>",
+        groupName: "<%= group.name %>",
+        currentUser: "<%= currentUser %>",
+        lastFetch: <%= messages.length ? messages[messages.length - 1].created_at : 0 %>
       };
       window.eventsInfo = <%- JSON.stringify(events) %>;
       window.usersInfo = <%- JSON.stringify(userInfo) %>;
@@ -24,30 +24,47 @@
     <div class="main-content-wrapper">
       <div class="page_header">Group: <%= group.name %></div>
       <div class="main_div">
-        <!--<main class="container" style="max-width: 900px; margin: 2rem auto">-->
-        <!-- <h2>Group: <%= groupId %></h2> -->
-
         <div class="chat_division" id="chat-panel" style="width: 60%">
           <section id="chat" class="chat">
+            <!-- prettier-ignore -->
             <div id="messages" class="messages" aria-live="polite">
-              <% messages.forEach(msg => { %>
-              <div class="message" data-id="<%= msg.id %>">
-                <div class="meta">
-                  <strong><%= msg.user_name %></strong> — <%= new
-                  Date(msg.created_at).toLocaleString() %>
+              <% 
+                function findSenderByMsgName(msgName) {
+                  if (!msgName) return null;
+                  for (const u of userInfo) {
+                    if (u.email === msgName) return u;
+                    if (u.username === msgName) return u;
+                  }
+                  return null;
+                }
+
+                function roleClass(role) {
+                  if (!role) return "role-member";
+                  const r = String(role).toLowerCase();
+                  if (r === "lurker") return "role-lurker";
+                  if (r === "member") return "role-member";
+                  if (r === "admin") return "role-admin";
+                  if (r === "owner") return "role-owner";
+                  return "role-member";
+                }
+              %>
+
+              <% messages.forEach(function(msg) { 
+                  const sender = findSenderByMsgName(msg.user_name);
+                  const displayName = sender ? sender.username : (msg.user_name || "Anonymous");
+                  const rclass = roleClass(sender ? sender.role : null);
+              %>
+                <div class="message" data-id="<%= msg.id %>">
+                  <div class="meta">
+                    <strong class="<%= rclass %>"><%= displayName %></strong> —
+                    <%= new Date(msg.created_at).toLocaleString() %>
+                  </div>
+                  <div class="content"><%= msg.content %></div>
                 </div>
-                <div class="content"><%= msg.content %></div>
-              </div>
               <% }) %>
             </div>
 
             <form id="composer" class="composer" onsubmit="return false;">
-              <input
-                type="text"
-                id="user_name"
-                placeholder="Your name (optional)"
-                value="Anonymous"
-              />
               <input
                 type="text"
                 id="content"
