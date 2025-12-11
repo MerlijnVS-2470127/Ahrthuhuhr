@@ -208,6 +208,8 @@
     sp_title.innerText = groupName;
     sp_description.innerText = "Group details.";
     contents = "";
+
+    //G-man
     let currentUserData;
 
     for (const user of usersInfo) {
@@ -234,15 +236,18 @@
         "</small>";
 
       if (currentUserData.get("role") === "owner") {
+        contents += " | ";
         if (user.role === "member") {
           contents +=
             "<button class='btn btn-primary' id='btnPromote'>Promote</button>";
+          contents += " | ";
           contents +=
             "<button class='btn btn-primary' id='btnLurk'>Lurk</button>";
         } else {
           if (user.role === "admin") {
             contents +=
               "<button class='btn btn-primary' id='btnDemote'>Demote</button>";
+            contents += " | ";
             contents +=
               "<button class='btn btn-primary' id='btnLurk'>Lurk</button>";
           } else {
