@@ -154,7 +154,6 @@ views.get("/map", (request, response) => {
 //general group page
 views.get("/groups", (request, response) => {
   let email = getCurrentUser(request);
-  console.log("email: " + email);
 
   let IDs = getGroupData(db, email, "id");
   let names = getGroupData(db, email, "name");
@@ -283,21 +282,58 @@ views.get("/groups/:groupId", (request, response) => {
     };
   });
 
-  //info van de users ophalen
-  const userInfo = db.prepare(`SELECT id, email, username FROM users`).all();
-
   //status van de users ophalen
   const userStatus = db
     .prepare(`SELECT user_id, role FROM groupusers WHERE group_id = ?`)
     .all(groupId);
 
+  const userInfo = userStatus.map((u) => {
+    //info van de users ophalen
+    const user = db
+      .prepare(`SELECT email, username FROM users WHERE id = ?`)
+      .get(u.user_id);
+
+    return {
+      id: u.user_id,
+      email: user.email,
+      username: user.username,
+      role: u.role,
+    };
+  });
+
+  const currentUser = getCurrentUser(request);
+
   response.render("pages/FS_Groupchat", {
+    currentUser,
     groupId,
     messages,
     group,
     events,
     userInfo,
-    userStatus,
+  });
+});
+
+views.get("/groups/:groupId/leave", (request, response) => {
+  const groupId = request.params.groupId;
+  const email = getCurrentUser(request);
+  const userId = getIdbyEmail(db, email);
+
+  const remove = db
+    .prepare(`DELETE FROM groupusers WHERE (group_id = ?) AND (user_id = ?)`)
+    .run(groupId, userId);
+
+  let IDs = getGroupData(db, email, "id");
+  let names = getGroupData(db, email, "name");
+  let descriptions = getGroupData(db, email, "description");
+
+  IDs = formatToEncodedString(IDs);
+  names = formatToEncodedString(names);
+  descriptions = formatToEncodedString(descriptions);
+
+  response.render("pages/FS_Groups", {
+    ids: IDs,
+    names: names,
+    descriptions: descriptions,
   });
 });
 

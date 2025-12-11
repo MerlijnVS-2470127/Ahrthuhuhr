@@ -94,20 +94,32 @@
   //-----------//
   //Side panel //
   //-----------//
-  let btn_changeSidePanel = document.getElementById("btn_changeSidePanel");
+  const btn_changeSidePanel = document.getElementById("btn_changeSidePanel");
   let loaded = "";
-  let sp_contents = document.getElementById("sp-contents");
+  const sp_contents = document.getElementById("sp-contents");
+  const sp_title = document.getElementById("sp-title");
+  const sp_description = document.getElementById("sp-description");
   const events = window.eventsInfo;
+  const usersInfo = window.usersInfo;
   const groupName = window.__CHAT.groupName;
+  let currentUser = window.__CHAT.currentUser;
 
   function loadEvents() {
-    sp_contents.innerHTML = "";
+    sp_title.innerText = "Events";
+    sp_description.innerText = "Events of the group.";
+    contents = "";
+
+    //declare contents
     if (Array.isArray(events) && events.length) {
       events.forEach(function (ev) {
         var statusClass = (ev.status || "planned")
           .replace(/\s+/g, "-")
           .toLowerCase();
-        sp_contents.innerHTML +=
+        contents +=
+          "<hr style='margin:0 0 10px 0;'>" +
+          "<div class='singular-event' id='" +
+          ev.id +
+          "'>" +
           "<div" +
           'class="event-tile"' +
           'aria-labelledby="ev-' +
@@ -136,19 +148,19 @@
           "<!-- Group name above date -->";
 
         if (ev.end) {
-          sp_contents.innerHTML +=
+          contents +=
             '<div class="event-date" aria-hidden="true">' +
             ev.start +
             "—" +
             ev.end +
             "</div>";
         } else {
-          sp_contents.innerHTML +=
+          contents +=
             '<div class="event-date" aria-hidden="true">' + ev.start + "</div>";
         }
 
         if (ev.location) {
-          sp_contents.innerHTML +=
+          contents +=
             '<div class="event-location-block">' +
             '<span class="" style="font-size: 18px;">Location: ' +
             ev.location +
@@ -156,34 +168,96 @@
             "</div>";
         }
 
-        sp_contents.innerHTML += "</div>";
+        contents += "</div>";
 
         if (ev.description) {
-          sp_contents.innerHTML +=
-            '<p class="event-description" style="margin-bottom: 20px">' +
+          contents +=
+            '<p class="event-description" style="margin-bottom: 15px">' +
             ev.description +
             "</p>";
         }
 
-        sp_contents.innerHTML += "</div>" + "</div>";
+        contents += "</div>" + "</div>";
       });
 
-      sp_contents.innerHTML +=
+      contents +=
         "<div>" +
         '<p id="noMatchMsg" style="display: none">' +
         "No events match your filters." +
         "</p>" +
         "</div>";
     } else {
-      sp_contents.innerHTML += '<p id="noEventsServer">No events found.</p>';
+      contents += '<p id="noEventsServer">No events found.</p>';
+    }
+
+    //adding the contents to the page
+    sp_contents.innerHTML = contents;
+
+    let eventsDivs = document.getElementsByClassName("singular-event");
+
+    if (eventsDivs.length > 0) {
+      for (const e of eventsDivs) {
+        e.addEventListener("click", () => {
+          window.location.href = "/events/" + e.getAttribute("id");
+        });
+      }
     }
   }
 
-  function loadGroupInfo() {}
+  function loadGroupInfo() {
+    sp_title.innerText = groupName;
+    sp_description.innerText = "Group details.";
+    contents = "";
+    let currentUserData;
+
+    for (const user of usersInfo) {
+      if (user.email === currentUser) {
+        currentUserData = new Map();
+        currentUserData.set("email", user.email);
+        currentUserData.set("username", user.username);
+        currentUserData.set("role", user.role);
+      }
+    }
+
+    //declare contents
+    contents +=
+      "<hr style='margin: 15px 0;'>" +
+      "<h2>Members</h2>" +
+      "<hr style='margin: 15px 0;'>";
+
+    for (const user of usersInfo) {
+      contents +=
+        "<div style='border: 3px solid; border-radius: 5px; padding: 3px;'>" +
+        user.username +
+        "<small " +
+        "style='font-size: 14px; color: grey;'> " +
+        "(" +
+        user.role +
+        ")" +
+        "</small></div>";
+    }
+
+    if (currentUserData.get("role") != "owner") {
+      contents +=
+        "<hr style='margin: 15px 0;'>" +
+        "<button class='btn btn-primary' id='btnLeave' style='margin-bottom: 10px;'>Leave</button>";
+    }
+
+    //adding the contents to the page
+    sp_contents.innerHTML = contents;
+
+    //leave button
+    const btnLeave = document.getElementById("btnLeave");
+    btnLeave.addEventListener("click", () => {
+      window.location.href = "/groups/" + groupId + "/leave";
+    });
+  }
 
   addEventListener("load", () => {
-    loaded = "events";
-    loadEvents();
+    //loaded = "events";
+    loaded = "groups";
+    //loadEvents();
+    loadGroupInfo();
   });
 
   btn_changeSidePanel.addEventListener("click", () => {

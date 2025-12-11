@@ -5,9 +5,9 @@ let app = express();
 app.use(cookieParser());
 
 export function getIdbyEmail(db, email) {
-  const users = db.prepare(`SELECT id FROM users WHERE email = ?`).all(email);
+  const users = db.prepare(`SELECT id FROM users WHERE email = ?`).get(email);
 
-  return users[0].id;
+  return users.id;
 }
 
 export function getCurrentUser(req) {
