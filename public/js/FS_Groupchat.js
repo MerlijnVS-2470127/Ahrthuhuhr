@@ -275,24 +275,34 @@
         ")" +
         "</small>";
 
-      if (currentUserData.get("role") === "owner") {
+      if (currentUserData.get("role") === "owner" && user.role != "owner") {
         contents += " | ";
         if (user.role === "member") {
           contents +=
-            "<button class='btn btn-primary' id='btnPromote'>Promote</button>";
+            "<button class='btn btn-primary roleButton' name='" +
+            user.id +
+            "' id='admin'>Promote</button>";
           contents += " | ";
           contents +=
-            "<button class='btn btn-primary' id='btnLurk'>Lurk</button>";
+            "<button class='btn btn-primary roleButton' name='" +
+            user.id +
+            "' id='lurker'>Lurk</button>";
         } else {
           if (user.role === "admin") {
             contents +=
-              "<button class='btn btn-primary' id='btnDemote'>Demote</button>";
+              "<button class='btn btn-primary roleButton' name='" +
+              user.id +
+              "' id='member'>Demote</button>";
             contents += " | ";
             contents +=
-              "<button class='btn btn-primary' id='btnLurk'>Lurk</button>";
+              "<button class='btn btn-primary roleButton' name='" +
+              user.id +
+              "' id='lurker'>Lurk</button>";
           } else {
             contents +=
-              "<button class='btn btn-primary' id='btnDelurk'>Delurk</button>";
+              "<button class='btn btn-primary roleButton' name='" +
+              user.id +
+              "' id='member'>Delurk</button>";
           }
         }
       }
@@ -300,20 +310,13 @@
       contents += "</div>";
     }
 
-    const btnPromote = document.getElementsByClassName("btnPromote");
-    const btnDemote = document.getElementsByClassName("btnPromote");
-    const btnLurk = document.getElementsByClassName("btnPromote");
-    const btnDelurk = document.getElementsByClassName("btnPromote");
-
-    //eventlisteners moeten toegevoegd worden en de role moet aangepast worden in de backend
-
     if (
       currentUserData.get("role") === "owner" ||
       currentUserData.get("role") === "admin"
     ) {
       contents +=
         "<hr style='margin: 15px 0;'>" +
-        "<h2>Add member</h2>" +
+        "<h2>Add member (email)</h2>" +
         "<input id='userEmail' name='userEmail' class='form-control' type='text' style='margin: 0 100px 0 0' />" +
         "<button class='btn btn-primary'" +
         "id='btnAdd'" +
@@ -335,21 +338,46 @@
     //adding the contents to the page
     sp_contents.innerHTML = contents;
 
+    //role buttons
+    let roleButtons = document.getElementsByClassName(
+      "btn btn-primary roleButton"
+    );
+
+    if (roleButtons.length > 0) {
+      for (const btn of roleButtons) {
+        btn.addEventListener("click", () => {
+          const btnId = btn.getAttribute("id");
+          const btnName = btn.getAttribute("name");
+
+          window.location.href =
+            "/groups/" +
+            groupId +
+            "/editRole/" +
+            btnName +
+            "/" +
+            btnId +
+            "/members";
+        });
+      }
+    }
+
+    //add button
+    const btnAdd = document.getElementById("btnAdd");
+    if (btnAdd) {
+      btnAdd.addEventListener("click", () => {
+        let newUser = document.getElementById("userEmail").value;
+        window.location.href =
+          "/groups/" + groupId + "/newMember/" + newUser + "/members";
+      });
+    }
+
     //leave button
     const btnLeave = document.getElementById("btnLeave");
-    btnLeave.addEventListener("click", () => {
-      window.location.href = "/groups/" + groupId + "/leave";
-    });
-
-    const btnAdd = document.getElementById("btnAdd");
-    btnLeave.addEventListener("click", () => {
-      let newUser = document.getElementById("userEmail").value;
-      //hier moet code om newUser toe te voegen aan de groep als:
-      //1. die nog geen lid is
-      //2. die bestaat
-      //
-      //die wordt toegevoegd als lid
-    });
+    if (btnLeave) {
+      btnLeave.addEventListener("click", () => {
+        window.location.href = "/groups/" + groupId + "/leave";
+      });
+    }
   }
 
   addEventListener("load", () => {

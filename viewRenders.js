@@ -17,8 +17,10 @@ import {
   getIdbyEmail,
   getCurrentUser,
   getCookieByName,
+  getCurrentUsername,
 } from "./public/js/getUserInfo.js";
 import cookieParser from "cookie-parser";
+import session from "express-session";
 
 const views = express();
 views.use(cookieParser());
@@ -30,7 +32,7 @@ views.get("/", (request, response) => {
   if (isAuthorized(request, db)) {
     let email = getCurrentUser(request);
 
-    let username = checkUsername(db, email);
+    let username = getCurrentUsername(db, email);
 
     response.render("pages/FS_Home", {
       username: username,
@@ -77,13 +79,6 @@ views.get("/login/:email/:password/:mode", (request, response) => {
   if (mode === "login") {
     credentialValidity = checkCredentails(email, password, db);
 
-    console.log(
-      "credentialValidity to be returned: " +
-        credentialValidity +
-        " type: " +
-        typeof credentialValidity
-    );
-
     response.render("pages/FS_Login", {
       email: email,
       credentialValidity: credentialValidity,
@@ -99,12 +94,6 @@ views.get("/login/:email/:password/:mode", (request, response) => {
       }
     }
 
-    console.log(
-      "credentialValidity to be returned: " +
-        credentialValidity +
-        " type: " +
-        typeof credentialValidity
-    );
     response.render("pages/FS_Login", {
       email: email,
       credentialValidity: credentialValidity,
@@ -130,7 +119,7 @@ views.get("/profile/:data/:changed/:email", (request, response) => {
     }
 
     if (changeStatus) {
-      currentUsername = checkUsername(db, email);
+      currentUsername = getCurrentUsername(db, email);
     }
 
     response.render("pages/FS_Profile", {
@@ -188,16 +177,13 @@ views.get("/groups/create", (request, response) => {
 
 views.get("/groups/create/:name/:description", (request, response) => {
   if (isAuthorized(request, db)) {
-    let email = request.headers.cookie.split(";")[0].substring(5);
-
+    let email = getCurrentUser(request, db);
     const name = decodeURIComponent(request.params.name);
     let description = decodeURIComponent(request.params.description);
 
     if (description === "null") {
       description = "";
     }
-
-    email = getCurrentUser(request, db);
 
     let owner_id = getIdbyEmail(db, email);
 
@@ -229,6 +215,30 @@ views.get("/groups/create/:name/:description", (request, response) => {
   } else {
     goToLogin(request, response);
   }
+});
+
+views.get("/groups/:groupId/leave", (request, response) => {
+  const groupId = request.params.groupId;
+  const email = getCurrentUser(request);
+  const userId = getIdbyEmail(db, email);
+
+  const remove = db
+    .prepare(`DELETE FROM groupusers WHERE (group_id = ?) AND (user_id = ?)`)
+    .run(groupId, userId);
+
+  let IDs = getGroupData(db, email, "id");
+  let names = getGroupData(db, email, "name");
+  let descriptions = getGroupData(db, email, "description");
+
+  IDs = formatToEncodedString(IDs);
+  names = formatToEncodedString(names);
+  descriptions = formatToEncodedString(descriptions);
+
+  response.render("pages/FS_Groups", {
+    ids: IDs,
+    names: names,
+    descriptions: descriptions,
+  });
 });
 
 //chatpagina per groep
@@ -317,28 +327,47 @@ views.get("/groups/:groupId", (request, response) => {
   });
 });
 
-views.get("/groups/:groupId/leave", (request, response) => {
+views.get("/groups/:groupId/editRole/:member/:role/", (request, response) => {
   const groupId = request.params.groupId;
-  const email = getCurrentUser(request);
-  const userId = getIdbyEmail(db, email);
+  const member = request.params.member;
+  const newRole = request.params.role;
 
-  const remove = db
-    .prepare(`DELETE FROM groupusers WHERE (group_id = ?) AND (user_id = ?)`)
-    .run(groupId, userId);
+  if (newRole === "admin" || newRole === "member" || newRole === "lurker") {
+    if (member) {
+      const newGroupuser = db
+        .prepare(`UPDATE groupusers SET role=? WHERE group_id=? AND user_id=?`)
+        .run(newRole, groupId, member);
+    }
+  }
 
-  let IDs = getGroupData(db, email, "id");
-  let names = getGroupData(db, email, "name");
-  let descriptions = getGroupData(db, email, "description");
+  response.redirect("/groups/" + groupId + "/members");
+});
 
-  IDs = formatToEncodedString(IDs);
-  names = formatToEncodedString(names);
-  descriptions = formatToEncodedString(descriptions);
+views.get("/groups/:groupId/newMember/:member", (request, response) => {
+  const groupId = request.params.groupId;
+  const newMember = request.params.member;
 
-  response.render("pages/FS_Groups", {
-    ids: IDs,
-    names: names,
-    descriptions: descriptions,
-  });
+  const newMemberId = getIdbyEmail(db, newMember);
+
+  if (newMemberId) {
+    //als de user bestaat
+    const userExists = db
+      .prepare(
+        `SELECT user_id FROM groupusers WHERE group_id = ? AND user_id = ?`
+      )
+      .get(groupId, newMemberId);
+
+    if (!userExists) {
+      //als de user niet in de groep zit
+      const newGroupuser = db
+        .prepare(
+          `INSERT INTO groupusers (group_id, user_id, role) VALUES (?, ?, ?)`
+        )
+        .run(groupId, newMemberId, "member");
+    }
+  }
+
+  response.redirect("/groups/" + groupId + "/members");
 });
 
 //---------------------//
@@ -460,7 +489,7 @@ views.get("/events/eventcreation", (request, response) => {
 
 //Shippy pagina
 views.get("/shippy", (request, response) => {
-  response.render("pages/FS_Shippy.ejs");
+  response.redirect("/events/shippy");
 });
 
 views.get("/events/shippy", (request, response) => {

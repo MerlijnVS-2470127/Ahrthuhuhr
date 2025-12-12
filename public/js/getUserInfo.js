@@ -14,6 +14,14 @@ export function getCurrentUser(req) {
   return getCookieByName(req, "user");
 }
 
+export function getCurrentUsername(db, email) {
+  let user = db
+    .prepare(`SELECT username FROM users WHERE email = ?`)
+    .get(email);
+
+  return user.username;
+}
+
 export function getCookieByName(req, name) {
   const cookieString = req.headers.cookie;
   console.log("cookieString: " + cookieString);
