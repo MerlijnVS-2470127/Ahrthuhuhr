@@ -320,7 +320,7 @@ views.get("/groups/:groupId", (request, response) => {
   // polls van groep ophalen
   const pollsRows = db
     .prepare(
-      `SELECT p.id, p.title, p.end_time, p.creator_id, u.username AS creator
+      `SELECT p.id, p.title, p.end_time, p.creator_id, p.allow_multiple, u.username AS creator
      FROM polls p
      LEFT JOIN users u ON u.id = p.creator_id
      WHERE p.group_id = ?
@@ -329,23 +329,39 @@ views.get("/groups/:groupId", (request, response) => {
     .all(groupId);
 
   // poll options & poll votes van groep ophalen
+  const currentUserEmail = getCurrentUser(request);
+  const currentUserId = currentUserEmail
+    ? getIdbyEmail(db, currentUserEmail)
+    : null;
+
   const polls = pollsRows.map((poll) => {
     const options = db
       .prepare(
-        `SELECT po.id, po.title, po.description,
-              COUNT(pv.id) AS votes
-       FROM poll_options po
-       LEFT JOIN poll_votes pv ON pv.poll_option_id = po.id
-       WHERE po.poll_id = ?
-       GROUP BY po.id`
+        `
+      SELECT 
+        po.id,
+        po.title,
+        po.description,
+        COUNT(pv.id) AS votes,
+        MAX(CASE WHEN pv.user_id = ? THEN 1 ELSE 0 END) AS voted_by_me
+      FROM poll_options po
+      LEFT JOIN poll_votes pv ON pv.poll_option_id = po.id
+      WHERE po.poll_id = ?
+      GROUP BY po.id
+      `
       )
-      .all(poll.id);
+      .all(currentUserId, poll.id)
+      .map((opt) => ({
+        ...opt,
+        voted_by_me: Boolean(opt.voted_by_me), // normalize
+      }));
 
     return {
       id: poll.id,
       title: poll.title,
       end_time: poll.end_time,
       creator: poll.creator,
+      allow_multiple: Number(poll.allow_multiple) === 1,
       options,
     };
   });

@@ -4,6 +4,7 @@ import { seedExampleData } from "./exampleData.js";
 import viewRenders from "./viewRenders.js";
 import mapRouter from "./routes/mapRouter.js";
 import chatmessagesRouter from "./routes/chatmessagesRouter.js";
+import pollsRouter from "./routes/pollsRouter.js";
 import eventsRouter from "./routes/eventsRouter.js";
 import eventResourcesRouter from "./routes/eventResourcesRouter.js";
 import shippyRouter from "./routes/shippyRouter.js";
@@ -42,6 +43,7 @@ app.use("/", viewRenders);
 // API routers
 app.use("/", mapRouter);
 app.use("/", chatmessagesRouter);
+app.use("/polls", pollsRouter);
 app.use("/", eventsRouter);
 app.use("/", eventResourcesRouter);
 app.use("/", shippyRouter);
