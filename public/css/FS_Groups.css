@@ -82,3 +82,15 @@
 #submitBtn {
   margin-top: 20px;
 }
+
+@media (max-width: 600px) {
+  .groups-header-row {
+    display: block !important;
+  }
+  #repeating_cards {
+    display: block !important;
+  }
+  .card {
+    width: 100% !important;
+  }
+}

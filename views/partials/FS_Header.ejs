@@ -12,51 +12,67 @@
         </a>
       </li>
 
-      <li class="nav-item">
-        <a class="nav-link page-link" href="/groups">Groups</a>
-      </li>
+      <div class="collapse navbar-collapse" id="navbarCollapseHeader">
+        <li class="nav-item">
+          <a class="nav-link page-link" href="/groups">Groups</a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link page-link" href="/events">Events</a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link page-link" href="/events">Events</a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link page-link" href="/map">Map</a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link page-link" href="/map">Map</a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link page-link" href="/shippy">
-          Shippy <i class="bi bi-robot"></i
-        ></a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link page-link" href="/shippy">
+            Shippy <i class="bi bi-robot"></i
+          ></a>
+        </li>
+      </div>
     </ul>
 
-    <div class="nav-item dropdown">
-      <a
-        class="nav-link dropdown-toggle"
-        href="#"
-        role="button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        <i
-          class="bi bi-person-circle"
-          style="color: white; font-size: 2rem"
-        ></i>
-        <span id="username"></span>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-end">
-        <li>
-          <a class="dropdown-item" role="button" id="btn_editProfile">
-            Edit profile
-          </a>
-        </li>
-        <li><hr class="dropdown-divider" /></li>
-        <li>
-          <a class="dropdown-item" role="button" id="btn_logout">Log out</a>
-        </li>
-      </ul>
+    <div
+      class="collapse navbar-collapse profile-item"
+      id="navbarCollapseHeader"
+    >
+      <div class="nav-item dropdown" id="profile-item">
+        <a
+          class="nav-link dropdown-toggle"
+          href="#"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i
+            class="bi bi-person-circle"
+            style="color: white; font-size: 2rem"
+          ></i>
+          <span id="username"></span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a class="dropdown-item" role="button" id="btn_editProfile">
+              Edit profile
+            </a>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+          <li>
+            <a class="dropdown-item" role="button" id="btn_logout">Log out</a>
+          </li>
+        </ul>
+      </div>
     </div>
+
+    <button
+      type="button"
+      class="navbar-toggler"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarCollapseHeader"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
   </div>
 </nav>
 

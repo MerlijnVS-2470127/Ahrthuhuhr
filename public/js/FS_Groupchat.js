@@ -278,7 +278,7 @@
 
     for (const user of usersInfo) {
       contents +=
-        "<div style='border: 3px solid; border-radius: 5px; padding: 3px;'>" +
+        "<div id='memberRoleBox' style='border: 3px solid; border-radius: 5px; padding: 3px;'>" +
         user.username +
         "<small " +
         "style='font-size: 14px; color: grey;'> " +
