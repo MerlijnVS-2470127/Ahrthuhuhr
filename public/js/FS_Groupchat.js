@@ -288,7 +288,7 @@
 
     for (const user of usersInfo) {
       contents +=
-        "<div style='border: 3px solid; border-radius: 5px; padding: 3px;'>" +
+        "<div id='memberRoleBox' style='border: 3px solid; border-radius: 5px; padding: 3px;'>" +
         user.username +
         "<small " +
         "style='font-size: 14px; color: grey;'> " +
@@ -355,6 +355,14 @@
         "style='margin-bottom: 10px;'>" +
         "Leave" +
         "</button>";
+    } else {
+      contents +=
+        "<hr style='margin: 15px 0;'>" +
+        "<button class='btn btn-primary'" +
+        "id='btnDelete'" +
+        "style='margin-bottom: 10px;'>" +
+        "Delete" +
+        "</button>";
     }
 
     //adding the contents to the page
@@ -372,13 +380,7 @@
           const btnName = btn.getAttribute("name");
 
           window.location.href =
-            "/groups/" +
-            groupId +
-            "/editRole/" +
-            btnName +
-            "/" +
-            btnId +
-            "/members";
+            "/groups/" + groupId + "/editRole/" + btnName + "/" + btnId + "/";
         });
       }
     }
@@ -399,6 +401,24 @@
       btnLeave.addEventListener("click", () => {
         window.location.href = "/groups/" + groupId + "/leave";
       });
+    }
+
+    //delete button
+    const btnDelete = document.getElementById("btnDelete");
+    if (btnDelete) {
+      if (currentUserData.get("role") === "owner") {
+        btnDelete.addEventListener("click", () => {
+          let confirmation = prompt(
+            "CAREFULL! This cannot be undone! \n" +
+              "Enter the name of the group to confirm. \n" +
+              "Group name: " +
+              groupName
+          );
+          if (confirmation === groupName) {
+            window.location.href = "/groups/" + groupId + "/delete";
+          }
+        });
+      }
     }
   }
 

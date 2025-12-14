@@ -27,3 +27,16 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
 }
+
+@media (max-width: 900px) {
+  .login-form {
+    margin-top: 40%;
+    width: 90%;
+  }
+  .centered {
+    display: block !important;
+  }
+  .seperator {
+    width: 100% !important;
+  }
+}

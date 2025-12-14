@@ -142,8 +142,18 @@
   color: var(--secondary);
 }
 
+.eventModificationButton {
+  margin-bottom: 5px;
+}
+
 /* Responsive tweaks: small screens */
 @media (max-width: 600px) {
+  .d-flex {
+    display: block !important;
+  }
+  .events-header-row {
+    display: block !important;
+  }
   .events-grid {
     grid-template-columns: 1fr;
     padding: 0.5rem;

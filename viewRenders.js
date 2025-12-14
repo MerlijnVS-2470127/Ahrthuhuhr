@@ -30,13 +30,139 @@ views.use(cookieParser());
 //------------------//
 views.get("/", (request, response) => {
   if (isAuthorized(request, db)) {
-    let email = getCurrentUser(request);
+    const userEmail = getCurrentUser(request);
 
-    let username = getCurrentUsername(db, email);
+    let username = getCurrentUsername(db, userEmail);
 
-    response.render("pages/FS_Home", {
-      username: username,
-    });
+    //loading in events
+    try {
+      // helper (server-side) to abbreviate long names consistently
+      function abbreviate(name, max = 25) {
+        if (!name) return "";
+        const s = String(name);
+        return s.length > max ? s.slice(0, max - 1) + "…" : s;
+      }
+
+      // find user row (if any)
+      const userRow = userEmail
+        ? db
+            .prepare("SELECT id, email, username FROM users WHERE email = ?")
+            .get(userEmail)
+        : null;
+
+      // if no logged-in user: return empty list and no groups
+      if (!userRow) {
+        return response.render("pages/FS_Events", {
+          events: [],
+          userGroups: [],
+        });
+      }
+
+      // fetch groups where user is a member
+      const userGroups = db
+        .prepare(
+          `SELECT g.id, g.name
+       FROM groups g
+       JOIN groupusers gu ON gu.group_id = g.id
+       WHERE gu.user_id = ?
+       ORDER BY g.name`
+        )
+        .all(userRow.id);
+
+      const groupIds = userGroups.map((g) => g.id);
+      if (groupIds.length === 0) {
+        return response.render("pages/FS_Events", { events: [], userGroups });
+      }
+
+      // fetch events for those groups, join group name, order by start_time
+      const rows = db
+        .prepare(
+          `
+  SELECT e.*, g.name AS group_name
+  FROM events e
+  LEFT JOIN groups g ON e.group_id = g.id
+  WHERE e.group_id IN (${groupIds.map(() => "?").join(",")})
+  ORDER BY
+    e.start_time ASC,
+    CASE WHEN e.end_time IS NULL THEN 1 ELSE 0 END ASC,
+    e.end_time ASC,
+    e.id ASC
+`
+        )
+        .all(...groupIds);
+
+      // map rows -> view-friendly objects
+      const events = rows.map((ev) => {
+        const startMs = ev.start_time ? Number(ev.start_time) : null;
+        const endMs = ev.end_time ? Number(ev.end_time) : null;
+
+        const start = startMs
+          ? new Date(startMs).toLocaleString("en-GB", {
+              dateStyle: "medium",
+              timeStyle: "short",
+              hour12: false,
+            })
+          : "TBD";
+        const end = endMs
+          ? new Date(endMs).toLocaleString("en-GB", {
+              dateStyle: "medium",
+              timeStyle: "short",
+              hour12: false,
+            })
+          : "";
+
+        const locationText = ev.location || ev.group_name || "—";
+
+        const lat = ev.location_lat != null ? Number(ev.location_lat) : null;
+        const lng = ev.location_lng != null ? Number(ev.location_lng) : null;
+
+        return {
+          id: ev.id,
+          title: ev.title,
+          description: ev.description,
+          start,
+          end,
+          status: ev.status,
+          location: locationText,
+          lat,
+          lng,
+          group_id: ev.group_id,
+          group_name: ev.group_name,
+          group_name_abbrev: abbreviate(ev.group_name),
+        };
+      });
+
+      //groups
+      const userId = getIdbyEmail(db, userEmail);
+
+      const groupRows = db
+        .prepare(
+          `SELECT g.id, g.name, g.description
+       FROM groups g
+       JOIN groupusers gu ON gu.group_id = g.id
+       WHERE gu.user_id = ?
+       ORDER BY g.name`
+        )
+        .all(userId);
+
+      const groups = groupRows.map((gr) => {
+        return {
+          id: gr.id,
+          name: gr.name,
+          description: gr.description,
+        };
+      });
+
+      response.render("pages/FS_Home", {
+        username,
+        groups,
+        events,
+        userGroups,
+      });
+    } catch (err) {
+      console.error("Error rendering homepage", err);
+      response.status(500).send("Server error");
+    }
   } else {
     goToLogin(request, response);
   }
@@ -217,6 +343,7 @@ views.get("/groups/create/:name/:description", (request, response) => {
   }
 });
 
+//group leaving
 views.get("/groups/:groupId/leave", (request, response) => {
   const groupId = request.params.groupId;
   const email = getCurrentUser(request);
@@ -226,19 +353,44 @@ views.get("/groups/:groupId/leave", (request, response) => {
     .prepare(`DELETE FROM groupusers WHERE (group_id = ?) AND (user_id = ?)`)
     .run(groupId, userId);
 
-  let IDs = getGroupData(db, email, "id");
-  let names = getGroupData(db, email, "name");
-  let descriptions = getGroupData(db, email, "description");
+  response.redirect("/groups");
+});
 
-  IDs = formatToEncodedString(IDs);
-  names = formatToEncodedString(names);
-  descriptions = formatToEncodedString(descriptions);
+//group deletion
+views.get("/groups/:groupId/delete", (request, response) => {
+  const groupId = request.params.groupId;
+  const email = getCurrentUser(request);
+  const userId = getIdbyEmail(db, email);
 
-  response.render("pages/FS_Groups", {
-    ids: IDs,
-    names: names,
-    descriptions: descriptions,
-  });
+  console.log(
+    "---------------- groupId = " +
+      groupId +
+      " email = " +
+      email +
+      " Userid = " +
+      userId +
+      "-----------"
+  );
+
+  const userRole = db
+    .prepare(
+      `SELECT role
+       FROM groupusers 
+       WHERE user_id = ? AND group_id = ?`
+    )
+    .get(userId, groupId);
+
+  console.log("---------------- userRole = " + userRole.role + "-----------");
+
+  //persoon moet owner zijn => check groupowner van groupusers, => check of email hetzelfde is
+  //aan te passen
+  if (userRole.role === "owner") {
+    const remove = db
+      .prepare(`DELETE FROM groups WHERE (id = ?) AND (owner_id = ?)`)
+      .run(groupId, userId);
+  }
+
+  response.redirect("/groups");
 });
 
 //chatpagina per groep
@@ -390,7 +542,7 @@ views.get("/groups/:groupId/editRole/:member/:role/", (request, response) => {
     }
   }
 
-  response.redirect("/groups/" + groupId + "/members");
+  response.redirect("/groups/" + groupId + "/");
 });
 
 views.get("/groups/:groupId/newMember/:member", (request, response) => {

@@ -28,6 +28,10 @@ header {
   transition: 0.25s;
 }
 
+.profile-item {
+  justify-content: end;
+}
+
 .user-dropdown {
   color: white;
 }

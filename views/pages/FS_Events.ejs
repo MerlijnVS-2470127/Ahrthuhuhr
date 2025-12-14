@@ -9,8 +9,8 @@
 
   <header><%- include('../partials/FS_Header'); %></header>
 
-  <div class="main-content-wrapper">
-    <body>
+  <body>
+    <div class="main-content-wrapper">
       <div class="main_div">
         <main class="events-list container">
           <div class="events-header-row">
@@ -29,6 +29,7 @@
           <!-- FILTERS -->
           <div
             class="mb-3 d-flex flex-column flex-sm-row gap-2 align-items-start align-items-sm-center"
+            id="statusChooser"
           >
             <div class="d-flex gap-2 align-items-center">
               <label class="me-2 fw-semibold">Status:</label>
@@ -181,8 +182,8 @@
           <% } %>
         </main>
       </div>
-    </body>
-  </div>
+    </div>
+  </body>
 
   <footer><%- include('../partials/FS_Footer'); %></footer>
 </html>
