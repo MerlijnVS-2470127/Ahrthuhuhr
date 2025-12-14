@@ -345,6 +345,14 @@
         "style='margin-bottom: 10px;'>" +
         "Leave" +
         "</button>";
+    } else {
+      contents +=
+        "<hr style='margin: 15px 0;'>" +
+        "<button class='btn btn-primary'" +
+        "id='btnDelete'" +
+        "style='margin-bottom: 10px;'>" +
+        "Delete" +
+        "</button>";
     }
 
     //adding the contents to the page
@@ -383,6 +391,24 @@
       btnLeave.addEventListener("click", () => {
         window.location.href = "/groups/" + groupId + "/leave";
       });
+    }
+
+    //delete button
+    const btnDelete = document.getElementById("btnDelete");
+    if (btnDelete) {
+      if (currentUserData.get("role") === "owner") {
+        btnDelete.addEventListener("click", () => {
+          let confirmation = prompt(
+            "CAREFULL! This cannot be undone! \n" +
+              "Enter the name of the group to confirm. \n" +
+              "Group name: " +
+              groupName
+          );
+          if (confirmation === groupName) {
+            window.location.href = "/groups/" + groupId + "/delete";
+          }
+        });
+      }
     }
   }
 

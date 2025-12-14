@@ -343,6 +343,7 @@ views.get("/groups/create/:name/:description", (request, response) => {
   }
 });
 
+//group leaving
 views.get("/groups/:groupId/leave", (request, response) => {
   const groupId = request.params.groupId;
   const email = getCurrentUser(request);
@@ -352,19 +353,44 @@ views.get("/groups/:groupId/leave", (request, response) => {
     .prepare(`DELETE FROM groupusers WHERE (group_id = ?) AND (user_id = ?)`)
     .run(groupId, userId);
 
-  let IDs = getGroupData(db, email, "id");
-  let names = getGroupData(db, email, "name");
-  let descriptions = getGroupData(db, email, "description");
+  response.redirect("/groups");
+});
 
-  IDs = formatToEncodedString(IDs);
-  names = formatToEncodedString(names);
-  descriptions = formatToEncodedString(descriptions);
+//group deletion
+views.get("/groups/:groupId/delete", (request, response) => {
+  const groupId = request.params.groupId;
+  const email = getCurrentUser(request);
+  const userId = getIdbyEmail(db, email);
 
-  response.render("pages/FS_Groups", {
-    ids: IDs,
-    names: names,
-    descriptions: descriptions,
-  });
+  console.log(
+    "---------------- groupId = " +
+      groupId +
+      " email = " +
+      email +
+      " Userid = " +
+      userId +
+      "-----------"
+  );
+
+  const userRole = db
+    .prepare(
+      `SELECT role
+       FROM groupusers 
+       WHERE user_id = ? AND group_id = ?`
+    )
+    .get(userId, groupId);
+
+  console.log("---------------- userRole = " + userRole.role + "-----------");
+
+  //persoon moet owner zijn => check groupowner van groupusers, => check of email hetzelfde is
+  //aan te passen
+  if (userRole.role === "owner") {
+    const remove = db
+      .prepare(`DELETE FROM groups WHERE (id = ?) AND (owner_id = ?)`)
+      .run(groupId, userId);
+  }
+
+  response.redirect("/groups");
 });
 
 //chatpagina per groep
