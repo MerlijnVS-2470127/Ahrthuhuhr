@@ -134,16 +134,27 @@
   //-----------//
   //Side panel //
   //-----------//
-  const btn_changeSidePanel = document.getElementById("btn_changeSidePanel");
-  let loaded = "";
   const sp_contents = document.getElementById("sp-contents");
   const sp_title = document.getElementById("sp-title");
   const sp_description = document.getElementById("sp-description");
+  const tabEvents = document.getElementById("tab-events");
+  const tabInfo = document.getElementById("tab-info");
+  const tabPolls = document.getElementById("tab-polls");
+
   const events = window.eventsInfo;
   const usersInfo = window.usersInfo;
   const groupName = window.__CHAT.groupName;
   let currentUser = window.__CHAT.currentUser;
 
+  //helper om active tab te bepalen
+  function setActiveTab(activeBtn) {
+    [tabEvents, tabInfo, tabPolls].forEach((btn) => {
+      if (btn) btn.classList.remove("active");
+    });
+    if (activeBtn) activeBtn.classList.add("active");
+  }
+
+  // event tab
   function loadEvents() {
     sp_title.innerText = "Events";
     sp_description.innerText = "Events of the group.";
@@ -244,6 +255,7 @@
     }
   }
 
+  // group tab
   function loadGroupInfo() {
     sp_title.innerText = groupName;
     sp_description.innerText = "Group details.";
@@ -380,18 +392,61 @@
     }
   }
 
-  addEventListener("load", () => {
-    loaded = "events";
+  // polls tab
+  function loadPolls() {
+    sp_title.innerText = "Polls";
+    sp_description.innerText = "All polls in this group.";
+
+    const polls = window.pollsData || [];
+    let contents = "";
+
+    if (!polls.length) {
+      contents = "<p>No polls yet.</p>";
+    } else {
+      polls.forEach((poll) => {
+        contents += `<div class="poll" style="margin-bottom: 15px;">
+                     <h4>${poll.title}</h4>
+                     <small>Created by ${poll.creator}</small>
+                     <ul style="list-style:none; padding-left:0;">`;
+
+        poll.options.forEach((opt) => {
+          contents += `<li style="display:flex; align-items:center; margin-bottom:5px;">
+                       <div style="width:20px; height:20px; border:2px solid #000; border-radius:50%; margin-right:10px;"></div>
+                       <span>${opt.title} (${opt.votes})</span>
+                       ${
+                         opt.description
+                           ? `<small style="margin-left:5px; color:gray;">- ${opt.description}</small>`
+                           : ""
+                       }
+                     </li>`;
+        });
+
+        contents += `</ul></div>`;
+      });
+    }
+
+    sp_contents.innerHTML = contents;
+  }
+
+  //wiring tab buttons
+  tabEvents.addEventListener("click", () => {
+    setActiveTab(tabEvents);
     loadEvents();
   });
 
-  btn_changeSidePanel.addEventListener("click", () => {
-    if (loaded === "events") {
-      loaded = "groups";
-      loadGroupInfo();
-    } else {
-      loaded = "events";
-      loadEvents();
-    }
+  tabInfo.addEventListener("click", () => {
+    setActiveTab(tabInfo);
+    loadGroupInfo();
+  });
+
+  tabPolls.addEventListener("click", () => {
+    setActiveTab(tabPolls);
+    loadPolls();
+  });
+
+  //load event tab on page loads
+  addEventListener("load", () => {
+    setActiveTab(tabEvents);
+    loadEvents();
   });
 })();

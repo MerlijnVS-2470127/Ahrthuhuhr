@@ -449,5 +449,93 @@ export function seedExampleData() {
     console.log("Inserted example messages.");
   }
 
+  // ---------------------------
+  // POLLS
+  // ---------------------------
+  if (isTableEmpty("polls")) {
+    const users = db
+      .prepare("SELECT id, username FROM users ORDER BY id")
+      .all();
+    const groups = db.prepare("SELECT id, name FROM groups ORDER BY id").all();
+
+    const testGroup = groups.find((g) => g.name === "Test Group");
+    const john = users.find((u) => u.username === "John Doe");
+
+    const twoDays = 1000 * 60 * 60 * 24 * 2;
+
+    // create poll
+    const pollResult = db
+      .prepare(
+        `
+        INSERT INTO polls (group_id, creator_id, title, allow_multiple, end_time)
+        VALUES (?, ?, ?, ?, ?)
+      `
+      )
+      .run(
+        testGroup.id,
+        john.id,
+        "Where should we eat?",
+        0, // single choice
+        now + twoDays
+      );
+
+    const pollId = pollResult.lastInsertRowid;
+
+    // create poll options
+    const insertOption = db.prepare(
+      `
+      INSERT INTO poll_options (poll_id, title, description)
+      VALUES (?, ?, ?)
+    `
+    );
+
+    const optionResults = [
+      insertOption.run(pollId, "Pizza", "Italian classics"),
+      insertOption.run(pollId, "Burgers", "Greasy & good"),
+      insertOption.run(pollId, "Sushi", "Fresh fish"),
+    ];
+
+    const optionIds = optionResults.map((r) => r.lastInsertRowid);
+
+    // voters: exclude John (creator) and lurkers
+    const eligibleVoters = db
+      .prepare(
+        `
+        SELECT u.id
+        FROM users u
+        JOIN groupusers gu ON gu.user_id = u.id
+        WHERE gu.group_id = ?
+          AND gu.role != 'lurker'
+          AND u.id != ?
+      `
+      )
+      .all(testGroup.id, john.id)
+      .map((u) => u.id);
+
+    const insertVote = db.prepare(
+      `
+      INSERT INTO poll_votes (poll_id, poll_option_id, user_id)
+      VALUES (?, ?, ?)
+    `
+    );
+
+    // distribute votes:
+    // option 1 -> 1 vote
+    // option 2 -> 2 votes
+    // option 3 -> 3 votes
+    let voterIndex = 0;
+
+    optionIds.forEach((optionId, optionIndex) => {
+      const votesForThisOption = optionIndex + 1;
+      for (let i = 0; i < votesForThisOption; i++) {
+        if (voterIndex >= eligibleVoters.length) break;
+        insertVote.run(pollId, optionId, eligibleVoters[voterIndex]);
+        voterIndex++;
+      }
+    });
+
+    console.log("Inserted example poll for Test Group.");
+  }
+
   console.log("Seeding complete.");
 }
