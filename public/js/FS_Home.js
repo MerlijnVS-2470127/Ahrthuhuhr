@@ -5,7 +5,6 @@
 let username = window.username;
 
 addEventListener("load", (e) => {
-  alert(username);
   let cookieString = "username=" + username + ";";
   cookieString += " path=/;";
   document.cookie = cookieString;
