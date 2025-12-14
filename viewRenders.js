@@ -340,7 +340,7 @@ views.get("/groups/:groupId/editRole/:member/:role/", (request, response) => {
     }
   }
 
-  response.redirect("/groups/" + groupId + "/members");
+  response.redirect("/groups/" + groupId + "/");
 });
 
 views.get("/groups/:groupId/newMember/:member", (request, response) => {

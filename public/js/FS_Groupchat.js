@@ -350,13 +350,7 @@
           const btnName = btn.getAttribute("name");
 
           window.location.href =
-            "/groups/" +
-            groupId +
-            "/editRole/" +
-            btnName +
-            "/" +
-            btnId +
-            "/members";
+            "/groups/" + groupId + "/editRole/" + btnName + "/" + btnId + "/";
         });
       }
     }
