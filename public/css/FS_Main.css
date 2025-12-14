@@ -67,7 +67,8 @@ hr {
 
 .tab_header {
   font-size: 34px;
-  color: var(--bs-secondary);
+  color: var(--bs-primary);
+  text-decoration: none;
 }
 
 .hidden {
