@@ -317,6 +317,39 @@ views.get("/groups/:groupId", (request, response) => {
 
   const currentUser = getCurrentUser(request);
 
+  // polls van groep ophalen
+  const pollsRows = db
+    .prepare(
+      `SELECT p.id, p.title, p.end_time, p.creator_id, u.username AS creator
+     FROM polls p
+     LEFT JOIN users u ON u.id = p.creator_id
+     WHERE p.group_id = ?
+     ORDER BY p.created_at DESC`
+    )
+    .all(groupId);
+
+  // poll options & poll votes van groep ophalen
+  const polls = pollsRows.map((poll) => {
+    const options = db
+      .prepare(
+        `SELECT po.id, po.title, po.description,
+              COUNT(pv.id) AS votes
+       FROM poll_options po
+       LEFT JOIN poll_votes pv ON pv.poll_option_id = po.id
+       WHERE po.poll_id = ?
+       GROUP BY po.id`
+      )
+      .all(poll.id);
+
+    return {
+      id: poll.id,
+      title: poll.title,
+      end_time: poll.end_time,
+      creator: poll.creator,
+      options,
+    };
+  });
+
   response.render("pages/FS_Groupchat", {
     currentUser,
     groupId,
@@ -324,6 +357,7 @@ views.get("/groups/:groupId", (request, response) => {
     group,
     events,
     userInfo,
+    polls,
   });
 });
 

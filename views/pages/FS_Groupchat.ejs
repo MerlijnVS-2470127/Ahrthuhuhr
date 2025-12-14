@@ -13,6 +13,7 @@
       };
       window.eventsInfo = <%- JSON.stringify(events) %>;
       window.usersInfo = <%- JSON.stringify(userInfo) %>;
+      window.pollsData = <%- JSON.stringify(polls) %>;
     </script>
     <script src="/js/FS_Groupchat.js" defer></script>
 
@@ -78,6 +79,18 @@
 
         <div class="chat_division" id="side-panel" style="max-width: 30%">
           <section id="chat" class="chat">
+            <div class="btn-group w-100 mb-2" role="tablist">
+              <button class="btn btn-outline-primary active" id="tab-events">
+                Events
+              </button>
+              <button class="btn btn-outline-primary" id="tab-info">
+                Info
+              </button>
+              <button class="btn btn-outline-primary" id="tab-polls">
+                Polls
+              </button>
+            </div>
+
             <h1 class="" id="sp-title"></h1>
             <div class="mb-2 sp-description">
               <small
@@ -89,15 +102,6 @@
             </div>
 
             <div class="sp-contents" id="sp-contents"></div>
-
-            <hr style="margin: 5px" />
-            <button
-              id="btn_changeSidePanel"
-              class="btn btn-primary"
-              style="margin-top: 10px"
-            >
-              Switch
-            </button>
           </section>
         </div>
       </div>

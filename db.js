@@ -116,6 +116,56 @@ export function InitializeDatabase() {
   `
   ).run();
 
+  // prepare polls
+  db.prepare(
+    `
+    CREATE TABLE IF NOT EXISTS polls (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      group_id INTEGER,
+      creator_id INTEGER,
+      title TEXT NOT NULL CHECK (length(title) <= 20),
+      allow_multiple INTEGER NOT NULL DEFAULT 0, -- 0 = single choice, 1 = multi choice
+      end_time INTEGER, -- NULL = no end time
+      is_closed INTEGER NOT NULL DEFAULT 0,
+      created_at INTEGER NOT NULL DEFAULT (cast(strftime('%s','now') as integer) * 1000),
+      updated_at INTEGER NOT NULL DEFAULT (cast(strftime('%s','now') as integer) * 1000),
+      FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE,
+      FOREIGN KEY(creator_id) REFERENCES users(id) ON DELETE SET NULL
+    ) STRICT
+    `
+  ).run();
+
+  // prepare poll options
+  db.prepare(
+    `
+    CREATE TABLE IF NOT EXISTS poll_options (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      poll_id INTEGER NOT NULL,
+      title TEXT NOT NULL CHECK (length(title) <= 20),
+      description TEXT CHECK (length(description) <= 20),
+      created_at INTEGER NOT NULL DEFAULT (cast(strftime('%s','now') as integer) * 1000),
+      FOREIGN KEY(poll_id) REFERENCES polls(id) ON DELETE CASCADE
+    ) STRICT
+    `
+  ).run();
+
+  // prepare poll votes
+  db.prepare(
+    `
+    CREATE TABLE IF NOT EXISTS poll_votes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      poll_id INTEGER NOT NULL,
+      poll_option_id INTEGER NOT NULL,
+      user_id INTEGER,
+      created_at INTEGER NOT NULL DEFAULT (cast(strftime('%s','now') as integer) * 1000),
+      FOREIGN KEY(poll_id) REFERENCES polls(id) ON DELETE CASCADE,
+      FOREIGN KEY(poll_option_id) REFERENCES poll_options(id) ON DELETE CASCADE,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL,
+      UNIQUE(poll_id, poll_option_id, user_id)
+    ) STRICT
+    `
+  ).run();
+
   // indices for faster lookup
   db.prepare(
     `CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);`
@@ -153,5 +203,25 @@ export function InitializeDatabase() {
   ).run();
   db.prepare(
     `CREATE INDEX IF NOT EXISTS idx_resources_event ON resources(event_id);`
+  ).run();
+
+  db.prepare(
+    `CREATE INDEX IF NOT EXISTS idx_polls_group ON polls(group_id);`
+  ).run();
+
+  db.prepare(
+    `CREATE INDEX IF NOT EXISTS idx_polls_creator ON polls(creator_id);`
+  ).run();
+
+  db.prepare(
+    `CREATE INDEX IF NOT EXISTS idx_poll_options_poll ON poll_options(poll_id);`
+  ).run();
+
+  db.prepare(
+    `CREATE INDEX IF NOT EXISTS idx_poll_votes_poll ON poll_votes(poll_id);`
+  ).run();
+
+  db.prepare(
+    `CREATE INDEX IF NOT EXISTS idx_poll_votes_user ON poll_votes(user_id);`
   ).run();
 }
