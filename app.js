@@ -54,13 +54,40 @@ app.use((request, response, next) => {});
 // Middleware for unknown routes
 // Must be last in pipeline
 app.use((request, response, next) => {
-  response.status(404).send("Sorry can't find that!");
+  response
+    .status(404)
+    .send(
+      +"<div style='margin: 30px;'>" +
+        "<h1 style='color: #216477; font-size: 4rem;'>Sorry can't find that!</h1>" +
+        "<div style='font-size: 2rem;'>This page doesn't exist." +
+        "<br>If this error is server-side, we will be working on a fix." +
+        "<br>You can try going to another page. </div>" +
+        "<hr style='margin: 25px 0; color: #216477; width: 875px;'>" +
+        "<a href='/' style='font-size: 2rem; color: #216477;'>Home</a> -/- " +
+        "<a href='/groups' style='font-size: 2rem; color: #216477;'>Groups</a> -/- " +
+        "<a href='/events' style='font-size: 2rem; color: #216477;'>Events</a> -/- " +
+        "<a href='/map' style='font-size: 2rem; color: #216477;'>Map</a>" +
+        "</div>"
+    );
 });
 
 // Middleware for error handling
 app.use((error, request, response, next) => {
   console.error(error.stack);
-  response.status(500).send("Something broke!");
+  response
+    .status(500)
+    .send(
+      "<div style='margin: 30px;'>" +
+        "<h1 style='color: #216477; font-size: 4rem;'>Something broke!</h1>" +
+        "<div style='font-size: 2rem;'>You can try reloading the page or going to another page." +
+        "<br>If this error is server-side, we will be working on a fix. </div>" +
+        "<hr style='margin: 25px 0; color: #216477; width: 875px;'>" +
+        "<a href='/' style='font-size: 2rem; color: #216477;'>Home</a> - / - " +
+        "<a href='/groups' style='font-size: 2rem; color: #216477;'>Groups</a> - / - " +
+        "<a href='/events' style='font-size: 2rem; color: #216477;'>Events</a> - / - " +
+        "<a href='/map' style='font-size: 2rem; color: #216477;'>Map</a>" +
+        "</div>"
+    );
 });
 
 // App starts here
