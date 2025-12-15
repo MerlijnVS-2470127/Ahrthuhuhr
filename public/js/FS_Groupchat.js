@@ -327,6 +327,14 @@
               "' id='member'>Delurk</button>";
           }
         }
+      }
+
+      if (
+        (currentUserData.get("role") === "admin" ||
+          currentUserData.get("role") === "owner") &&
+        user.role != "owner" &&
+        user.email != currentUserData.get("email")
+      ) {
         contents += " | ";
         contents +=
           "<button class='btn btn-primary kickButton'" +

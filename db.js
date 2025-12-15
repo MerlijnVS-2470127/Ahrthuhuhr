@@ -10,7 +10,7 @@ export function InitializeDatabase() {
   db.pragma("foreign_keys = true;");
   db.pragma("temp_store = memory;");
 
-  //db.prepare(`DROP TABLE groups`).run();
+  //db.prepare(`DROP TABLE groupusers`).run();
 
   //prepare users
   db.prepare(
