@@ -10,9 +10,14 @@ let message = window.message;
 
 function validateSubmit(form) {
   errorBox = document.getElementById("nameError");
+  let name = form["name"].value;
   if (form["name"].value === "") {
-    alert("[" + form["name"].value + "]");
     errorBox.innerText = "A group name is required";
+    return false;
+  }
+  if (name.length > 30) {
+    errorBox.innerText =
+      "The group name is too long. Current length: " + name.length;
     return false;
   }
   return true;
