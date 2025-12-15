@@ -231,6 +231,21 @@ views.get("/login/:email/:password/:mode", (request, response) => {
 //--------------------------//
 // Edit Profile page render //
 //--------------------------//
+views.get("/profile", (request, response) => {
+  if (isAuthorized(request, db)) {
+    const email = getCurrentUser(request);
+    const currentUsername = getCurrentUsername(db, email);
+
+    response.render("pages/FS_Profile", {
+      changeStatus: true,
+      email: email,
+      currentUsername: currentUsername,
+    });
+  } else {
+    goToLogin(request, response);
+  }
+});
+
 views.get("/profile/:data/:changed/:email", (request, response) => {
   let changed = decodeURIComponent(request.params.changed);
   let data = decodeURIComponent(request.params.data);
@@ -238,6 +253,13 @@ views.get("/profile/:data/:changed/:email", (request, response) => {
 
   let changeStatus = true;
   let currentUsername = "error loading username";
+
+  console.log(
+    "----------------------- data: " +
+      data +
+      "----------------------- email: " +
+      email
+  );
 
   if (isAuthorized(request, db)) {
     if (changed != "null" && data != "null") {
@@ -247,6 +269,8 @@ views.get("/profile/:data/:changed/:email", (request, response) => {
     if (changeStatus) {
       currentUsername = getCurrentUsername(db, email);
     }
+
+    console.log("----------------------- currentUsername: " + currentUsername);
 
     response.render("pages/FS_Profile", {
       changeStatus: changeStatus,
@@ -542,6 +566,12 @@ views.get("/groups/:groupId/editRole/:member/:role/", (request, response) => {
     }
   }
 
+  if (newRole === "kick") {
+    const remove = db
+      .prepare(`DELETE FROM groupusers WHERE (group_id = ?) AND (user_id = ?)`)
+      .run(groupId, member);
+  }
+
   response.redirect("/groups/" + groupId + "/");
 });
 
@@ -569,7 +599,7 @@ views.get("/groups/:groupId/newMember/:member", (request, response) => {
     }
   }
 
-  response.redirect("/groups/" + groupId + "/members");
+  response.redirect("/groups/" + groupId);
 });
 
 //---------------------//

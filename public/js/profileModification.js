@@ -1,6 +1,7 @@
 "use strict";
 import express from "express";
 import cookieParser from "cookie-parser";
+import { getCookieByName } from "./getUserInfo.js";
 
 const app = express();
 app.use(cookieParser());
@@ -19,8 +20,7 @@ export function changeData(req, res, db, data, changed, email) {
 }
 
 function authorization(req, email) {
-  let rawUserCookie = req.headers.cookie.split(";")[0];
-  let userCookie = rawUserCookie.substring(5);
+  const userCookie = getCookieByName(req, "user");
 
   if (userCookie === email) {
     return true;

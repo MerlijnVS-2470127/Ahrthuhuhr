@@ -327,6 +327,12 @@
               "' id='member'>Delurk</button>";
           }
         }
+        contents += " | ";
+        contents +=
+          "<button class='btn btn-primary kickButton'" +
+          "' id='" +
+          user.id +
+          "'>Kick</button>";
       }
 
       contents += "</div>";
@@ -385,13 +391,28 @@
       }
     }
 
+    //kick buttons
+    let kickButtons = document.getElementsByClassName(
+      "btn btn-primary kickButton"
+    );
+
+    if (kickButtons.length > 0) {
+      for (const btn of kickButtons) {
+        btn.addEventListener("click", () => {
+          const userId = btn.getAttribute("id");
+
+          window.location.href =
+            "/groups/" + groupId + "/editRole/" + userId + "/" + "kick" + "/";
+        });
+      }
+    }
+
     //add button
     const btnAdd = document.getElementById("btnAdd");
     if (btnAdd) {
       btnAdd.addEventListener("click", () => {
         let newUser = document.getElementById("userEmail").value;
-        window.location.href =
-          "/groups/" + groupId + "/newMember/" + newUser + "/members";
+        window.location.href = "/groups/" + groupId + "/newMember/" + newUser;
       });
     }
 

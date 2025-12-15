@@ -463,7 +463,7 @@ export function seedExampleData() {
 
     const twoDays = 1000 * 60 * 60 * 24 * 2;
 
-    // create poll
+    //create poll
     const pollResult = db
       .prepare(
         `
@@ -540,13 +540,13 @@ export function seedExampleData() {
     // MULTIPLE CHOICE POLL (EXAMPLE)
     // ---------------------------
 
-    // create multiple-choice poll
+    //create multiple-choice poll
     const multiPollResult = db
       .prepare(
         `
-    INSERT INTO polls (group_id, creator_id, title, allow_multiple, end_time)
-    VALUES (?, ?, ?, ?, ?)
-  `
+      INSERT INTO polls (group_id, creator_id, title, allow_multiple, end_time)
+      VALUES (?, ?, ?, ?, ?)
+    `
       )
       .run(
         testGroup.id,
@@ -561,9 +561,9 @@ export function seedExampleData() {
     // poll options
     const insertMultiOption = db.prepare(
       `
-  INSERT INTO poll_options (poll_id, title, description)
-  VALUES (?, ?, ?)
-`
+    INSERT INTO poll_options (poll_id, title, description)
+    VALUES (?, ?, ?)
+  `
     );
 
     const multiOptionResults = [
@@ -579,14 +579,14 @@ export function seedExampleData() {
     const multiVoters = db
       .prepare(
         `
-    SELECT u.id
-    FROM users u
-    JOIN groupusers gu ON gu.user_id = u.id
-    WHERE gu.group_id = ?
-      AND gu.role != 'lurker'
-      AND u.id != ?
-    LIMIT 5
-  `
+      SELECT u.id
+      FROM users u
+      JOIN groupusers gu ON gu.user_id = u.id
+      WHERE gu.group_id = ?
+        AND gu.role != 'lurker'
+        AND u.id != ?
+      LIMIT 5
+    `
       )
       .all(testGroup.id, john.id)
       .map((u) => u.id);
@@ -594,9 +594,9 @@ export function seedExampleData() {
     // insert votes (each user picks 2 options)
     const insertMultiVote = db.prepare(
       `
-  INSERT INTO poll_votes (poll_id, poll_option_id, user_id)
-  VALUES (?, ?, ?)
-`
+    INSERT INTO poll_votes (poll_id, poll_option_id, user_id)
+    VALUES (?, ?, ?)
+  `
     );
 
     multiVoters.forEach((userId, index) => {
