@@ -11,14 +11,17 @@ router.get("/stream", (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
-
   res.flushHeaders();
 
-  const client = { res };
-  clients.add(client);
+  const interval = setInterval(() => {
+    res.write(": keepalive\n\n");
+  }, 20000);
+
+  clients.add(res);
 
   req.on("close", () => {
-    clients.delete(client);
+    clearInterval(interval);
+    clients.delete(res);
   });
 });
 
@@ -40,9 +43,9 @@ function broadcastPollUpdate(pollId) {
     options: data,
   });
 
-  for (const client of clients) {
-    client.res.write(`event: pollUpdate\n`);
-    client.res.write(`data: ${payload}\n\n`);
+  for (const res of clients) {
+    res.write(`event: pollUpdate\n`);
+    res.write(`data: ${payload}\n\n`);
   }
 }
 
@@ -165,7 +168,7 @@ router.post("/:pollId/vote", (req, res) => {
 });
 
 // post created poll
-router.post("/:groupId", (req, res) => {
+router.post("/groups/:groupId", (req, res) => {
   const groupId = Number(req.params.groupId);
 
   const email = getCurrentUser(req);

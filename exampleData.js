@@ -270,6 +270,18 @@ export function seedExampleData() {
         location_lat: null,
         location_lng: null,
       },
+      {
+        creator_id: users[1].id, //John
+        group_id: groups[0].id,
+        title: "Cancelled event",
+        description: "cancelled due to complications",
+        start_time: now + oneDay * 2,
+        end_time: now + oneDay * 3,
+        status: "cancelled",
+        location: "Community Center, Test City",
+        location_lat: null,
+        location_lng: null,
+      },
 
       //new york trip
       {
@@ -417,6 +429,24 @@ export function seedExampleData() {
     let floor = Math.floor;
 
     const exampleMessages = [
+      //test group
+      {
+        group_id: floor(groups[0].id),
+        user_name: "John Doe",
+        content: "Welcome in the testgroup for testing the app!",
+      },
+      {
+        group_id: floor(groups[0].id),
+        user_name: "Merlijn van Suetendael",
+        content: "I'm very motivated to work on this project!",
+      },
+      {
+        group_id: floor(groups[0].id),
+        user_name: "Gerben Geurts",
+        content: "Go team!",
+      },
+
+      //new york group
       {
         group_id: floor(groups[1].id),
         user_name: "Gerben Geurts",
@@ -522,7 +552,7 @@ export function seedExampleData() {
     // distribute votes:
     // option 1 -> 1 vote
     // option 2 -> 2 votes
-    // option 3 -> 3 votes
+    // option 3 -> 1 votes
     let voterIndex = 0;
 
     optionIds.forEach((optionId, optionIndex) => {

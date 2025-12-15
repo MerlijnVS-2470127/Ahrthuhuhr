@@ -512,7 +512,13 @@
                 : ""
             }
           </label>
-          <span class="badge bg-secondary">${opt.votes}</span>
+          <span
+            class="badge bg-secondary poll-votes"
+            data-option-id="${opt.id}"
+          >
+            ${opt.votes}
+          </span>
+
         </div>
       `;
       });
@@ -691,7 +697,7 @@
     }
 
     try {
-      const res = await fetch(`/polls/${groupId}`, {
+      const res = await fetch(`/polls/groups/${groupId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
