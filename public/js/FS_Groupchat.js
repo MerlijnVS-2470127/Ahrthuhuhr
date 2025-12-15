@@ -327,11 +327,12 @@
               "' id='member'>Delurk</button>";
           }
         }
+        contents += " | ";
         contents +=
           "<button class='btn btn-primary kickButton'" +
           "' id='" +
           user.id +
-          "'>Delurk</button>";
+          "'>Kick</button>";
       }
 
       contents += "</div>";

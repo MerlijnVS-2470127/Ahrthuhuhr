@@ -452,164 +452,164 @@ export function seedExampleData() {
   // ---------------------------
   // POLLS
   // ---------------------------
-  if (isTableEmpty("polls")) {
-    const users = db
-      .prepare("SELECT id, username FROM users ORDER BY id")
-      .all();
-    const groups = db.prepare("SELECT id, name FROM groups ORDER BY id").all();
+  // if (isTableEmpty("polls")) {
+  //   const users = db
+  //     .prepare("SELECT id, username FROM users ORDER BY id")
+  //     .all();
+  //   const groups = db.prepare("SELECT id, name FROM groups ORDER BY id").all();
 
-    const testGroup = groups.find((g) => g.name === "Test Group");
-    const john = users.find((u) => u.username === "John Doe");
+  //   const testGroup = groups.find((g) => g.name === "Test Group");
+  //   const john = users.find((u) => u.username === "John Doe");
 
-    const twoDays = 1000 * 60 * 60 * 24 * 2;
+  //   const twoDays = 1000 * 60 * 60 * 24 * 2;
 
-    // create poll
-    const pollResult = db
-      .prepare(
-        `
-        INSERT INTO polls (group_id, creator_id, title, allow_multiple, end_time)
-        VALUES (?, ?, ?, ?, ?)
-      `
-      )
-      .run(
-        testGroup.id,
-        john.id,
-        "Where should we eat?",
-        0, // single choice
-        now + twoDays
-      );
+  //   // create poll
+  //   // const pollResult = db
+  //   //   .prepare(
+  //   //     `
+  //   //     INSERT INTO polls (group_id, creator_id, title, allow_multiple, end_time)
+  //   //     VALUES (?, ?, ?, ?, ?)
+  //   //   `
+  //   //   )
+  //   //   .run(
+  //   //     testGroup.id,
+  //   //     john.id,
+  //   //     "Where should we eat?",
+  //   //     0, // single choice
+  //   //     now + twoDays
+  //   //   );
 
-    const pollId = pollResult.lastInsertRowid;
+  //   // const pollId = pollResult.lastInsertRowid;
 
-    // create poll options
-    const insertOption = db.prepare(
-      `
-      INSERT INTO poll_options (poll_id, title, description)
-      VALUES (?, ?, ?)
-    `
-    );
+  //   // create poll options
+  //   const insertOption = db.prepare(
+  //     `
+  //     INSERT INTO poll_options (poll_id, title, description)
+  //     VALUES (?, ?, ?)
+  //   `
+  //   );
 
-    const optionResults = [
-      insertOption.run(pollId, "Pizza", "Italian classics"),
-      insertOption.run(pollId, "Burgers", "Greasy & good"),
-      insertOption.run(pollId, "Sushi", "Fresh fish"),
-    ];
+  //   const optionResults = [
+  //     insertOption.run(pollId, "Pizza", "Italian classics"),
+  //     insertOption.run(pollId, "Burgers", "Greasy & good"),
+  //     insertOption.run(pollId, "Sushi", "Fresh fish"),
+  //   ];
 
-    const optionIds = optionResults.map((r) => r.lastInsertRowid);
+  //   const optionIds = optionResults.map((r) => r.lastInsertRowid);
 
-    // voters: exclude John (creator) and lurkers
-    const eligibleVoters = db
-      .prepare(
-        `
-        SELECT u.id
-        FROM users u
-        JOIN groupusers gu ON gu.user_id = u.id
-        WHERE gu.group_id = ?
-          AND gu.role != 'lurker'
-          AND u.id != ?
-      `
-      )
-      .all(testGroup.id, john.id)
-      .map((u) => u.id);
+  //   // voters: exclude John (creator) and lurkers
+  //   const eligibleVoters = db
+  //     .prepare(
+  //       `
+  //       SELECT u.id
+  //       FROM users u
+  //       JOIN groupusers gu ON gu.user_id = u.id
+  //       WHERE gu.group_id = ?
+  //         AND gu.role != 'lurker'
+  //         AND u.id != ?
+  //     `
+  //     )
+  //     .all(testGroup.id, john.id)
+  //     .map((u) => u.id);
 
-    const insertVote = db.prepare(
-      `
-      INSERT INTO poll_votes (poll_id, poll_option_id, user_id)
-      VALUES (?, ?, ?)
-    `
-    );
+  //   const insertVote = db.prepare(
+  //     `
+  //     INSERT INTO poll_votes (poll_id, poll_option_id, user_id)
+  //     VALUES (?, ?, ?)
+  //   `
+  //   );
 
-    // distribute votes:
-    // option 1 -> 1 vote
-    // option 2 -> 2 votes
-    // option 3 -> 3 votes
-    let voterIndex = 0;
+  //   // distribute votes:
+  //   // option 1 -> 1 vote
+  //   // option 2 -> 2 votes
+  //   // option 3 -> 3 votes
+  //   let voterIndex = 0;
 
-    optionIds.forEach((optionId, optionIndex) => {
-      const votesForThisOption = optionIndex + 1;
-      for (let i = 0; i < votesForThisOption; i++) {
-        if (voterIndex >= eligibleVoters.length) break;
-        insertVote.run(pollId, optionId, eligibleVoters[voterIndex]);
-        voterIndex++;
-      }
-    });
+  //   optionIds.forEach((optionId, optionIndex) => {
+  //     const votesForThisOption = optionIndex + 1;
+  //     for (let i = 0; i < votesForThisOption; i++) {
+  //       if (voterIndex >= eligibleVoters.length) break;
+  //       insertVote.run(pollId, optionId, eligibleVoters[voterIndex]);
+  //       voterIndex++;
+  //     }
+  //   });
 
-    console.log("Inserted example poll for Test Group.");
+  //   console.log("Inserted example poll for Test Group.");
 
-    // ---------------------------
-    // MULTIPLE CHOICE POLL (EXAMPLE)
-    // ---------------------------
+  // ---------------------------
+  // MULTIPLE CHOICE POLL (EXAMPLE)
+  // ---------------------------
 
-    // create multiple-choice poll
-    const multiPollResult = db
-      .prepare(
-        `
-    INSERT INTO polls (group_id, creator_id, title, allow_multiple, end_time)
-    VALUES (?, ?, ?, ?, ?)
-  `
-      )
-      .run(
-        testGroup.id,
-        john.id,
-        "Multiple choice",
-        1, // multiple choice
-        now + twoDays
-      );
+  // create multiple-choice poll
+  //     const multiPollResult = db
+  //       .prepare(
+  //         `
+  //     INSERT INTO polls (group_id, creator_id, title, allow_multiple, end_time)
+  //     VALUES (?, ?, ?, ?, ?)
+  //   `
+  //       )
+  //       .run(
+  //         testGroup.id,
+  //         john.id,
+  //         "Multiple choice",
+  //         1, // multiple choice
+  //         now + twoDays
+  //       );
 
-    const multiPollId = multiPollResult.lastInsertRowid;
+  //     const multiPollId = multiPollResult.lastInsertRowid;
 
-    // poll options
-    const insertMultiOption = db.prepare(
-      `
-  INSERT INTO poll_options (poll_id, title, description)
-  VALUES (?, ?, ?)
-`
-    );
+  //     // poll options
+  //     const insertMultiOption = db.prepare(
+  //       `
+  //   INSERT INTO poll_options (poll_id, title, description)
+  //   VALUES (?, ?, ?)
+  // `
+  //     );
 
-    const multiOptionResults = [
-      insertMultiOption.run(multiPollId, "Bowling", "Fun & competitive"),
-      insertMultiOption.run(multiPollId, "Escape Room", "Brains required"),
-      insertMultiOption.run(multiPollId, "Movie Night", "Relaxing"),
-      insertMultiOption.run(multiPollId, "Board Games", "Casual fun"),
-    ];
+  //     const multiOptionResults = [
+  //       insertMultiOption.run(multiPollId, "Bowling", "Fun & competitive"),
+  //       insertMultiOption.run(multiPollId, "Escape Room", "Brains required"),
+  //       insertMultiOption.run(multiPollId, "Movie Night", "Relaxing"),
+  //       insertMultiOption.run(multiPollId, "Board Games", "Casual fun"),
+  //     ];
 
-    const multiOptionIds = multiOptionResults.map((r) => r.lastInsertRowid);
+  //     const multiOptionIds = multiOptionResults.map((r) => r.lastInsertRowid);
 
-    // eligible voters: exactly 5 non-lurkers (excluding John)
-    const multiVoters = db
-      .prepare(
-        `
-    SELECT u.id
-    FROM users u
-    JOIN groupusers gu ON gu.user_id = u.id
-    WHERE gu.group_id = ?
-      AND gu.role != 'lurker'
-      AND u.id != ?
-    LIMIT 5
-  `
-      )
-      .all(testGroup.id, john.id)
-      .map((u) => u.id);
+  //     // eligible voters: exactly 5 non-lurkers (excluding John)
+  //     const multiVoters = db
+  //       .prepare(
+  //         `
+  //     SELECT u.id
+  //     FROM users u
+  //     JOIN groupusers gu ON gu.user_id = u.id
+  //     WHERE gu.group_id = ?
+  //       AND gu.role != 'lurker'
+  //       AND u.id != ?
+  //     LIMIT 5
+  //   `
+  //       )
+  //       .all(testGroup.id, john.id)
+  //       .map((u) => u.id);
 
-    // insert votes (each user picks 2 options)
-    const insertMultiVote = db.prepare(
-      `
-  INSERT INTO poll_votes (poll_id, poll_option_id, user_id)
-  VALUES (?, ?, ?)
-`
-    );
+  //     // insert votes (each user picks 2 options)
+  //     const insertMultiVote = db.prepare(
+  //       `
+  //   INSERT INTO poll_votes (poll_id, poll_option_id, user_id)
+  //   VALUES (?, ?, ?)
+  // `
+  //     );
 
-    multiVoters.forEach((userId, index) => {
-      // rotate options so results look realistic
-      const firstOption = multiOptionIds[index % multiOptionIds.length];
-      const secondOption = multiOptionIds[(index + 1) % multiOptionIds.length];
+  //     multiVoters.forEach((userId, index) => {
+  //       // rotate options so results look realistic
+  //       const firstOption = multiOptionIds[index % multiOptionIds.length];
+  //       const secondOption = multiOptionIds[(index + 1) % multiOptionIds.length];
 
-      insertMultiVote.run(multiPollId, firstOption, userId);
-      insertMultiVote.run(multiPollId, secondOption, userId);
-    });
+  //       insertMultiVote.run(multiPollId, firstOption, userId);
+  //       insertMultiVote.run(multiPollId, secondOption, userId);
+  //     });
 
-    console.log("Inserted example multiple-choice poll for Test Group.");
-  }
+  //     console.log("Inserted example multiple-choice poll for Test Group.");
+  //   }
 
-  console.log("Seeding complete.");
+  //   console.log("Seeding complete.");
 }
