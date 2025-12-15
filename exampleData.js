@@ -124,9 +124,9 @@ export function seedExampleData() {
       },
       {
         owner_id: users[4].id, //Elric
-        name: "Kroegentocht scherpenheuvel (titel extra lang maken met onnodige tekst :D)AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        name: "Kroegentocht scherpenheuvel",
         description:
-          "We gaan te voet naar scherpenheuvel, jaja te voet naar scherpenheuvel. En wanneer komen wij daar aan, met al die kroegen langs de baan?AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "We gaan te voet naar scherpenheuvel, jaja te voet naar scherpenheuvel.",
       },
       {
         owner_id: users[2].id, //Gerben
@@ -249,7 +249,7 @@ export function seedExampleData() {
       {
         creator_id: users[2].id, //Gerben
         group_id: groups[0].id,
-        title: "Event in the very distant future",
+        title: "Event in the distant future",
         description: "Guys I don't think this will ever take place",
         start_time: now + oneDay * 100,
         end_time: now + oneDay * 101,
@@ -261,7 +261,7 @@ export function seedExampleData() {
       {
         creator_id: users[3].id, //Merlijn
         group_id: groups[0].id,
-        title: "Event in the very distant past",
+        title: "Event in the distant past",
         description: "Guys I can't even remember this happening",
         start_time: now - oneDay * 100,
         end_time: now - oneDay * 29,

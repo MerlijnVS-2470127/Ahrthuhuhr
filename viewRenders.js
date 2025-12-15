@@ -36,13 +36,6 @@ views.get("/", (request, response) => {
 
     //loading in events
     try {
-      // helper (server-side) to abbreviate long names consistently
-      function abbreviate(name, max = 25) {
-        if (!name) return "";
-        const s = String(name);
-        return s.length > max ? s.slice(0, max - 1) + "…" : s;
-      }
-
       // find user row (if any)
       const userRow = userEmail
         ? db
@@ -128,7 +121,6 @@ views.get("/", (request, response) => {
           lng,
           group_id: ev.group_id,
           group_name: ev.group_name,
-          group_name_abbrev: abbreviate(ev.group_name),
         };
       });
 
@@ -609,12 +601,6 @@ views.get("/groups/:groupId/newMember/:member", (request, response) => {
 //algemene events pagina
 views.get("/events", (request, response) => {
   try {
-    // helper (server-side) to abbreviate long names consistently
-    function abbreviate(name, max = 25) {
-      if (!name) return "";
-      const s = String(name);
-      return s.length > max ? s.slice(0, max - 1) + "…" : s;
-    }
     // quick cookie parse (request.cookies exists because views.use(cookieParser()))
     const userEmail =
       request.cookies && request.cookies.user ? request.cookies.user : "";
@@ -701,11 +687,8 @@ views.get("/events", (request, response) => {
         lng,
         group_id: ev.group_id,
         group_name: ev.group_name,
-        group_name_abbrev: abbreviate(ev.group_name),
       };
     });
-
-    console.log("-------------" + events + "--------------------");
 
     response.render("pages/FS_Events", { events, userGroups });
   } catch (err) {

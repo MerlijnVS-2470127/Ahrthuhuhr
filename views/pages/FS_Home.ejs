@@ -55,9 +55,9 @@
           <% if (Array.isArray(events) && events.length) { let iteration = 0; %>
           <div id="eventsGridWrapper">
             <div id="eventsGrid" class="events-grid">
-              <% events.forEach(function(ev) { if(iteration < 3){ %> <% let
-              statusClass = (ev.status || 'planned').replace(/\s+/g,
-              '-').toLowerCase(); %>
+              <% events.forEach(function(ev) { if(iteration < 3 && (ev.status ==
+              'happening now' || ev.status == 'planned')){ %> <% let statusClass
+              = (ev.status || 'planned').replace(/\s+/g, '-').toLowerCase(); %>
               <div class="card" style="padding: 20px; margin-bottom: 10px">
                 <article
                   class="event-tile"
