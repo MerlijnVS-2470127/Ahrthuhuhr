@@ -427,23 +427,33 @@
     sp_title.innerText = "Polls";
     sp_description.innerText = "All polls in this group.";
 
-    const polls = window.pollsData || [];
     let contents = "";
 
+    if (!isLurker) {
+      contents += `
+      <button class="btn btn-primary mb-3" id="btnCreatePoll">
+        + Create poll
+      </button>
+    `;
+    }
+
+    const polls = window.pollsData || [];
+
     if (!polls.length) {
-      sp_contents.innerHTML = "<p>No polls yet.</p>";
+      contents += "<p>No polls yet.</p>";
+      sp_contents.innerHTML = contents;
+      wireCreatePollButton();
       return;
     }
 
+    // existing poll rendering…
     polls.forEach((poll) => {
       const closed = poll.end_time && Date.now() > poll.end_time;
 
       contents += `
       <div class="poll mb-3" data-poll-id="${poll.id}">
         <h4>${poll.title}</h4>
-        <small class="text-muted">
-          Created by ${poll.creator || "Unknown"}
-        </small>
+        <small class="text-muted">Created by ${poll.creator}</small>
         ${
           poll.end_time
             ? `<div><small>Ends: ${new Date(
@@ -456,14 +466,12 @@
 
       poll.options.forEach((opt) => {
         contents += `
-        <div class="form-check d-flex align-items-center gap-2">
+        <div class="form-check d-flex gap-2">
           <input
             class="form-check-input poll-input"
             type="${poll.allow_multiple ? "checkbox" : "radio"}"
             name="poll-${poll.id}"
             value="${opt.id}"
-            data-poll-id="${poll.id}"
-            data-option-id="${opt.id}"
             ${opt.voted_by_me ? "checked" : ""}
             ${closed || isLurker ? "disabled" : ""}
           />
@@ -471,16 +479,11 @@
             ${opt.title}
             ${
               opt.description
-                ? `<small class="text-muted"> ${opt.description}</small>`
+                ? `<small class="text-muted"> – ${opt.description}</small>`
                 : ""
             }
           </label>
-          <span
-            class="badge bg-secondary poll-votes"
-            data-option-id="${opt.id}"
-          >
-            ${opt.votes}
-          </span>
+          <span class="badge bg-secondary">${opt.votes}</span>
         </div>
       `;
       });
@@ -493,6 +496,7 @@
     });
 
     sp_contents.innerHTML = contents;
+    wireCreatePollButton();
   }
 
   // handle poll inputs
@@ -536,6 +540,147 @@
       }
     });
   });
+
+  // poll creation modal
+  function ensurePollModal() {
+    if (document.getElementById("pollModal")) return;
+
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      `
+      <div class="modal fade" id="pollModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Create poll</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input id="pollTitle" class="form-control" required />
+              </div>
+
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="pollAllowMultiple">
+                <label class="form-check-label">Allow multiple selections</label>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">End time (optional)</label>
+                <input type="datetime-local" id="pollEndTime" class="form-control" />
+              </div>
+
+              <hr />
+              <h6>Options</h6>
+              <div id="pollOptions"></div>
+
+              <button class="btn btn-sm btn-outline-secondary mt-2" id="btnAddOption">
+                + Add option
+              </button>
+            </div>
+
+            <div class="modal-footer">
+              <button class="btn btn-secondary" data-bs-dismiss="modal">
+                Cancel
+              </button>
+              <button class="btn btn-primary" id="btnSavePoll">
+                Create poll
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      `
+    );
+  }
+
+  function addPollOption(title = "", description = "") {
+    const container = document.getElementById("pollOptions");
+    if (container.children.length >= 10) return;
+
+    const idx = container.children.length + 1;
+
+    container.insertAdjacentHTML(
+      "beforeend",
+      `
+<div class="border rounded p-2 mb-2">
+  <input class="form-control mb-1 poll-option-title"
+    placeholder="Option ${idx}"
+    value="${title}" />
+  <input class="form-control poll-option-desc"
+    placeholder="Description (optional)"
+    value="${description}" />
+</div>
+`
+    );
+  }
+
+  function wireCreatePollButton() {
+    const btn = document.getElementById("btnCreatePoll");
+    if (!btn) return;
+
+    btn.onclick = () => {
+      ensurePollModal();
+
+      const optionsEl = document.getElementById("pollOptions");
+      optionsEl.innerHTML = "";
+      addPollOption();
+      addPollOption();
+
+      document.getElementById("btnAddOption").onclick = () => addPollOption();
+
+      document.getElementById("btnSavePoll").onclick = submitPoll;
+
+      new bootstrap.Modal(document.getElementById("pollModal")).show();
+    };
+  }
+
+  //submit created poll
+  async function submitPoll() {
+    const title = document.getElementById("pollTitle").value.trim();
+    if (!title) return alert("Poll title is required");
+
+    const allowMultiple = document.getElementById("pollAllowMultiple").checked;
+
+    const endTimeValue = document.getElementById("pollEndTime").value;
+
+    const end_time = endTimeValue ? new Date(endTimeValue).getTime() : null;
+
+    const options = Array.from(document.querySelectorAll(".poll-option-title"))
+      .map((el, i) => ({
+        title: el.value.trim(),
+        description: document
+          .querySelectorAll(".poll-option-desc")
+          [i].value.trim(),
+      }))
+      .filter((o) => o.title);
+
+    if (options.length < 2) {
+      return alert("At least 2 options required");
+    }
+
+    try {
+      const res = await fetch(`/polls/${groupId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          allow_multiple: allowMultiple,
+          end_time,
+          options,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Create poll failed");
+
+      location.reload(); // simple + safe
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create poll");
+    }
+  }
 
   //wiring tab buttons
   tabEvents.addEventListener("click", () => {

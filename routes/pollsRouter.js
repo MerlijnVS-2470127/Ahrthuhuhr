@@ -6,6 +6,7 @@ const router = express.Router();
 
 const clients = new Set();
 
+//keep votes per option up to date
 router.get("/stream", (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -46,7 +47,7 @@ function broadcastPollUpdate(pollId) {
 }
 
 /**
- * Vote on a poll
+ * Post vote on a poll
  * body: { optionIds: number[] }
  */
 router.post("/:pollId/vote", (req, res) => {
@@ -161,6 +162,72 @@ router.post("/:pollId/vote", (req, res) => {
 
   res.json({ success: true });
   broadcastPollUpdate(pollId);
+});
+
+// post created poll
+router.post("/:groupId", (req, res) => {
+  const groupId = Number(req.params.groupId);
+
+  const email = getCurrentUser(req);
+  if (!email) return res.sendStatus(401);
+
+  // Convert email → user row
+  const user = db.prepare("SELECT id FROM users WHERE email = ?").get(email);
+
+  if (!user) return res.sendStatus(401);
+
+  // Role check
+  const roleRow = db
+    .prepare(
+      `
+      SELECT role
+      FROM groupusers
+      WHERE group_id = ? AND user_id = ?
+      `
+    )
+    .get(groupId, user.id);
+
+  if (!roleRow || roleRow.role === "lurker") {
+    return res.sendStatus(403);
+  }
+
+  const { title, allow_multiple, end_time, options } = req.body;
+
+  if (!title || !Array.isArray(options) || options.length < 2) {
+    return res.status(400).json({ error: "Invalid poll data" });
+  }
+
+  // insert poll
+  const pollResult = db
+    .prepare(
+      `
+      INSERT INTO polls (group_id, creator_id, title, allow_multiple, end_time)
+      VALUES (?, ?, ?, ?, ?)
+    `
+    )
+    .run(groupId, user.id, title, allow_multiple ? 1 : 0, end_time || null);
+
+  const pollId = pollResult.lastInsertRowid;
+
+  // insert options
+  const insertOption = db.prepare(
+    `
+    INSERT INTO poll_options (poll_id, title, description)
+    VALUES (?, ?, ?)
+  `
+  );
+
+  const tx = db.transaction(() => {
+    options.forEach((opt) => {
+      insertOption.run(pollId, opt.title, opt.description || "");
+    });
+  });
+
+  tx();
+
+  // optionally: broadcast new poll via SSE to all group members
+
+  res.status(201).json({ success: true, pollId });
 });
 
 export default router;
