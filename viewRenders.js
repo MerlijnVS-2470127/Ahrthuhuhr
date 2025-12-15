@@ -566,6 +566,12 @@ views.get("/groups/:groupId/editRole/:member/:role/", (request, response) => {
     }
   }
 
+  if (newRole === "kick") {
+    const remove = db
+      .prepare(`DELETE FROM groupusers WHERE (group_id = ?) AND (user_id = ?)`)
+      .run(groupId, member);
+  }
+
   response.redirect("/groups/" + groupId + "/");
 });
 
@@ -593,7 +599,7 @@ views.get("/groups/:groupId/newMember/:member", (request, response) => {
     }
   }
 
-  response.redirect("/groups/" + groupId + "/members");
+  response.redirect("/groups/" + groupId);
 });
 
 //---------------------//
