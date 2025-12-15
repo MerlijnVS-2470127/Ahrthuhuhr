@@ -146,6 +146,16 @@
   const groupName = window.__CHAT.groupName;
   let currentUser = window.__CHAT.currentUser;
 
+  //compute global isLurker var
+  let currentUserRole = null;
+
+  if (Array.isArray(usersInfo)) {
+    const me = usersInfo.find((u) => u.email === currentUser);
+    if (me) currentUserRole = me.role;
+  }
+
+  const isLurker = currentUserRole === "lurker";
+
   //helper om active tab te bepalen
   function setActiveTab(activeBtn) {
     [tabEvents, tabInfo, tabPolls].forEach((btn) => {
@@ -426,32 +436,111 @@
     let contents = "";
 
     if (!polls.length) {
-      contents = "<p>No polls yet.</p>";
-    } else {
-      polls.forEach((poll) => {
-        contents += `<div class="poll" style="margin-bottom: 15px;">
-                     <h4>${poll.title}</h4>
-                     <small>Created by ${poll.creator}</small>
-                     <ul style="list-style:none; padding-left:0;">`;
-
-        poll.options.forEach((opt) => {
-          contents += `<li style="display:flex; align-items:center; margin-bottom:5px;">
-                       <div style="width:20px; height:20px; border:2px solid #000; border-radius:50%; margin-right:10px;"></div>
-                       <span>${opt.title} (${opt.votes})</span>
-                       ${
-                         opt.description
-                           ? `<small style="margin-left:5px; color:gray;">- ${opt.description}</small>`
-                           : ""
-                       }
-                     </li>`;
-        });
-
-        contents += `</ul></div>`;
-      });
+      sp_contents.innerHTML = "<p>No polls yet.</p>";
+      return;
     }
+
+    polls.forEach((poll) => {
+      const closed = poll.end_time && Date.now() > poll.end_time;
+
+      contents += `
+      <div class="poll mb-3" data-poll-id="${poll.id}">
+        <h4>${poll.title}</h4>
+        <small class="text-muted">
+          Created by ${poll.creator || "Unknown"}
+        </small>
+        ${
+          poll.end_time
+            ? `<div><small>Ends: ${new Date(
+                poll.end_time
+              ).toLocaleString()}</small></div>`
+            : ""
+        }
+        <div class="mt-2">
+    `;
+
+      poll.options.forEach((opt) => {
+        contents += `
+        <div class="form-check d-flex align-items-center gap-2">
+          <input
+            class="form-check-input poll-input"
+            type="${poll.allow_multiple ? "checkbox" : "radio"}"
+            name="poll-${poll.id}"
+            value="${opt.id}"
+            data-poll-id="${poll.id}"
+            data-option-id="${opt.id}"
+            ${opt.voted_by_me ? "checked" : ""}
+            ${closed || isLurker ? "disabled" : ""}
+          />
+          <label class="form-check-label flex-grow-1">
+            ${opt.title}
+            ${
+              opt.description
+                ? `<small class="text-muted"> ${opt.description}</small>`
+                : ""
+            }
+          </label>
+          <span
+            class="badge bg-secondary poll-votes"
+            data-option-id="${opt.id}"
+          >
+            ${opt.votes}
+          </span>
+        </div>
+      `;
+      });
+
+      if (closed) {
+        contents += `<div class="text-danger small mt-1">Poll closed</div>`;
+      }
+
+      contents += `</div></div>`;
+    });
 
     sp_contents.innerHTML = contents;
   }
+
+  // handle poll inputs
+  sp_contents.addEventListener("change", async (e) => {
+    if (!e.target.classList.contains("poll-input")) return;
+
+    const pollEl = e.target.closest(".poll");
+    const pollId = pollEl.dataset.pollId;
+
+    const checked = pollEl.querySelectorAll(".poll-input:checked");
+    const optionIds = Array.from(checked).map((i) => Number(i.value));
+
+    try {
+      const res = await fetch(`/polls/${pollId}/vote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ optionIds }),
+      });
+
+      if (!res.ok) {
+        console.error("Vote failed");
+      }
+    } catch (err) {
+      console.error("Vote error", err);
+    }
+  });
+
+  //poll update listener
+  const evtSource = new EventSource("/polls/stream");
+
+  evtSource.addEventListener("pollUpdate", (e) => {
+    const data = JSON.parse(e.data);
+
+    data.options.forEach((opt) => {
+      const el = document.querySelector(
+        `.poll-votes[data-option-id="${opt.id}"]`
+      );
+
+      if (el) {
+        el.textContent = opt.votes;
+      }
+    });
+  });
 
   //wiring tab buttons
   tabEvents.addEventListener("click", () => {

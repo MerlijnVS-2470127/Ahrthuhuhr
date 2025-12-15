@@ -535,6 +535,80 @@ export function seedExampleData() {
     });
 
     console.log("Inserted example poll for Test Group.");
+
+    // ---------------------------
+    // MULTIPLE CHOICE POLL (EXAMPLE)
+    // ---------------------------
+
+    // create multiple-choice poll
+    const multiPollResult = db
+      .prepare(
+        `
+    INSERT INTO polls (group_id, creator_id, title, allow_multiple, end_time)
+    VALUES (?, ?, ?, ?, ?)
+  `
+      )
+      .run(
+        testGroup.id,
+        john.id,
+        "Multiple choice",
+        1, // multiple choice
+        now + twoDays
+      );
+
+    const multiPollId = multiPollResult.lastInsertRowid;
+
+    // poll options
+    const insertMultiOption = db.prepare(
+      `
+  INSERT INTO poll_options (poll_id, title, description)
+  VALUES (?, ?, ?)
+`
+    );
+
+    const multiOptionResults = [
+      insertMultiOption.run(multiPollId, "Bowling", "Fun & competitive"),
+      insertMultiOption.run(multiPollId, "Escape Room", "Brains required"),
+      insertMultiOption.run(multiPollId, "Movie Night", "Relaxing"),
+      insertMultiOption.run(multiPollId, "Board Games", "Casual fun"),
+    ];
+
+    const multiOptionIds = multiOptionResults.map((r) => r.lastInsertRowid);
+
+    // eligible voters: exactly 5 non-lurkers (excluding John)
+    const multiVoters = db
+      .prepare(
+        `
+    SELECT u.id
+    FROM users u
+    JOIN groupusers gu ON gu.user_id = u.id
+    WHERE gu.group_id = ?
+      AND gu.role != 'lurker'
+      AND u.id != ?
+    LIMIT 5
+  `
+      )
+      .all(testGroup.id, john.id)
+      .map((u) => u.id);
+
+    // insert votes (each user picks 2 options)
+    const insertMultiVote = db.prepare(
+      `
+  INSERT INTO poll_votes (poll_id, poll_option_id, user_id)
+  VALUES (?, ?, ?)
+`
+    );
+
+    multiVoters.forEach((userId, index) => {
+      // rotate options so results look realistic
+      const firstOption = multiOptionIds[index % multiOptionIds.length];
+      const secondOption = multiOptionIds[(index + 1) % multiOptionIds.length];
+
+      insertMultiVote.run(multiPollId, firstOption, userId);
+      insertMultiVote.run(multiPollId, secondOption, userId);
+    });
+
+    console.log("Inserted example multiple-choice poll for Test Group.");
   }
 
   console.log("Seeding complete.");
