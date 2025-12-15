@@ -5,12 +5,6 @@ import path from "path";
 import { db } from "../db.js";
 const router = express.Router();
 
-function abbreviate(name, max = 25) {
-  if (!name) return "";
-  const s = String(name);
-  return s.length > max ? s.slice(0, max - 1) + "…" : s;
-}
-
 // helper: parse cookie header quickly (server-side)
 function parseCookieCookie(req) {
   const header = req.headers.cookie || "";
@@ -50,7 +44,7 @@ router.get("/events/new", (req, res) => {
     `
       )
       .all(userRow.id)
-      .map((g) => ({ id: g.id, name: g.name, abbrev: abbreviate(g.name, 25) })); // abbrev for select
+      .map((g) => ({ id: g.id, name: g.name }));
   } else {
     groups = [];
   }

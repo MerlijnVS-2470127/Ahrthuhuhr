@@ -508,7 +508,7 @@
             ${opt.title}
             ${
               opt.description
-                ? `<small class="text-muted"> – ${opt.description}</small>`
+                ? `<small class="text-muted"> ${opt.description}</small>`
                 : ""
             }
           </label>

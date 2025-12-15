@@ -18,7 +18,7 @@ export function InitializeDatabase() {
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT NOT NULL UNIQUE,
-      username TEXT NOT NULL, 
+      username TEXT NOT NULL CHECK (length(username) <= 30), 
       password TEXT NOT NULL,
       last_login INTEGER NOT NULL
       ) STRICT
@@ -30,8 +30,8 @@ export function InitializeDatabase() {
     `CREATE TABLE IF NOT EXISTS groups (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       owner_id INTEGER,
-      name TEXT NOT NULL,
-      description TEXT,
+      name TEXT NOT NULL CHECK (length(name) <= 30),
+      description TEXT CHECK (length(description) <= 100),
       FOREIGN KEY(owner_id) REFERENCES users(id) ON DELETE SET NULL
     ) STRICT
   `
@@ -56,7 +56,7 @@ export function InitializeDatabase() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       creator_id INTEGER,
       group_id INTEGER NOT NULL,
-      title TEXT NOT NULL,
+      title TEXT NOT NULL CHECK (length(title) <= 30),
       description TEXT,
       start_time INTEGER NOT NULL,
       end_time INTEGER NOT NULL,
