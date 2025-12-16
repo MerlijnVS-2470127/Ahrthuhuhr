@@ -81,26 +81,52 @@ Op deze pagina kan de gebruiker een groep aanmaken. Het "Group name" invoerveld 
 
 ### Chat
 
+G-man
+
 ### Sidebar
+
+De sidebar is onderverdeeld in drie tabs. Deze drie zijn: Events, Info en Polls. Door vanboven aan de sidebar op een van de tabs teklikken, wordt die tab ingeladen.
 
 #### Events
 
+De sidepanel start op de events tab. Hier staan alle evenementen die aan de groep verbonden zijn en nu zijn aan het gebeuren of nog gepland zijn. Door eender waar op een evenement te klikken, opent de eventview pagina met alle info over het geselecteerde evenement.
+
 #### Group controls
+
+Als er op de "Info" knop gedrukt wordt, wordt de info van de groep getoond. Elke gebruiker buiten de owner kan de groep verlaten door op de "Leave" knop te drukken. Als de gebruiker een admin is, kan die leden toevoegen en kicken zolang dat lid niet de owner is of zichzelf. Als de gebruiker de owner is, kan die alles wat de admin kan en kan die de rollen van gebruikers aapassen. Er zijn vier rollen: Owner, admin, member en lurker. Als lurker kan het lid niet meedoen met polls. Daarnaast kan de owner ook de groep verwijderen in plaats van de groep te verlaten. Als de gebruiker dan op "Delete" klikt, komt er een prompt die aangeeft dat dit permanent is en om de groep te verwijderen de gebruiker de naam van de groep uit moet typen als extra voorzorgmaatregel.
 
 #### Polls
 
+G-man
+
 ## Events
+
+G-man
 
 ### Event Creation
 
+G-man
+
 ### EventView
+
+G-man
 
 #### Attendees
 
+G-man
+
 #### Externe bronnen
+
+G-man
 
 #### pdf conversion
 
+G-man
+
 ### Shippy
 
+G-man
+
 ## Map
+
+G-man

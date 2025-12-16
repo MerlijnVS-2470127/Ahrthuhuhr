@@ -144,6 +144,7 @@
   const events = window.eventsInfo;
   const usersInfo = window.usersInfo;
   const groupName = window.__CHAT.groupName;
+  const groupDescr = window.__CHAT.groupDescr;
   let currentUser = window.__CHAT.currentUser;
 
   //compute global isLurker var
@@ -173,72 +174,76 @@
     //declare contents
     if (Array.isArray(events) && events.length) {
       events.forEach(function (ev) {
-        var statusClass = (ev.status || "planned")
-          .replace(/\s+/g, "-")
-          .toLowerCase();
-        contents +=
-          "<hr style='margin:0 0 10px 0;'>" +
-          "<div class='singular-event' id='" +
-          ev.id +
-          "'>" +
-          "<div" +
-          'class="event-tile"' +
-          'aria-labelledby="ev-' +
-          ev.id +
-          '-title"' +
-          'data-status="' +
-          ev.status +
-          '"' +
-          'data-group-id="' +
-          ev.group_id +
-          '" style="">' +
-          '<div class="event-content">' +
-          "<h2" +
-          'id="ev-' +
-          ev.id +
-          '-title"' +
-          'class="event-title status-' +
-          statusClass +
-          '"' +
-          'title="' +
-          ev.title +
-          '"' +
-          ">" +
-          ev.title + //title
-          "</h2>" +
-          "<!-- Group name above date -->";
+        if (ev.status == "planned" || ev.status == "happening now") {
+          var statusClass = (ev.status || "planned")
+            .replace(/\s+/g, "-")
+            .toLowerCase();
+          contents +=
+            "<hr style='margin:0 0 10px 0;'>" +
+            "<div class='singular-event' id='" +
+            ev.id +
+            "'>" +
+            "<div" +
+            'class="event-tile"' +
+            'aria-labelledby="ev-' +
+            ev.id +
+            '-title"' +
+            'data-status="' +
+            ev.status +
+            '"' +
+            'data-group-id="' +
+            ev.group_id +
+            '" style="">' +
+            '<div class="event-content">' +
+            "<h2" +
+            'id="ev-' +
+            ev.id +
+            '-title"' +
+            'class="event-title status-' +
+            statusClass +
+            '"' +
+            'title="' +
+            ev.title +
+            '"' +
+            ">" +
+            ev.title + //title
+            "</h2>" +
+            "<!-- Group name above date -->";
 
-        if (ev.end) {
-          contents +=
-            '<div class="event-date" aria-hidden="true">' +
-            ev.start +
-            "—" +
-            ev.end +
-            "</div>";
-        } else {
-          contents +=
-            '<div class="event-date" aria-hidden="true">' + ev.start + "</div>";
+          if (ev.end) {
+            contents +=
+              '<div class="event-date" aria-hidden="true">' +
+              ev.start +
+              "—" +
+              ev.end +
+              "</div>";
+          } else {
+            contents +=
+              '<div class="event-date" aria-hidden="true">' +
+              ev.start +
+              "</div>";
+          }
+
+          if (ev.location) {
+            contents +=
+              '<div class="event-location-block">' +
+              '<span class="" style="font-size: 18px;">Location: ' +
+              ev.location +
+              "</span>" +
+              "</div>";
+          }
+
+          contents += "</div>";
+
+          if (ev.description) {
+            contents +=
+              '<p class="event-description" style="margin-bottom: 15px">' +
+              ev.description +
+              "</p>";
+          }
+
+          contents += "</div>" + "</div>";
         }
-
-        if (ev.location) {
-          contents +=
-            '<div class="event-location-block">' +
-            '<span class="" style="font-size: 18px;">Location: ' +
-            ev.location +
-            "</span>" +
-            "</div>";
-        }
-
-        contents += "</div>";
-
-        if (ev.description) {
-          contents +=
-            '<p class="event-description" style="margin-bottom: 15px">' +
-            ev.description +
-            "</p>";
-        }
-
-        contents += "</div>" + "</div>";
       });
 
       contents +=
@@ -268,7 +273,7 @@
   // group tab
   function loadGroupInfo() {
     sp_title.innerText = groupName;
-    sp_description.innerText = "Group details.";
+    sp_description.innerText = groupDescr;
     contents = "";
 
     //G-man
