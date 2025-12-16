@@ -43,14 +43,6 @@ views.get("/", (request, response) => {
             .get(userEmail)
         : null;
 
-      // if no logged-in user: return empty list and no groups
-      if (!userRow) {
-        return response.render("pages/FS_Events", {
-          events: [],
-          userGroups: [],
-        });
-      }
-
       // fetch groups where user is a member
       const userGroups = db
         .prepare(
@@ -63,9 +55,6 @@ views.get("/", (request, response) => {
         .all(userRow.id);
 
       const groupIds = userGroups.map((g) => g.id);
-      if (groupIds.length === 0) {
-        return response.render("pages/FS_Events", { events: [], userGroups });
-      }
 
       // fetch events for those groups, join group name, order by start_time
       const rows = db

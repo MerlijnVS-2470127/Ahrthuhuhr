@@ -50,6 +50,8 @@ links within markdown-> link naar appendix
 
 ### Sidebar
 
+#### Events
+
 #### Group controls
 
 #### Polls
