@@ -445,6 +445,16 @@ export function seedExampleData() {
         user_name: "Gerben Geurts",
         content: "Go team!",
       },
+      {
+        group_id: floor(groups[0].id),
+        user_name: "Yara van HOI",
+        content: "I'm a member.",
+      },
+      {
+        group_id: floor(groups[0].id),
+        user_name: "Ronny",
+        content: "And I'm a lurker.",
+      },
 
       //new york group
       {
