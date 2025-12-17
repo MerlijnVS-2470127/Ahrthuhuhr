@@ -188,6 +188,15 @@
     const lngRaw = document.getElementById("lng").value.trim();
 
     let invalid = false;
+    let errorbox = document.getElementById("titleError");
+    if (title.length > 40) {
+      errorbox.innerText =
+        "The title is too long. Current length: " + title.length;
+      return { ok: false };
+    } else {
+      errorbox.innerText = "";
+    }
+
     if (!location) {
       document.getElementById("location").classList.add("is-invalid");
       invalid = true;
