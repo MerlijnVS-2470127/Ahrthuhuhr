@@ -15,7 +15,7 @@ function validateSubmit(form) {
     errorBox.innerText = "A group name is required";
     return false;
   }
-  if (name.length > 30) {
+  if (name.length > 40) {
     errorBox.innerText =
       "The group name is too long. Current length: " + name.length;
     return false;

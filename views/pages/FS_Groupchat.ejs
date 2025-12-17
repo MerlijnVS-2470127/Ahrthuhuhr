@@ -8,6 +8,7 @@
       window.__CHAT = {
         groupId: "<%= groupId %>",
         groupName: "<%= group.name %>",
+        groupDescr: "<%= group.description %>",
         currentUser: "<%= currentUser %>",
         lastFetch: <%= messages.length ? messages[messages.length - 1].created_at : 0 %>
       };
