@@ -32,9 +32,15 @@ Password: `password1`
 
 ---
 
-**Lone Wolf**: deze user staat los van iedereen en zit in geen enkele groep
+**Lone Wolf**: deze user staat los van iedereen en zit in geen enkele groep. Dit is ideaal om de verschillende pagina's uit te testen voor het geval dat er niks is om in te laden (op de groups page en events page).
 
-links within markdown-> link naar appendix
+Email: `lone@wolf.com`
+
+Password: `iamsolonely`
+
+---
+
+Login informatie van overige example-accounts is te vinden [aan het einde](#logins-overige-accounts) te vinden.
 
 ## Login
 
@@ -130,3 +136,27 @@ G-man
 ## Map
 
 G-man
+
+## Offline
+
+## Logins overige accounts
+
+\<username>: \<email>; \<password>
+
+Gerben: gerben@example.com; password2
+
+Merlijn: merlijn@example.com; password3
+
+Kitty2610: kitty@example.com; password4
+
+Yara: yara@example.com; password5
+
+Rob: maria@example.com; password6
+
+Michael: linux@example.com; password7
+
+Joost: rooster@example.com; password8
+
+Ronny: ranjot@example.com; password9
+
+Vansh: vanshpreet@example.com; password10
